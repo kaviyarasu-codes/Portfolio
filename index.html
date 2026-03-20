@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ── Primary Meta ─────────────────────────────── -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <title>Kaviyarasu K | Full-Stack Python Developer (Django)</title>
+  <meta name="description"
+    content="Kaviyarasu K — Full-Stack Python Developer skilled in Django, MySQL, and live deployment. I build responsive, SEO-friendly websites and web apps." />
+  <meta name="keywords"
+    content="Kaviyarasu K, Full-Stack Developer, Python Developer, Django Developer, Web Developer Tamil Nadu, Freelance Web Developer India" />
+  <meta name="author" content="Kaviyarasu K" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://kaviyarasu.dev/" />
+
+  <!-- ── Open Graph / Facebook ───────────────────── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kaviyarasu.dev/" />
+  <meta property="og:title" content="Kaviyarasu K | Full-Stack Python Developer" />
+  <meta property="og:description"
+    content="I build responsive, SEO-friendly websites and full-stack web apps. I also handle domain & hosting setup and live deployment." />
+  <meta property="og:image" content="assets/img/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Kaviyarasu K Portfolio" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- ── Twitter Card ─────────────────────────────── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://kaviyarasu.dev/" />
+  <meta name="twitter:title" content="Kaviyarasu K | Full-Stack Python Developer" />
+  <meta name="twitter:description" content="I build responsive, SEO-friendly websites and full-stack web apps." />
+  <meta name="twitter:image" content="assets/img/og-image.jpg" />
+
+  <!-- ── Theme / Favicon ─────────────────────────── -->
+
+  <meta name="theme-color" content="#2F2F33" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48x48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon-180x180.png" />
+  <link rel="manifest" href="site.webmanifest" />
+
+  <!-- ── Fonts & Icons ───────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- ── Stylesheet ──────────────────────────────── -->
+
+  <!-- Theme: apply before CSS to prevent flash -->
+  <script>!function () { var t = localStorage.getItem('kk-theme') || 'dark'; document.documentElement.setAttribute('data-theme', t) }();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- ── Structured Data: Person ─────────────────── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Kaviyarasu K",
+    "jobTitle": "Full-Stack Python Developer",
+    "url": "https://kaviyarasu.dev/",
+    "email": "kaviyarasukanthavel@gmail.com",
+    "address": { "@type": "PostalAddress", "addressRegion": "Tamil Nadu", "addressCountry": "IN" },
+    "knowsAbout": ["Python", "Django", "MySQL", "HTML", "CSS", "JavaScript", "Web Development"],
+    "sameAs": [
+      "https://www.linkedin.com/in/kaviyarasu-kanthavel-71b556374/",
+      "https://github.com/kaviyarasu-codes"
+    ]
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- ══════════════ NAVBAR ══════════════ -->
+  <nav id="navbar" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Kaviyarasu K Portfolio Home">
+        <img src="assets/img/dark-logo.png" class="nav-logo-dark" alt="Kaviyarasu K" height="64"
+          style="display:block" />
+        <img src="assets/img/light-logo.png" class="nav-logo-light" alt="Kaviyarasu K" height="64"
+          style="display:none" />
+        <span class="nav-logo-name"><span class="nav-logo-first">Kaviyarasu</span></span>
+      </a>
+      <ul class="nav-links" id="navLinks" role="menubar">
+        <li role="none"><a href="index.html" class="active" role="menuitem"><i class="fa fa-house nav-icon"
+              aria-hidden="true"></i>Home</a></li>
+        <li role="none"><a href="projects.html" role="menuitem"><i class="fa fa-folder-open nav-icon"
+              aria-hidden="true"></i>Projects</a></li>
+        <li role="none"><a href="about.html" role="menuitem"><i class="fa fa-user nav-icon"
+              aria-hidden="true"></i>About</a></li>
+        <li role="none"><a href="contact.html" role="menuitem"><i class="fa fa-envelope nav-icon"
+              aria-hidden="true"></i>Contact</a></li>
+        <li class="sep" role="none" aria-hidden="true"></li>
+        <li role="none">
+          <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode" title="Light mode">
+            <i class="fa fa-sun" aria-hidden="true"></i>
+            <span class="theme-label">Light Mode</span>
+          </button>
+        </li>
+        <li role="none">
+          <a class="btn btn-mix btn-sm" href="assets/docs/Kaviyarasu_K_Resume.pdf" download role="menuitem"
+            aria-label="Download Resume PDF">
+            <i class="fa fa-download" aria-hidden="true"></i> Resume
+          </a>
+        </li>
+        <li class="nav-social-row" role="none" aria-label="Social links">
+          <a href="mailto:kaviyarasukanthavel@gmail.com" class="nav-soc-btn" aria-label="Email"><i
+              class="fa fa-envelope"></i></a>
+          <a href="https://www.linkedin.com/in/kaviyarasu-kanthavel-71b556374/" target="_blank"
+            rel="noopener noreferrer" class="nav-soc-btn" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+          <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" class="nav-soc-btn"
+            aria-label="GitHub"><i class="fab fa-github"></i></a>
+        </li>
+
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ══════════════ HERO ══════════════ -->
+  <section id="hero" aria-label="Hero introduction">
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="hero-blob hero-blob-1" aria-hidden="true"></div>
+    <div class="hero-blob hero-blob-2" aria-hidden="true"></div>
+    <div class="hero-blob hero-blob-3" aria-hidden="true"></div>
+
+    <div class="container hero-inner">
+
+      <!-- Left text -->
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <span class="badge badge-cyan">
+            <span class="dot" aria-hidden="true"></span> Available for Work
+          </span>
+        </div>
+
+        <h1 class="hero-name">
+          <span class="grad-text">Kaviyarasu K</span>
+        </h1>
+
+        <p class="hero-role" id="typed-role"
+          aria-label="Full-Stack Python Developer (Django) | Websites &amp; Web Apps"></p>
+
+        <p class="hero-desc">
+          I build responsive, SEO-friendly websites and full-stack web apps.
+          I also handle domain &amp; hosting setup and live deployment — end to end.
+        </p>
+
+        <div class="hero-cta">
+          <a href="projects.html" class="btn btn-primary btn-lg">
+            <i class="fa fa-folder-open" aria-hidden="true"></i> View Projects
+          </a>
+          <a href="assets/docs/Kaviyarasu_K_Resume.pdf" download class="btn btn-mix btn-lg"
+            aria-label="Download Resume">
+            <i class="fa fa-download" aria-hidden="true"></i> Download CV
+          </a>
+          <a href="contact.html" class="btn btn-outline-cyan btn-lg">
+            <i class="fa fa-envelope" aria-hidden="true"></i> Contact Me
+          </a>
+        </div>
+
+        <div class="hero-stats" aria-label="Key statistics">
+          <div class="hero-stat">
+            <div class="stat-num" aria-label="3 plus live websites">3+</div>
+            <div class="stat-label">Live Sites</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-num" aria-label="2 plus years experience">2+</div>
+            <div class="stat-label">Years Exp.</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-num" aria-label="100 percent deployed">100%</div>
+            <div class="stat-label">Deployed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right photo -->
+      <div class="hero-right">
+        <div class="photo-card">
+          <img src="assets/img/my_photo.png" alt="Kaviyarasu K — Full-Stack Python Developer profile photo" width="340"
+            height="453" loading="eager" />
+          <div class="photo-card-overlay">
+            <div class="photo-card-name">Kaviyarasu K</div>
+            <div class="photo-card-role">Full-Stack Python Developer</div>
+            <div class="photo-card-tags">
+              <span class="tag tag-p">Python</span>
+              <span class="tag tag-c">Django</span>
+              <span class="tag tag-g">MySQL</span>
+            </div>
+          </div>
+          <div class="hero-dots" aria-hidden="true"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════ PROOF STRIP ══════════════ -->
+  <div id="proof" aria-label="Key highlights ticker" aria-hidden="true">
+    <div class="ticker-wrap">
+      <div class="ticker-track" id="ticker">
+        <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">3+ Live Websites</span></span>
+        <span class="ticker-item"><span class="ti-dot"></span>Django &amp; MySQL Stack</span>
+        <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">Domain &amp; Hosting
+            Setup</span></span>
+        <span class="ticker-item"><span class="ti-dot"></span>Hostinger Deployment</span>
+        <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">SEO-Friendly
+            Builds</span></span>
+        <span class="ticker-item"><span class="ti-dot"></span>Mobile-First Design</span>
+        <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">AI-Assisted
+            Workflows</span></span>
+        <span class="ticker-item"><span class="ti-dot"></span>Freelance Ready</span>
+        <!-- duplicate for seamless loop -->
+        <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">3+ Live Websites</span></span>
+        <span class="ticker-item"><span class="ti-dot"></span>Django &amp; MySQL Stack</span>
+        <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">Domain &amp; Hosting
+            Setup</span></span>
+        <span class="ticker-item"><span class="ti-dot"></span>Hostinger Deployment</span>
+        <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">SEO-Friendly
+            Builds</span></span>
+        <span class="ticker-item"><span class="ti-dot"></span>Mobile-First Design</span>
+        <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">AI-Assisted
+            Workflows</span></span>
+        <span class="ticker-item"><span class="ti-dot"></span>Freelance Ready</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ BENTO GRID ══════════════ -->
+  <section id="bento" aria-label="Overview bento grid">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="eyebrow">At a Glance</p>
+        <h2>Everything <em>In One View</em></h2>
+        <p>Projects · Skills · Experience · Tools — all at a glance</p>
+      </div>
+
+      <div class="bento-grid">
+
+        <!-- Featured Project 1 – large -->
+        <article class="bc bc-7x3 bc-project reveal" aria-label="Featured Project: Aero Edge Media">
+          <img class="bc-bg" src="assets/img/projects/aeroedgemedia.png" alt="Aero Edge Media website screenshot"
+            loading="lazy" />
+          <div class="bc-content">
+            <div class="live-dot">Live</div>
+            <div class="bc-eyebrow">Featured Project</div>
+            <div class="bc-title" style="font-size:1.25rem">Aero Edge Media</div>
+            <div class="bc-tags" style="margin-top:8px">
+              <span class="tag tag-p">Django</span>
+              <span class="tag tag-c">Hostinger</span>
+              <span class="tag tag-w">Envato Template</span>
+            </div>
+            <p class="bc-sub" style="margin-top:10px">Media agency — full production website, domain + hosting, live.
+            </p>
+            <a href="https://www.aeroedgemedia.com" target="_blank" rel="noopener noreferrer"
+              class="btn btn-primary btn-sm" style="margin-top:14px;width:fit-content"
+              aria-label="Visit Aero Edge Media live site">
+              <i class="fa fa-arrow-up-right-from-square" aria-hidden="true"></i> Visit Live
+            </a>
+          </div>
+        </article>
+
+        <!-- Skills -->
+        <article class="bc bc-5x2 bc-accent reveal" aria-label="Core skills overview">
+          <div class="bc-icon">⚡</div>
+          <div class="bc-eyebrow">Core Stack</div>
+          <div class="bc-title">Python · Django · MySQL</div>
+          <div class="chip-cloud">
+            <span class="chip">Python</span><span class="chip">Django</span>
+            <span class="chip">MySQL</span><span class="chip">HTML5</span>
+            <span class="chip">CSS3</span><span class="chip">JavaScript</span>
+          </div>
+        </article>
+
+        <!-- Project 2 -->
+        <article class="bc bc-5x2b bc-project reveal" aria-label="Project: Sundaram Oils">
+          <img class="bc-bg" src="assets/img/projects/sundaramoils.png" alt="Sundaram Oils website" loading="lazy" />
+          <div class="bc-content">
+            <div class="live-dot">Live</div>
+            <div class="bc-eyebrow">Project</div>
+            <div class="bc-title">Sundaram Oils</div>
+            <div class="bc-tags">
+              <span class="tag tag-c">AI-Assisted</span>
+              <span class="tag tag-g">Live</span>
+            </div>
+            <a href="https://sundaramoils.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm"
+              style="margin-top:12px;width:fit-content">
+              <i class="fa fa-globe" aria-hidden="true"></i> Visit
+            </a>
+          </div>
+        </article>
+
+        <!-- Experience -->
+        <article class="bc bc-4x2 reveal"
+          style="background:linear-gradient(135deg,#0e1524,#1a0a2e);border-color:rgba(124,58,237,.28)"
+          aria-label="Experience summary">
+          <div class="bc-icon">🏢</div>
+          <div class="bc-eyebrow">Experience</div>
+          <div class="bc-title">Freelance Full-Stack Dev</div>
+          <div class="bc-sub">@ Aero Edge Media · 2023 – Present</div>
+          <div class="bc-sub">Built &amp; deployed 3 production websites end-to-end.</div>
+        </article>
+
+        <!-- Project 3 -->
+        <article class="bc bc-3x3 bc-project reveal" aria-label="Project: AK Sports Club">
+          <img class="bc-bg" src="assets/img/projects/aksportsclub.png" alt="AK Sports Club website" loading="lazy" />
+          <div class="bc-content">
+            <div class="live-dot">Live</div>
+            <div class="bc-eyebrow">Project</div>
+            <div class="bc-title">AK Sports Club</div>
+            <div class="bc-tags">
+              <span class="tag tag-w">HTML/CSS/JS</span>
+              <span class="tag tag-g">Live</span>
+            </div>
+            <a href="https://aksportsclub.com/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm"
+              style="margin-top:12px;width:fit-content">
+              <i class="fa fa-globe" aria-hidden="true"></i> Visit
+            </a>
+          </div>
+        </article>
+
+        <!-- KAVI Card -->
+        <article class="bc bc-3x2 reveal" style="
+            background:var(--card-2);
+            border-color:var(--b-i);
+            display:flex;align-items:center;justify-content:center;text-align:center;
+            position:relative;overflow:hidden;
+            transform:translateX(20px);">
+          <!-- Butterfly watermark -->
+          <img src="assets/img/favicon.png" alt="" aria-hidden="true" style="
+            position:absolute;top:50%;left:50%;
+            transform:translate(-50%,-50%);
+            width:80%;height:80%;
+            object-fit:contain;
+            opacity:0.14;
+            filter:saturate(0) brightness(1.5);
+            pointer-events:none;user-select:none;">
+          <!-- Glow -->
+          <div
+            style="position:absolute;inset:0;background:radial-gradient(ellipse at center,var(--surface) 0%,transparent 65%);pointer-events:none">
+          </div>
+          <!-- KAVI only -->
+          <div style="position:relative;z-index:1;">
+            <div style="
+              font-family:var(--font-head);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;
+              letter-spacing:.12em;line-height:1;
+              background:var(--grad-mix);
+              -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">KAVI</div>
+          </div>
+        </article>
+
+
+
+        <!-- Tools -->
+        <article class="bc bc-9x2 bc-skills reveal" aria-label="Tools and deployment skills">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <span style="font-size:1.6rem">🛠️</span>
+            <div>
+              <div class="bc-eyebrow">Tools &amp; Deployment</div>
+              <div class="bc-title">Full Production Stack</div>
+            </div>
+          </div>
+          <div class="chip-cloud">
+            <span class="chip">Git / GitHub</span>
+            <span class="chip">Hostinger</span>
+            <span class="chip">cPanel</span>
+            <span class="chip">Domain Setup</span>
+            <span class="chip">Bootstrap</span>
+            <span class="chip">jQuery</span>
+            <span class="chip">MS Office</span>
+            <span class="chip">AI Coding Tools</span>
+            <span class="chip">Image AI</span>
+            <span class="chip">Video AI</span>
+            <span class="chip">SEO Basics</span>
+          </div>
+        </article>
+
+        <!-- CTA -->
+        <article class="bc bc-3x2 bc-cta reveal" aria-label="Contact call to action">
+          <div style="font-size:2rem;margin-bottom:12px">✉️</div>
+          <div style="font-family:var(--font-head);font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:14px">Let's
+            Build Together</div>
+          <a href="contact.html" class="btn btn-outline-white btn-sm">Get In Touch</a>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ FEATURED PROJECTS ══════════════ -->
+  <section id="featured" aria-label="Featured projects">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="eyebrow">Real Work</p>
+        <h2>Featured <em>Projects</em></h2>
+        <p>Live websites — built, deployed &amp; serving real users</p>
+      </div>
+
+      <div class="proj-grid">
+
+        <!-- Card 1 -->
+        <article class="proj-card reveal" aria-label="Project: Aero Edge Media">
+          <div class="proj-thumb">
+            <img src="assets/img/projects/aeroedgemedia.png" alt="Aero Edge Media website screenshot" loading="lazy" />
+            <span class="live-badge" aria-label="Live website">Live</span>
+          </div>
+          <div class="proj-body">
+            <h3>Aero Edge Media</h3>
+            <div class="ptags">
+              <span class="tag tag-p">Envato Template</span>
+              <span class="tag tag-c">Hostinger</span>
+              <span class="tag tag-w">Django</span>
+            </div>
+            <ul>
+              <li>Customised Envato template into a production-ready company website</li>
+              <li>Purchased domain, configured hosting &amp; deployed live on Hostinger</li>
+              <li>Optimised pages for responsive layout, SEO &amp; clean UI</li>
+            </ul>
+            <p class="prole">Role: Freelance Full Stack Developer</p>
+            <div class="pactions">
+              <a href="https://www.aeroedgemedia.com" target="_blank" rel="noopener noreferrer"
+                class="btn btn-primary btn-sm">
+                <i class="fa fa-globe" aria-hidden="true"></i> Live Site
+              </a>
+              <a href="projects.html#aeroedgemedia" class="btn btn-outline-purple btn-sm">Case Study</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="proj-card reveal" aria-label="Project: Sundaram Oils">
+          <div class="proj-thumb">
+            <img src="assets/img/projects/sundaramoils.png" alt="Sundaram Oils website screenshot" loading="lazy" />
+            <span class="live-badge" aria-label="Live website">Live</span>
+          </div>
+          <div class="proj-body">
+            <h3>Sundaram Oils</h3>
+            <div class="ptags">
+              <span class="tag tag-p">AI-Assisted</span>
+              <span class="tag tag-c">Hostinger</span>
+              <span class="tag tag-w">HTML/CSS</span>
+            </div>
+            <ul>
+              <li>Built complete website using AI-assisted workflow (Antigravity)</li>
+              <li>Structured all content, layout &amp; navigation from scratch</li>
+              <li>Ensured mobile-first responsive design &amp; fast page load</li>
+            </ul>
+            <p class="prole">Role: Freelance Full Stack Developer</p>
+            <div class="pactions">
+              <a href="https://sundaramoils.com/" target="_blank" rel="noopener noreferrer"
+                class="btn btn-primary btn-sm">
+                <i class="fa fa-globe" aria-hidden="true"></i> Live Site
+              </a>
+              <a href="projects.html#sundaramoils" class="btn btn-outline-purple btn-sm">Case Study</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="proj-card reveal" aria-label="Project: AK Sports Club">
+          <div class="proj-thumb">
+            <img src="assets/img/projects/aksportsclub.png" alt="AK Sports Club website screenshot" loading="lazy" />
+            <span class="live-badge" aria-label="Live website">Live</span>
+          </div>
+          <div class="proj-body">
+            <h3>AK Sports Club</h3>
+            <div class="ptags">
+              <span class="tag tag-p">HTML/CSS/JS</span>
+              <span class="tag tag-c">AI Tools</span>
+              <span class="tag tag-g">Deployed</span>
+            </div>
+            <ul>
+              <li>Built site rapidly using AI tools + manual editing for quality</li>
+              <li>Managed full structure — pages, navigation, imagery, deployment</li>
+              <li>Cross-browser &amp; cross-device compatibility ensured</li>
+            </ul>
+            <p class="prole">Role: Freelance Full Stack Developer</p>
+            <div class="pactions">
+              <a href="https://aksportsclub.com/" target="_blank" rel="noopener noreferrer"
+                class="btn btn-primary btn-sm">
+                <i class="fa fa-globe" aria-hidden="true"></i> Live Site
+              </a>
+              <a href="projects.html#aksportsclub" class="btn btn-outline-purple btn-sm">Case Study</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <div style="text-align:center;margin-top:44px" class="reveal">
+        <a href="projects.html" class="btn btn-primary btn-lg">
+          <i class="fa fa-folder-open" aria-hidden="true"></i> View All Case Studies
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SKILLS ══════════════ -->
+  <section id="skills" class="dark-section" aria-label="Technical skills">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="eyebrow">Capabilities</p>
+        <h2>My <em>Skills</em></h2>
+        <p>Technologies I use to build and ship production products</p>
+      </div>
+      <div class="skills-grid">
+        <article class="skill-box reveal">
+          <div class="sb-icon">🎨</div>
+          <h4>Frontend</h4>
+          <div class="sb-chips">
+            <span class="sb-chip">HTML5</span><span class="sb-chip">CSS3</span>
+            <span class="sb-chip">JavaScript</span><span class="sb-chip">jQuery</span>
+            <span class="sb-chip">Bootstrap</span><span class="sb-chip">Responsive Design</span>
+          </div>
+        </article>
+        <article class="skill-box reveal">
+          <div class="sb-icon">⚙️</div>
+          <h4>Backend</h4>
+          <div class="sb-chips">
+            <span class="sb-chip">Python</span><span class="sb-chip">Django</span>
+            <span class="sb-chip">REST APIs</span><span class="sb-chip">Django ORM</span>
+            <span class="sb-chip">Authentication</span>
+          </div>
+        </article>
+        <article class="skill-box reveal">
+          <div class="sb-icon">🗄️</div>
+          <h4>Database</h4>
+          <div class="sb-chips">
+            <span class="sb-chip">MySQL</span><span class="sb-chip">SQLite</span>
+            <span class="sb-chip">Database Design</span><span class="sb-chip">Query Optimisation</span>
+          </div>
+        </article>
+        <article class="skill-box reveal">
+          <div class="sb-icon">🚀</div>
+          <h4>Deployment &amp; Hosting</h4>
+          <div class="sb-chips">
+            <span class="sb-chip">Hostinger</span><span class="sb-chip">cPanel</span>
+            <span class="sb-chip">Domain Setup</span><span class="sb-chip">DNS Config</span>
+            <span class="sb-chip">Live Deployment</span>
+          </div>
+        </article>
+        <article class="skill-box reveal">
+          <div class="sb-icon">🤖</div>
+          <h4>AI Workflows</h4>
+          <div class="sb-chips">
+            <span class="sb-chip">AI-Assisted Coding</span><span class="sb-chip">Image AI</span>
+            <span class="sb-chip">Video AI</span><span class="sb-chip">Prompt Engineering</span>
+          </div>
+        </article>
+        <article class="skill-box reveal">
+          <div class="sb-icon">🔧</div>
+          <h4>Tools</h4>
+          <div class="sb-chips">
+            <span class="sb-chip">Git</span><span class="sb-chip">GitHub</span>
+            <span class="sb-chip">VS Code</span><span class="sb-chip">MS Office</span>
+            <span class="sb-chip">SEO Basics</span>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ EXPERIENCE ══════════════ -->
+  <section id="experience" aria-label="Work experience">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="eyebrow">Career</p>
+        <h2>Experience</h2>
+        <p>Building real products for real businesses</p>
+      </div>
+      <div class="timeline">
+
+        <div class="tl-item reveal">
+          <div class="tl-dot" aria-hidden="true"></div>
+          <div class="tl-meta">
+            <span class="badge badge-purple">Freelance</span>
+            <span class="tl-period">2023 – Present</span>
+          </div>
+          <div class="tl-role">Full-Stack Developer</div>
+          <div class="tl-company">@ Aero Edge Media (Startup)</div>
+          <ul class="tl-list" aria-label="Responsibilities">
+            <li>Built and deployed 3 live production websites for real clients</li>
+            <li>Managed end-to-end workflow — design, code, domain, hosting, deployment</li>
+            <li>Used AI-assisted tools to accelerate development and deliver smarter solutions</li>
+            <li>Optimised all sites for SEO, responsiveness &amp; cross-browser compatibility</li>
+            <li>Coordinated directly with startup stakeholders on requirements &amp; revisions</li>
+          </ul>
+        </div>
+
+        <div class="tl-item reveal">
+          <div class="tl-dot" aria-hidden="true"></div>
+          <div class="tl-meta">
+            <span class="badge badge-purple">Training</span>
+            <span class="tl-period">2022 – 2023</span>
+          </div>
+          <div class="tl-role">Python &amp; Django Self-Study</div>
+          <div class="tl-company">Online Courses &amp; Practice Projects</div>
+          <ul class="tl-list">
+            <li>Completed structured Python &amp; Django training via online platforms</li>
+            <li>Built multiple CRUD web apps and REST API projects</li>
+            <li>Learned MySQL integration with Django ORM and database design</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ CERTIFICATIONS ══════════════ -->
+  <section id="certs" class="dark-section" aria-label="Certifications and training">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="eyebrow">Learning</p>
+        <h2>Certifications &amp; <em>Training</em></h2>
+        <p>Continuous learning and skill development</p>
+      </div>
+      <div class="certs-grid">
+        <article class="cert-card reveal">
+          <div class="cert-icon">🐍</div>
+          <div class="cert-name">Python Programming</div>
+          <div class="cert-by">Online Platform</div>
+          <div class="cert-year">2022</div>
+        </article>
+        <article class="cert-card reveal">
+          <div class="cert-icon">🌐</div>
+          <div class="cert-name">Django Web Framework</div>
+          <div class="cert-by">Online Platform</div>
+          <div class="cert-year">2023</div>
+        </article>
+        <article class="cert-card reveal">
+          <div class="cert-icon">🗄️</div>
+          <div class="cert-name">MySQL Database Fundamentals</div>
+          <div class="cert-by">Online Platform</div>
+          <div class="cert-year">2023</div>
+        </article>
+        <article class="cert-card reveal">
+          <div class="cert-icon">🤖</div>
+          <div class="cert-name">AI Tools for Developers</div>
+          <div class="cert-by">Self-Learned &amp; Applied</div>
+          <div class="cert-year">2024</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ CTA BAND ══════════════ -->
+  <section id="cta-band" aria-label="Contact call to action">
+    <div class="container">
+      <div class="cta-box reveal">
+        <h2>Ready to Build Something <br><span class="grad-text">Together?</span></h2>
+        <p>Whether you need a website, web app, or full deployment setup — I'm one message away.</p>
+        <div class="cta-row">
+          <a href="mailto:kaviyarasukanthavel@gmail.com" class="btn btn-primary btn-lg">
+            <i class="fa fa-envelope" aria-hidden="true"></i> kaviyarasukanthavel@gmail.com
+          </a>
+          <a href="https://www.linkedin.com/in/kaviyarasu-kanthavel-71b556374/" target="_blank"
+            rel="noopener noreferrer" class="cta-social">
+            <i class="fab fa-linkedin" aria-hidden="true"></i> LinkedIn
+          </a>
+          <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" class="cta-social">
+            <i class="fab fa-github" aria-hidden="true"></i> GitHub
+          </a>
+          <a href="contact.html" class="btn btn-outline-cyan btn-lg">
+            <i class="fa fa-paper-plane" aria-hidden="true"></i> Send Message
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ FOOTER ══════════════ -->
+  <footer id="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Brand -->
+        <div class="footer-brand">
+          <div class="footer-logo-text"><span>Kaviyarasu</span> Portfolio</div>
+          <p class="footer-tagline">Full-Stack Python Developer · Building responsive, SEO-friendly websites and web
+            apps from start to live deployment.</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-col">
+          <div class="footer-col-title">Quick Links</div>
+          <nav class="footer-links" aria-label="Footer navigation">
+            <a href="index.html"><i class="fa fa-chevron-right"></i> Home</a>
+            <a href="projects.html"><i class="fa fa-chevron-right"></i> Projects</a>
+            <a href="about.html"><i class="fa fa-chevron-right"></i> About</a>
+            <a href="contact.html"><i class="fa fa-chevron-right"></i> Contact</a>
+            <a href="assets/docs/Kaviyarasu_K_Resume.pdf" download><i class="fa fa-chevron-right"></i> Resume</a>
+          </nav>
+        </div>
+
+        <!-- Social -->
+        <div class="footer-col">
+          <div class="footer-col-title">Connect</div>
+          <div class="footer-social-row">
+            <a href="https://www.linkedin.com/in/kaviyarasu-kanthavel-71b556374/" target="_blank"
+              rel="noopener noreferrer" class="footer-soc-btn" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer"
+              class="footer-soc-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="mailto:kaviyarasukanthavel@gmail.com" class="footer-soc-btn" aria-label="Email"><i
+                class="fa fa-envelope"></i></a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Copyright -->
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2025 Kaviyarasu — Built with HTML, CSS &amp; JavaScript</p>
+      </div>
+    </div>
+  </footer>
+
+  <button id="btt" aria-label="Back to top"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
+
+  <!-- WhatsApp Float -->
+  <a href="https://wa.me/919092266940?text=hi%20kavi%20%2C%20I%20came%20%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!%F0%9F%98%8A"
+    target="_blank" rel="noopener noreferrer" class="float-wa" id="floatWa" aria-label="Chat on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+  </a>
+
+  <script src="assets/js/main.js"></script>
+</body>
+
+</html>

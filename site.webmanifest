@@ -1,0 +1,12 @@
+{
+  "name": "Kaviyarasu K Portfolio",
+  "short_name": "KK Portfolio",
+  "icons": [
+    { "src": "assets/img/favicon-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/img/favicon-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#2F2F33",
+  "background_color": "#1C1C1F",
+  "display": "standalone",
+  "start_url": "/"
+}
