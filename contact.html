@@ -214,7 +214,7 @@
                 <!-- ── Form ── -->
                 <div class="form-card reveal-right">
                     <h3>Send a Message</h3>
-                    <form id="contactForm" novalidate aria-label="Contact form" onsubmit="handleForm(event)">
+                    <form id="contactForm" novalidate aria-label="Contact form">
 
                         <div class="form-row">
                             <div class="fg">
@@ -327,12 +327,67 @@
 
     <button id="btt" aria-label="Back to top"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
     <!-- WhatsApp Float -->
-    <a href="https://wa.me/919092266940?text=hi%20kavi%20%2C%20I%20came%20%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!%F0%9F%98%8A" 
-       target="_blank" rel="noopener noreferrer" class="float-wa" id="floatWa" aria-label="Chat on WhatsApp">
-      <i class="fab fa-whatsapp"></i>
+    <a href="https://wa.me/919092266940?text=hi%20kavi%20%2C%20I%20came%20%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!%F0%9F%98%8A"
+        target="_blank" rel="noopener noreferrer" class="float-wa" id="floatWa" aria-label="Chat on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
     </a>
 
     <script src="assets/js/main.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSH6Ryd0MtbQOTiK1GYBSQa8oe65TGXpA",
+            authDomain: "portfolio-contact-39c14.firebaseapp.com",
+            projectId: "portfolio-contact-39c14",
+            storageBucket: "portfolio-contact-39c14.firebasestorage.app",
+            messagingSenderId: "1011375934660",
+            appId: "1:1011375934660:web:ac5b4ab463dc122de48d91",
+            measurementId: "G-7JFCLZBL0C"
+        };
+
+        // Initialize
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Form submit
+        document.getElementById("contactForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById("submit-btn");
+            const text = document.getElementById("btn-text");
+            const status = document.getElementById("form-status");
+
+            btn.disabled = true;
+            text.innerText = "Sending...";
+
+            try {
+                await addDoc(collection(db, "contacts"), {
+                    firstName: document.getElementById("first-name").value,
+                    lastName: document.getElementById("last-name").value,
+                    email: document.getElementById("email-input").value,
+                    subject: document.getElementById("subject").value,
+                    message: document.getElementById("message").value,
+                    createdAt: serverTimestamp()
+                });
+
+                status.innerHTML = "✅ Message sent successfully!";
+                status.style.color = "green";
+
+                document.getElementById("contactForm").reset();
+
+            } catch (error) {
+                console.error(error);
+                status.innerHTML = "❌ Failed to send message";
+                status.style.color = "red";
+            }
+
+            btn.disabled = false;
+            text.innerText = "Send Message";
+        });
+    </script>
 </body>
 
 </html>

@@ -277,67 +277,10 @@ function initSmoothScroll() {
 }
 
 /* ────────────────────────────────────────────────────── *
-   9.  CONTACT FORM HANDLER
-       Replace the setTimeout block with a real API call
-       (Formspree / EmailJS / your Django endpoint).
+   9.  CONTACT FORM
+       Form submission is handled via Firebase Firestore
+       directly in contact.html (inline <script type="module">).
  * ────────────────────────────────────────────────────── */
-window.handleForm = function handleForm(e) {
-  e.preventDefault();
-
-  const form = document.getElementById('contactForm');
-  const btn = document.getElementById('submit-btn');
-  const btnTxt = document.getElementById('btn-text');
-  const status = document.getElementById('form-status');
-  if (!form || !btn) return;
-
-  /* Basic HTML5 validation */
-  if (!form.checkValidity()) {
-    form.reportValidity();
-    return;
-  }
-
-  /* Loading state */
-  btn.disabled = true;
-  btnTxt.textContent = 'Sending…';
-  btn.querySelector('i').className = 'fa fa-spinner fa-spin';
-  status.style.display = 'none';
-  status.className = '';
-
-  /* ── Replace this block with a real fetch() call ── */
-  /*
-  const data = new FormData(form);
-  fetch('https://formspree.io/f/YOUR_FORM_ID', {
-    method: 'POST', body: data, headers: { 'Accept': 'application/json' }
-  })
-  .then(r => r.ok ? showSuccess() : showError())
-  .catch(showError);
-  */
-
-  // Demo:  simulate network delay
-  setTimeout(() => {
-    showSuccess();
-    form.reset();
-  }, 1500);
-
-  function showSuccess() {
-    btn.disabled = false;
-    btnTxt.textContent = 'Send Message';
-    btn.querySelector('i').className = 'fa fa-paper-plane';
-    status.style.display = 'block';
-    status.className = 'success';
-    status.textContent = '✅ Message sent! I\'ll reply within 24 hours.';
-    setTimeout(() => { status.style.display = 'none'; }, 6000);
-  }
-
-  function showError() {
-    btn.disabled = false;
-    btnTxt.textContent = 'Send Message';
-    btn.querySelector('i').className = 'fa fa-paper-plane';
-    status.style.display = 'block';
-    status.className = 'error';
-    status.textContent = '❌ Something went wrong. Please email me directly.';
-  }
-};
 
 /* ────────────────────────────────────────────────────── *
    10. TICKER PAUSE on hover (accessibility)
