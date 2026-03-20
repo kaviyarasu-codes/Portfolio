@@ -219,12 +219,12 @@
                         <div class="form-row">
                             <div class="fg">
                                 <label for="first-name">First Name <span aria-hidden="true">*</span></label>
-                                <input type="text" id="first-name" name="firstName" placeholder="Malar" required
+                                <input type="text" id="first-name" name="first_name" placeholder="Malar" required
                                     autocomplete="given-name" aria-required="true" />
                             </div>
                             <div class="fg">
                                 <label for="last-name">Last Name</label>
-                                <input type="text" id="last-name" name="lastName" placeholder=" "
+                                <input type="text" id="last-name" name="last_name" placeholder=" "
                                     autocomplete="family-name" />
                             </div>
                         </div>
@@ -333,7 +333,17 @@
     </a>
 
     <script src="assets/js/main.js"></script>
+    <!-- 1. EmailJS library -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
+    <!-- 2. Initialize -->
+    <script>
+        emailjs.init({
+            publicKey: "Q-IEP7ifmgja43yFs"
+        });
+    </script>
+
+    <!-- 3. Your Firebase + sendForm code -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
@@ -372,11 +382,16 @@
                     message: document.getElementById("message").value,
                     createdAt: serverTimestamp()
                 });
-
-                status.innerHTML = "✅ Message sent successfully!";
-                status.style.color = "green";
+                // 🔥 Send Email
+                await emailjs.sendForm(
+                    "service_7247d77",
+                    "template_7izn0kc",
+                    "#contactForm"
+                );
 
                 document.getElementById("contactForm").reset();
+                // Redirect to thank-you page
+                window.location.href = "thank-you.html";
 
             } catch (error) {
                 console.error(error);
@@ -388,6 +403,8 @@
             text.innerText = "Send Message";
         });
     </script>
+
+
 </body>
 
 </html>
