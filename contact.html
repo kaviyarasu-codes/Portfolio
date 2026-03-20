@@ -14,11 +14,11 @@
         content="Contact Kaviyarasu K, Hire Django Developer, Freelance Web Developer India, Python Web Dev Contact" />
     <meta name="author" content="Kaviyarasu K" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://kaviyarasu.dev/contact.html" />
+    <link rel="canonical" href="https://kaviyarasu-portfolio.pages.dev/contact.html" />
 
     <!-- ── Open Graph ───────────────────────────────── -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://kaviyarasu.dev/contact.html" />
+    <meta property="og:url" content="https://kaviyarasu-portfolio.pages.dev/contact.html" />
     <meta property="og:title" content="Contact Kaviyarasu K | Full-Stack Developer" />
     <meta property="og:description"
         content="Available for freelance projects and full-time roles. Quick turnaround, code + deployment included." />
@@ -380,13 +380,24 @@
                     email: document.getElementById("email-input").value,
                     subject: document.getElementById("subject").value,
                     message: document.getElementById("message").value,
+                    isRead: false,
+                    isStarred: false,
                     createdAt: serverTimestamp()
                 });
-                // 🔥 Send Email
+                // 🔥 Send Email to my email
                 await emailjs.sendForm(
                     "service_7247d77",
                     "template_7izn0kc",
                     "#contactForm"
+                );
+                // 🔥 Auto reply to USER
+                await emailjs.send(
+                    "service_7247d77",
+                    "template_v7qgder",
+                    {
+                        to_email: document.getElementById("email-input").value,
+                        user_name: document.getElementById("first-name").value
+                    }
                 );
 
                 document.getElementById("contactForm").reset();
