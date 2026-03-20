@@ -69,6 +69,7 @@
                 opacity: 0;
                 transform: translateY(40px) scale(0.96);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0) scale(1);
@@ -110,6 +111,7 @@
                 opacity: 0;
                 transform: scale(0);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
@@ -117,10 +119,13 @@
         }
 
         @keyframes ringPulse {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: scale(1);
                 opacity: 0.5;
             }
+
             50% {
                 transform: scale(1.15);
                 opacity: 0;
@@ -138,6 +143,7 @@
                 opacity: 0;
                 transform: scale(0) rotate(-45deg);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1) rotate(0deg);
@@ -174,6 +180,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -306,14 +313,18 @@
         }
 
         @keyframes particleFloat {
-            0%, 100% {
+
+            0%,
+            100% {
                 opacity: 0;
                 transform: translateY(0) scale(0);
             }
+
             20% {
                 opacity: 0.7;
                 transform: translateY(-20px) scale(1);
             }
+
             80% {
                 opacity: 0.3;
                 transform: translateY(-60px) scale(0.8);
@@ -454,7 +465,7 @@
                     <i class="fa fa-envelope-circle-check"></i>
                 </div>
                 <div class="thank-info-text">
-                    A <strong>confirmation email</strong> has been sent to your inbox.
+                    A <strong>reply email</strong> may arrive shortly.
                     Please check your spam folder if you don't see it.
                 </div>
             </div>
