@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /thank-you.html
+
+Sitemap: https://kaviyarasu-portfolio.pages.dev/sitemap.xml

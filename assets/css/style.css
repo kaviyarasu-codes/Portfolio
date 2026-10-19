@@ -4,7 +4,6 @@
    Light/Dark mode via [data-theme] on <html>
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* ─ Dark Theme (default) ─────────────────────────────── */
 :root,
@@ -4094,3 +4093,177 @@ textarea {
     overflow-x: hidden;
   }
 }
+/* ══════════════════════════════════════════
+   v2 UPGRADE (Oct 2026)
+   - Missing utility classes used in markup
+   - Project status badges, filters, art thumbs
+   - Education, archive cards, 404, a11y
+══════════════════════════════════════════ */
+
+/* ── Missing badge / tag / button variants (were undefined) ── */
+.badge-cyan { background: rgba(56, 189, 248, .12); border: 1px solid var(--b-i); color: var(--indigo-l) }
+.badge-purple { background: rgba(124, 207, 164, .1); border: 1px solid var(--b-e); color: var(--emerald-l) }
+[data-theme="light"] .badge-cyan { color: var(--indigo-d) }
+[data-theme="light"] .badge-purple { color: var(--emerald-d) }
+
+.tag-p { color: var(--indigo-l); background: rgba(56, 189, 248, .1); border-color: var(--b-i) }
+.tag-c { color: var(--emerald-l); background: rgba(124, 207, 164, .08); border-color: var(--b-e) }
+.tag-g { color: #FCD34D; background: rgba(252, 211, 77, .08); border-color: rgba(252, 211, 77, .25) }
+[data-theme="light"] .tag-p { color: var(--indigo-d) }
+[data-theme="light"] .tag-c { color: var(--emerald-d) }
+[data-theme="light"] .tag-g { color: #B45309 }
+
+.btn-outline-cyan { background: transparent; color: var(--indigo-l); border: 2px solid var(--b-i) }
+.btn-outline-cyan:hover { background: rgba(56, 189, 248, .1); transform: translateY(-2px) }
+.btn-outline-purple { background: transparent; color: var(--emerald-l); border: 2px solid var(--b-e) }
+.btn-outline-purple:hover { background: rgba(124, 207, 164, .1); transform: translateY(-2px) }
+.btn-outline-white { background: rgba(255, 255, 255, .12); color: #fff; border: 2px solid rgba(255, 255, 255, .55) }
+.btn-outline-white:hover { background: rgba(255, 255, 255, .22); transform: translateY(-2px) }
+[data-theme="light"] .btn-outline-cyan { color: var(--indigo-d); border-color: rgba(2, 132, 199, .45) }
+[data-theme="light"] .btn-outline-purple { color: var(--emerald-d); border-color: rgba(91, 191, 149, .5) }
+#about-main .btn-outline-white, .contact-cta-row .btn-outline-white { color: var(--text); border-color: var(--border); background: var(--surface) }
+
+:focus-visible { outline: 2px solid var(--indigo); outline-offset: 3px; border-radius: 6px }
+
+/* anchor targets clear the fixed navbar */
+[id] { scroll-margin-top: 90px }
+
+/* ── Status pills (Live / In development / Archived) ── */
+.status-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 999px;
+  font-size: .7rem; font-weight: 700; letter-spacing: .04em;
+  background: rgba(9, 12, 20, .85); backdrop-filter: blur(8px);
+  border: 1px solid rgba(124, 207, 164, .3); color: #7CCFA4;
+}
+.status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor }
+.status-pill.live::before { animation: blink 1.4s ease-in-out infinite }
+.status-pill.dev { color: #FCD34D; border-color: rgba(252, 211, 77, .35) }
+.status-pill.archived { color: #CBD5E1; border-color: rgba(203, 213, 225, .3) }
+.proj-thumb .status-pill, .case-img .status-pill { position: absolute; top: 12px; right: 12px; z-index: 2 }
+.case-img .status-pill { left: 12px; right: auto }
+
+/* ── Illustrated thumbnails for products without a public screenshot ── */
+.art-thumb {
+  position: relative; width: 100%; height: 100%; min-height: 220px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  overflow: hidden; color: #fff; text-align: center; padding: 24px;
+}
+.art-thumb::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 28px 28px; pointer-events: none;
+}
+.art-thumb i { font-size: 3rem; position: relative; z-index: 1; filter: drop-shadow(0 8px 24px rgba(0,0,0,.35)) }
+.art-thumb .art-title { position: relative; z-index: 1; font-family: var(--font-head); font-weight: 800; font-size: 1.35rem; letter-spacing: .01em }
+.art-thumb .art-sub { position: relative; z-index: 1; font-size: .78rem; opacity: .85; font-weight: 500 }
+.art-tickets { background: linear-gradient(135deg, #1D4ED8 0%, #0EA5E9 60%, #38BDF8 100%) }
+.art-billing { background: linear-gradient(135deg, #065F46 0%, #059669 55%, #7CCFA4 100%) }
+.art-event { background: linear-gradient(135deg, #7C2D12 0%, #EA580C 60%, #FBBF24 100%) }
+.art-portfolio { background: linear-gradient(135deg, #0F172A 0%, #0284C7 55%, #7CCFA4 100%) }
+.case-img .art-thumb { min-height: 380px }
+.proj-card:hover .art-thumb i { transform: scale(1.08); transition: transform .5s var(--ease) }
+
+/* image-backed bento cards: show more of the screenshot */
+.bc-project .bc-bg { object-position: top; opacity: .45 }
+.bc-project:hover .bc-bg { opacity: .6 }
+.bc-project .bc-title, .bc-project .bc-sub { color: #fff }
+.bc-project .bc-sub { opacity: .85 }
+.bc-art { color: #fff; border: none }
+.bc-art .bc-eyebrow { color: rgba(255,255,255,.85) }
+.bc-art .bc-title { color: #fff }
+.bc-art .bc-sub { color: rgba(255,255,255,.85) }
+.bc-art .bc-big-icon { position: absolute; right: 18px; top: 18px; font-size: 2.6rem; opacity: .35 }
+.bc-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px }
+
+/* ── Project filter bar ── */
+.filter-bar {
+  display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+  padding: 28px 0 0;
+}
+.filter-btn {
+  padding: 9px 18px; border-radius: 999px; font-family: var(--font-head); font-weight: 600; font-size: .82rem;
+  background: var(--card); color: var(--text-mid); border: 1px solid var(--border);
+  transition: all var(--t) var(--ease);
+}
+.filter-btn:hover { border-color: var(--b-i); color: var(--indigo) }
+.filter-btn.active { background: var(--grad-i); color: #fff; border-color: transparent; box-shadow: 0 4px 18px var(--glow-i) }
+.filter-btn .count { opacity: .7; margin-left: 4px; font-weight: 500 }
+.case-study.is-hidden, .archive-card.is-hidden { display: none }
+.filter-empty { text-align: center; padding: 60px 0; color: var(--text-muted); display: none }
+
+/* ── Case study extras ── */
+.case-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .8rem; color: var(--text-muted); margin: 4px 0 6px }
+.case-meta span { display: inline-flex; align-items: center; gap: 6px }
+.case-meta i { color: var(--emerald) }
+
+/* ── Archived client work ── */
+#archive { padding: 96px 0; background: var(--bg) }
+.archive-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px }
+.archive-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md);
+  overflow: hidden; display: flex; flex-direction: column;
+}
+.archive-card .archive-thumb { position: relative; height: 190px; overflow: hidden }
+.archive-card .archive-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; filter: saturate(.75) }
+.archive-card .archive-body { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 10px }
+.archive-card h3 { font-family: var(--font-head); font-size: 1.05rem; font-weight: 700; color: var(--text) }
+.archive-card p { font-size: .86rem; color: var(--text-mid); line-height: 1.6 }
+.archive-note { font-size: .74rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px }
+@media(max-width:900px) { .archive-grid { grid-template-columns: 1fr 1fr } }
+@media(max-width:580px) { .archive-grid { grid-template-columns: 1fr } }
+
+/* ── Education card ── */
+.edu-card {
+  margin-top: 28px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); padding: 22px 24px;
+}
+.edu-card .edu-icon { width: 54px; height: 54px; border-radius: 14px; background: var(--grad-mix); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.4rem; flex-shrink: 0 }
+.edu-card .edu-title { font-family: var(--font-head); font-weight: 700; color: var(--text) }
+.edu-card .edu-sub { font-size: .85rem; color: var(--text-muted) }
+.certs-grid.five { grid-template-columns: repeat(5, 1fr) }
+@media(max-width:1100px) { .certs-grid.five { grid-template-columns: repeat(3, 1fr) } }
+@media(max-width:640px) { .certs-grid.five { grid-template-columns: 1fr 1fr } }
+@media(max-width:420px) { .certs-grid.five { grid-template-columns: 1fr } }
+
+/* skills grid: 6 boxes look best 3-up */
+.skill-box .sb-note { font-size: .78rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 10px }
+
+/* ── Contact form extras ── */
+.hp-field { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden }
+#form-status { margin-top: 14px; font-size: .9rem; font-weight: 600; min-height: 1.4em }
+#form-status.ok { color: var(--emerald) }
+#form-status.err { color: var(--rose) }
+.fg select {
+  width: 100%; padding: 13px 16px; border-radius: 12px; background: var(--bg); color: var(--text);
+  border: 1px solid var(--border); font-family: inherit; font-size: .93rem;
+}
+.char-count { font-size: .72rem; color: var(--text-muted); text-align: right; margin-top: 4px }
+.btn[disabled] { opacity: .7; cursor: not-allowed; transform: none !important }
+
+/* ── 404 page ── */
+.nf-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 120px 20px 80px; position: relative; overflow: hidden }
+.nf-code { font-family: var(--font-head); font-weight: 900; font-size: clamp(5rem, 18vw, 9rem); line-height: 1 }
+.nf-wrap p { color: var(--text-muted); margin: 12px auto 28px; max-width: 440px }
+.nf-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap }
+
+/* ── Respect reduced-motion users ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important }
+  .reveal, .reveal-left, .reveal-right { opacity: 1 !important; transform: none !important }
+}
+
+/* ── Skip link (keyboard users) ── */
+.skip-link { position: absolute; left: 12px; top: -60px; z-index: 10000; padding: 10px 16px; border-radius: 10px; background: var(--grad-i); color: #fff; font-weight: 600; transition: top .2s }
+.skip-link:focus { top: 12px }
+
+/* typed role: keep the caret next to the text, not at the far edge */
+#typed-role { display: inline-block; max-width: 100% }
+/* featured bento card: keep the title readable over the screenshot */
+.bc-7x3.bc-project .bc-bg { opacity: .3 }
+.bc-7x3.bc-project:hover .bc-bg { opacity: .42 }
+.bc-7x3.bc-project .bc-content { padding: 22px 24px; background: linear-gradient(0deg, rgba(7, 10, 20, .98) 0%, rgba(7, 10, 20, .85) 55%, transparent 100%) }
+/* tags that sit on dark imagery keep their dark-theme colours in light mode */
+[data-theme="light"] .bc-project .tag-p, [data-theme="light"] .photo-card .tag-p { color: #7DD3FC }
+[data-theme="light"] .bc-project .tag-c, [data-theme="light"] .photo-card .tag-c { color: #A8E6CF }
+[data-theme="light"] .bc-project .tag-g, [data-theme="light"] .photo-card .tag-g { color: #FCD34D }
