@@ -4267,3 +4267,9 @@ textarea {
 [data-theme="light"] .bc-project .tag-p, [data-theme="light"] .photo-card .tag-p { color: #7DD3FC }
 [data-theme="light"] .bc-project .tag-c, [data-theme="light"] .photo-card .tag-c { color: #A8E6CF }
 [data-theme="light"] .bc-project .tag-g, [data-theme="light"] .photo-card .tag-g { color: #FCD34D }
+.archive-grid.two { grid-template-columns: repeat(2, 1fr) }
+@media(max-width:700px) { .archive-grid.two { grid-template-columns: 1fr } }
+.is-empty-section { display: none }
+.archive-grid.two .archive-thumb { height: 240px }
+#vishal-mobiles .archive-thumb { background: linear-gradient(180deg, #111c33, #1f4a70) }
+#vishal-mobiles .archive-thumb img { object-fit: contain; filter: none }

@@ -283,6 +283,11 @@ function initProjectFilter() {
       b.classList.toggle('active', on);
       b.setAttribute('aria-pressed', String(on));
     });
+    // hide wrapper sections (e.g. "More builds") whose cards are all filtered out
+    document.querySelectorAll('#project-list section:not([data-cats])').forEach(sec => {
+      const cards = sec.querySelectorAll('[data-cats]');
+      if (cards.length) sec.classList.toggle('is-empty-section', [...cards].every(c => c.classList.contains('is-hidden')));
+    });
     if (empty) empty.style.display = shown ? 'none' : 'block';
   };
 
