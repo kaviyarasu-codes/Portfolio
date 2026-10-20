@@ -4273,3 +4273,14 @@ textarea {
 .archive-grid.two .archive-thumb { height: 240px }
 #vishal-mobiles .archive-thumb { background: linear-gradient(180deg, #111c33, #1f4a70) }
 #vishal-mobiles .archive-thumb img { object-fit: contain; filter: none }
+
+/* ── Photos: let CSS aspect-ratio decide height (width/height attrs only reserve space) ── */
+.photo-card img, .sidebar-img { height: auto }
+.sidebar-img { aspect-ratio: 1 }
+
+/* ── Butterfly logo mark (transparent, works in both themes) ── */
+.nav-logo { gap: 10px }
+.nav-logo img.nav-logo-mark { height: 42px; width: auto; display: block; filter: drop-shadow(0 0 10px rgba(56,189,248,.35)) }
+@media(max-width:900px) { .nav-logo img.nav-logo-mark { height: 34px } }
+.footer-logo-text { display: flex; align-items: center; gap: 4px }
+.footer-mark { height: 30px; width: auto; margin-right: 8px }
