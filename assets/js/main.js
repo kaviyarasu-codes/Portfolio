@@ -47,13 +47,13 @@ function initTheme() {
       const icon = btn.querySelector('i');
       const label = btn.querySelector('.theme-label');
       const toLight = theme === 'dark';
-      if (icon) icon.className = toLight ? 'fa fa-sun' : 'fa fa-moon';
+      if (icon) icon.className = toLight ? 'ph ph-sun' : 'ph ph-moon';
       if (label) label.textContent = toLight ? 'Light Mode' : 'Dark Mode';
       btn.setAttribute('aria-label', toLight ? 'Switch to light mode' : 'Switch to dark mode');
       btn.setAttribute('title', toLight ? 'Light mode' : 'Dark mode');
     });
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0F172A' : '#E9EDF2');
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0A1628' : '#F5F8FC');
   };
 
   sync(current());
@@ -78,17 +78,16 @@ function initNavbar() {
 
   if (!btn || !menu) return;
 
-  const close = () => {
-    menu.classList.remove('open');
-    btn.classList.remove('open');
-    btn.setAttribute('aria-expanded', 'false');
-  };
-
-  btn.addEventListener('click', () => {
-    const open = menu.classList.toggle('open');
-    btn.classList.toggle('open', open);
+  const icon = btn.querySelector('i');
+  const setOpen = (open) => {
+    menu.classList.toggle('open', open);
     btn.setAttribute('aria-expanded', String(open));
-  });
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    if (icon) icon.className = open ? 'ph ph-x' : 'ph ph-list';
+  };
+  const close = () => setOpen(false);
+
+  btn.addEventListener('click', () => setOpen(!menu.classList.contains('open')));
   menu.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
   document.addEventListener('click', (e) => { if (!nav.contains(e.target)) close(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
@@ -98,7 +97,7 @@ function initNavbar() {
 /* ── ACTIVE NAV LINK (by current file name) ───────────── */
 function markActiveNav() {
   const page = window.location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('.nav-links a[role="menuitem"]').forEach(a => {
+  document.querySelectorAll('.nav-links a.nav-link').forEach(a => {
     const href = (a.getAttribute('href') || '').split('#')[0];
     if (!href.endsWith('.html')) return;
     const match = href === page || (page === '' && href === 'index.html') || (href === page + '.html');

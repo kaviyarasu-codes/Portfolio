@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         crossorigin="anonymous" />
@@ -23,17 +23,17 @@
         /* ── Tokens (match portfolio) ── */
         :root,
         [data-theme="dark"] {
-            --bg: #0F172A;
-            --bg-2: #1E293B;
-            --card: #1E293B;
-            --card-2: #334155;
-            --border: rgba(51, 65, 85, .8);
+            --bg: #0A1628;
+            --bg-2: #0C1A30;
+            --card: #0F1F36;
+            --card-2: #132745;
+            --border: #1E3A5F;
             --text: #F8FAFC;
             --text-mid: #CBD5E1;
             --text-muted: #94A3B8;
             --surface: rgba(56, 189, 248, .06);
-            --nav-bg: rgba(15, 23, 42, .93);
-            --indigo: #38BDF8;
+            --nav-bg: rgba(10, 22, 40, .9);
+            --indigo: #4FD1F5;
             --indigo-l: #7DD3FC;
             --emerald: #7CCFA4;
             --emerald-l: #A8E6CF;
@@ -41,26 +41,26 @@
             --b-i: rgba(56, 189, 248, .28);
             --b-e: rgba(124, 207, 164, .22);
             --grad-mix: linear-gradient(135deg, #38BDF8 0%, #7CCFA4 100%);
-            --grad-i: linear-gradient(135deg, #38BDF8, #0284C7);
+            --grad-i: linear-gradient(135deg, #2563EB, #3B82F6);
             --r-md: 18px;
             --t: .3s;
             --ease: cubic-bezier(.4, 0, .2, 1);
-            --font-head: 'Poppins', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --font-head: 'Bricolage Grotesque', sans-serif;
+            --font-body: 'Instrument Sans', sans-serif;
             --danger: #FB7185;
             --danger-bg: rgba(244, 63, 94, .08);
             --danger-border: rgba(244, 63, 94, .22);
         }
 
         [data-theme="light"] {
-            --bg: #E9EDF2;
-            --bg-2: #F0F4F8;
-            --card: rgba(255, 255, 255, .55);
-            --card-2: #E2EAF0;
-            --border: rgba(124, 207, 164, .20);
-            --text: #5B636A;
-            --text-mid: #5B636A;
-            --text-muted: #8A939B;
+            --bg: #F5F8FC;
+            --bg-2: #EDF2F9;
+            --card: #FFFFFF;
+            --card-2: #F1F5FB;
+            --border: #D3DEEC;
+            --text: #0A1628;
+            --text-mid: #2E425E;
+            --text-muted: #5B6F8C;
             --surface: rgba(124, 207, 164, .10);
             --nav-bg: rgba(233, 237, 242, .96);
         }
@@ -587,7 +587,7 @@
     <!-- ══════ LOGIN ══════ -->
     <div class="login-wrap" id="loginBox">
         <div class="login-card">
-            <div class="lock-icon"><i class="fa fa-shield-halved"></i></div>
+            <img src="assets/img/logo-mark.png" alt="" width="120" height="88" style="height:64px;width:auto;margin:0 auto 18px;filter:drop-shadow(0 0 10px rgba(79,209,245,.4))" />
             <h2><span class="grad-text">Admin Access</span></h2>
             <p>Restricted to authorized personnel only</p>
             <div class="fg">

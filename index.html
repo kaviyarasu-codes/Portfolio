@@ -5,28 +5,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Kaviyarasu K | Full-Stack & App Developer — Next.js, Expo, Django</title>
-  <meta name="description" content="Kaviyarasu K — Full-Stack & App Developer in Coimbatore. I build websites, web apps and Android apps with Next.js, NestJS, Expo, Django and PostgreSQL, and deploy them live." />
+  <title>Kaviyarasu K | Full-Stack & App Developer</title>
+  <meta name="description" content="Kaviyarasu K — Full-Stack & App Developer in Coimbatore. I build websites, web apps and Android apps with Next.js, NestJS, Expo, Django and PostgreSQL, and ship them live." />
   <meta name="author" content="Kaviyarasu K" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://kaviyarasu-portfolio.pages.dev/" />
 
-  <!-- Open Graph / social preview -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://kaviyarasu-portfolio.pages.dev/" />
-  <meta property="og:title" content="Kaviyarasu K | Full-Stack & App Developer — Next.js, Expo, Django" />
-  <meta property="og:description" content="Kaviyarasu K — Full-Stack & App Developer in Coimbatore. I build websites, web apps and Android apps with Next.js, NestJS, Expo, Django and PostgreSQL, and deploy them live." />
+  <meta property="og:title" content="Kaviyarasu K | Full-Stack & App Developer" />
+  <meta property="og:description" content="Kaviyarasu K — Full-Stack & App Developer in Coimbatore. I build websites, web apps and Android apps with Next.js, NestJS, Expo, Django and PostgreSQL, and ship them live." />
   <meta property="og:image" content="https://kaviyarasu-portfolio.pages.dev/assets/img/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:site_name" content="Kaviyarasu K Portfolio" />
+  <meta property="og:site_name" content="Kaviyarasu K" />
   <meta property="og:locale" content="en_IN" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Kaviyarasu K | Full-Stack & App Developer — Next.js, Expo, Django" />
-  <meta name="twitter:description" content="Kaviyarasu K — Full-Stack & App Developer in Coimbatore. I build websites, web apps and Android apps with Next.js, NestJS, Expo, Django and PostgreSQL, and deploy them live." />
+  <meta name="twitter:title" content="Kaviyarasu K | Full-Stack & App Developer" />
+  <meta name="twitter:description" content="Kaviyarasu K — Full-Stack & App Developer in Coimbatore. I build websites, web apps and Android apps with Next.js, NestJS, Expo, Django and PostgreSQL, and ship them live." />
   <meta name="twitter:image" content="https://kaviyarasu-portfolio.pages.dev/assets/img/og-image.jpg" />
 
-  <meta name="theme-color" content="#0F172A" />
+  <meta name="theme-color" content="#0A1628" />
   <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48x48.png" />
@@ -35,13 +34,9 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 
-  <!-- Theme: apply before CSS to prevent a flash of the wrong theme -->
   <script>!function () { var t = 'dark'; try { t = localStorage.getItem('kk-theme') || 'dark' } catch (e) { } document.documentElement.setAttribute('data-theme', t) }();</script>
   <link rel="stylesheet" href="assets/css/style.css" />
   <script type="application/ld+json">
@@ -94,548 +89,243 @@
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- ══════════════ NAVBAR ══════════════ -->
-  <nav id="navbar" aria-label="Main navigation">
-    <div class="container nav-inner">
-      <a href="index.html" class="nav-logo" aria-label="Kaviyarasu K – home">
-        <img src="assets/img/logo-mark.png" class="nav-logo-mark" alt="" width="174" height="128" />
-        <span class="nav-logo-name"><span class="nav-logo-first">Kaviyarasu</span></span>
+  <header id="navbar">
+    <nav class="wrap nav-inner" aria-label="Main">
+      <a href="index.html" class="brand" aria-label="Kaviyarasu K, home">
+        <img src="assets/img/logo-mark.png" alt="" width="174" height="128" />
+        <span>Kaviyarasu</span>
       </a>
-      <ul class="nav-links" id="navLinks" role="menubar">
-        <li role="none"><a href="index.html" class="active" aria-current="page" role="menuitem"><i class="fa fa-house nav-icon" aria-hidden="true"></i>Home</a></li>
-        <li role="none"><a href="projects.html" role="menuitem"><i class="fa fa-folder-open nav-icon" aria-hidden="true"></i>Projects</a></li>
-        <li role="none"><a href="about.html" role="menuitem"><i class="fa fa-user nav-icon" aria-hidden="true"></i>About</a></li>
-        <li role="none"><a href="contact.html" role="menuitem"><i class="fa fa-envelope nav-icon" aria-hidden="true"></i>Contact</a></li>
-        <li class="sep" role="none" aria-hidden="true"></li>
-        <li role="none">
-          <button class="theme-toggle" type="button" aria-label="Switch to light mode" title="Light mode">
-            <i class="fa fa-sun" aria-hidden="true"></i>
-            <span class="theme-label">Light Mode</span>
-          </button>
-        </li>
-        <li role="none">
-          <a class="btn btn-mix btn-sm" href="assets/docs/Kaviyarasu_K_Resume.pdf" download role="menuitem" aria-label="Download resume (PDF)">
-            <i class="fa fa-download" aria-hidden="true"></i> Resume
-          </a>
-        </li>
-        <li class="nav-social-row" role="none">
-          <a href="mailto:kaviyarasukanthavel@gmail.com" class="nav-soc-btn" aria-label="Email"><i class="fa fa-envelope" aria-hidden="true"></i></a>
-          <a href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer" class="nav-soc-btn" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
-          <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" class="nav-soc-btn" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
-        </li>
-      </ul>
-      <button class="hamburger" id="hamburger" type="button" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
+      <div class="nav-links" id="navLinks">
+        <a class="nav-link active" href="index.html" aria-current="page">Home</a>
+        <a class="nav-link" href="projects.html">Projects</a>
+        <a class="nav-link" href="about.html">About</a>
+        <a class="nav-link" href="contact.html">Contact</a>
+        <div class="nav-actions">
+          <div class="nav-social">
+            <a class="icon-btn" href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="ph ph-linkedin-logo" aria-hidden="true"></i></a>
+            <a class="icon-btn" href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i></a>
+          </div>
+          <button class="icon-btn theme-toggle" type="button" aria-label="Switch to light mode" title="Light mode"><i class="ph ph-sun" aria-hidden="true"></i></button>
+          <a class="btn btn-line btn-sm" href="assets/docs/Kaviyarasu_K_Resume.pdf" download><i class="ph ph-download-simple" aria-hidden="true"></i> Resume</a>
+        </div>
+      </div>
+      <button class="icon-btn hamburger" id="hamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><i class="ph ph-list" aria-hidden="true"></i></button>
+    </nav>
+  </header>
 
   <main id="main">
-    <!-- ══════════════ HERO ══════════════ -->
-    <section id="hero" aria-label="Introduction">
-      <div class="hero-grid" aria-hidden="true"></div>
-      <div class="hero-blob hero-blob-1" aria-hidden="true"></div>
-      <div class="hero-blob hero-blob-2" aria-hidden="true"></div>
-      <div class="hero-blob hero-blob-3" aria-hidden="true"></div>
-
-      <div class="container hero-inner">
-        <div class="hero-left">
-          <div class="hero-eyebrow">
-            <span class="badge badge-cyan"><span class="dot" aria-hidden="true"></span> Open to freelance &amp; full-time work</span>
-          </div>
-
-          <h1 class="hero-name"><span class="grad-text">Kaviyarasu K</span></h1>
-
-          <p class="hero-role" id="typed-role">Full-Stack &amp; App Developer</p>
-
-          <p class="hero-desc">
-            I build websites, web apps and Android apps — and ship them live.
-            I'm the App Developer at <strong>The Shine</strong>, Coimbatore, where I built the
-            <strong>Agnisiragu</strong> news platform on my own and am now building the <strong>TicketsRaja</strong>
-            ticketing marketplace and an in-house GST billing platform.
-          </p>
-
+    <section class="hero" aria-label="Introduction">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <span class="status live">Open to freelance and full-time work</span>
+          <h1>Kaviyarasu K</h1>
+          <p class="hero-lede">I build websites, web apps and Android apps — and ship them live.</p>
           <div class="hero-cta">
-            <a href="projects.html" class="btn btn-primary btn-lg"><i class="fa fa-folder-open" aria-hidden="true"></i> View Projects</a>
-            <a href="assets/docs/Kaviyarasu_K_Resume.pdf" download class="btn btn-mix btn-lg"><i class="fa fa-download" aria-hidden="true"></i> Download CV</a>
-            <a href="contact.html" class="btn btn-outline-cyan btn-lg"><i class="fa fa-envelope" aria-hidden="true"></i> Contact Me</a>
-          </div>
-
-          <div class="hero-stats" aria-label="Key numbers">
-            <div class="hero-stat">
-              <div class="stat-num" data-count="10">10</div>
-              <div class="stat-label">Projects</div>
-            </div>
-            <div class="hero-stat">
-              <div class="stat-num" data-count="1">1</div>
-              <div class="stat-label">App on Play Store</div>
-            </div>
-            <div class="hero-stat">
-              <div class="stat-num" data-count="5">5</div>
-              <div class="stat-label">Certifications</div>
-            </div>
+            <a class="btn btn-solid" href="projects.html"><i class="ph ph-folder-open" aria-hidden="true"></i> See my work</a>
+            <a class="btn btn-line" href="contact.html"><i class="ph ph-envelope-simple" aria-hidden="true"></i> Get in touch</a>
           </div>
         </div>
 
-        <div class="hero-right">
-          <div class="photo-card">
-            <img src="assets/img/photo-hero.webp" alt="Kaviyarasu K, Full-Stack and App Developer" width="384" height="512" fetchpriority="high" />
-            <div class="photo-card-overlay">
-              <div class="photo-card-name">Kaviyarasu K</div>
-              <div class="photo-card-role">Full-Stack &amp; App Developer</div>
-              <div class="photo-card-tags">
-                <span class="tag tag-p">Next.js</span>
-                <span class="tag tag-c">Expo</span>
-                <span class="tag tag-g">Django</span>
-              </div>
-            </div>
-            <div class="hero-dots" aria-hidden="true"></div>
+        <div class="hero-visual">
+          <svg viewBox="0 0 620 440" role="img" aria-labelledby="heroTitle">
+            <title id="heroTitle">Photo of Kaviyarasu K with circuit traces leading to Next.js, NestJS, Expo, Django and PostgreSQL</title>
+            <defs>
+              <clipPath id="photoClip"><circle cx="200" cy="220" r="166" /></clipPath>
+            </defs>
+            <circle class="ring-2" cx="200" cy="220" r="196" />
+            <image href="assets/img/photo-hero.webp" x="34" y="54" width="332" height="332" preserveAspectRatio="xMidYMin slice" clip-path="url(#photoClip)" />
+            <circle class="ring" cx="200" cy="220" r="174" />
+
+            <path class="trace" pathLength="1" d="M335 113 L385 63 L478 63" />
+            <path class="trace" pathLength="1" d="M362 168 L420 168 L448 140 L528 140" />
+            <path class="trace" pathLength="1" d="M372 222 L510 222" />
+            <path class="trace" pathLength="1" d="M360 280 L410 280 L440 310 L520 310" />
+            <path class="trace" pathLength="1" d="M327 340 L372 385 L470 385" />
+
+            <circle class="node" cx="478" cy="63" r="6" />
+            <circle class="node" cx="528" cy="140" r="6" />
+            <circle class="node" cx="510" cy="222" r="6" />
+            <circle class="node" cx="520" cy="310" r="6" />
+            <circle class="node" cx="470" cy="385" r="6" />
+
+            <text class="node-label" x="492" y="69">Next.js</text>
+            <text class="node-label" x="542" y="146">NestJS</text>
+            <text class="node-label" x="524" y="228">Expo</text>
+            <text class="node-label" x="534" y="316">Django</text>
+            <text class="node-label" x="484" y="391">PostgreSQL</text>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="workTitle">
+      <div class="wrap">
+        <div class="sec-head">
+          <div>
+            <h2 id="workTitle">Selected work</h2>
+            <p>Products I've built and shipped as the App Developer at The Shine, Coimbatore.</p>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════════ PROOF STRIP ══════════════ -->
-    <div id="proof" aria-hidden="true">
-      <div class="ticker-wrap">
-        <div class="ticker-track" id="ticker">
-          <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">Android app live on Google Play</span></span>
-          <span class="ticker-item"><span class="ti-dot"></span>Next.js · NestJS · PostgreSQL</span>
-          <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">React Native / Expo</span></span>
-          <span class="ticker-item"><span class="ti-dot"></span>Python · Django · MySQL</span>
-          <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">Firebase Auth &amp; Firestore</span></span>
-          <span class="ticker-item"><span class="ti-dot"></span>Docker on Hostinger VPS</span>
-          <span class="ticker-item"><span class="ti-dot"></span><span class="ti-highlight">Vercel &amp; Cloudflare Pages</span></span>
-          <span class="ticker-item"><span class="ti-dot"></span>PHP + MySQL</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══════════════ BENTO GRID ══════════════ -->
-    <section id="bento" aria-label="Overview">
-      <div class="container">
-        <div class="section-header reveal">
-          <p class="eyebrow">At a Glance</p>
-          <h2>Everything <em>In One View</em></h2>
-          <p>What I'm building, what I build it with, and where I work</p>
+          <a class="btn btn-line" href="projects.html">All projects <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
         </div>
 
-        <div class="bento-grid">
+        <article class="work-feature">
+          <div class="shot"><img src="assets/img/projects/agnisiragu.webp" alt="Agnisiragu news website home page" width="1200" height="750" loading="lazy" /></div>
+          <div class="body">
+            <span class="status live">Live on Google Play</span>
+            <h3>Agnisiragu</h3>
+            <p>A Tamil citizen-journalism news platform I built on my own: reader and reporter Android apps, a NestJS API, an admin panel for editors and the public website.</p>
+            <div class="tags"><span class="tag">Expo</span><span class="tag">NestJS + Prisma</span><span class="tag">React</span><span class="tag">Next.js</span></div>
+            <div class="links-row">
+              <a class="btn btn-solid btn-sm" href="https://play.google.com/store/apps/details?id=com.agnisiragu.reader" target="_blank" rel="noopener noreferrer"><i class="ph ph-google-play-logo" aria-hidden="true"></i> Get the app</a>
+              <a class="btn btn-line btn-sm" href="https://agnisiragu.com" target="_blank" rel="noopener noreferrer"><i class="ph ph-globe" aria-hidden="true"></i> Website</a>
+              <a class="btn btn-quiet btn-sm" href="projects.html#agnisiragu">Case study</a>
+            </div>
+          </div>
+        </article>
 
-          <!-- Featured: Agnisiragu -->
-          <article class="bc bc-7x3 bc-project reveal" aria-label="Featured project: Agnisiragu">
-            <img class="bc-bg" src="assets/img/projects/agnisiragu.webp" alt="" loading="lazy" />
-            <div class="bc-content">
-              <div class="live-dot">Live · Web + Android</div>
-              <div class="bc-eyebrow">Featured Project</div>
-              <div class="bc-title" style="font-size:1.3rem">Agnisiragu — Tamil News</div>
-              <div class="bc-tags">
-                <span class="tag tag-p">Expo</span>
-                <span class="tag tag-c">Next.js</span>
-                <span class="tag tag-g">Play Store</span>
-              </div>
-              <p class="bc-sub" style="margin-top:10px">Built solo end to end: reader &amp; reporter Android apps, NestJS API, admin panel and Next.js website.</p>
-              <div class="bc-actions">
-                <a href="https://agnisiragu.com" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm"><i class="fa fa-globe" aria-hidden="true"></i> Website</a>
-                <a href="https://play.google.com/store/apps/details?id=com.agnisiragu.reader" target="_blank" rel="noopener noreferrer" class="btn btn-outline-white btn-sm"><i class="fab fa-google-play" aria-hidden="true"></i> Play Store</a>
-              </div>
+        <div class="work-pair">
+          <article class="work-card">
+            <div class="mark mark-tickets" aria-hidden="true"><i class="ph ph-ticket"></i></div>
+            <div class="body">
+              <span class="status dev">In development</span>
+              <h3>TicketsRaja</h3>
+              <p>An event ticketing marketplace where organisers list concerts, comedy and sports nights, and fans book in a few taps.</p>
+              <div class="tags"><span class="tag">Next.js</span><span class="tag">NestJS</span><span class="tag">PostgreSQL</span></div>
+              <div class="links-row"><a class="btn btn-quiet btn-sm" href="projects.html#ticketsraja">Case study <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a></div>
             </div>
           </article>
-
-          <!-- Core stack -->
-          <article class="bc bc-5x3 bc-accent reveal" aria-label="Core stack">
-            <div class="bc-icon">⚡</div>
-            <div class="bc-eyebrow">Core Stack</div>
-            <div class="bc-title">Web · Mobile · Backend</div>
-            <div class="chip-cloud">
-              <span class="chip">Next.js</span><span class="chip">NestJS</span><span class="chip">PostgreSQL</span>
-              <span class="chip">React Native</span><span class="chip">Expo</span><span class="chip">Python</span>
-              <span class="chip">Django</span><span class="chip">PHP</span><span class="chip">MySQL</span>
-              <span class="chip">Firebase</span><span class="chip">JavaScript</span><span class="chip">Bootstrap</span>
-            </div>
-          </article>
-
-          <!-- TicketsRaja -->
-          <article class="bc bc-4x2 bc-art art-tickets reveal" aria-label="Project: TicketsRaja">
-            <i class="fa fa-ticket bc-big-icon" aria-hidden="true"></i>
-            <div class="bc-eyebrow">In Development</div>
-            <div class="bc-title">TicketsRaja</div>
-            <div class="bc-sub">Multi-vendor event ticketing marketplace · Next.js + NestJS + PostgreSQL</div>
-            <div class="bc-actions"><a href="projects.html#ticketsraja" class="btn btn-outline-white btn-sm">Case study</a></div>
-          </article>
-
-          <!-- Billing -->
-          <article class="bc bc-4x2 bc-art art-billing reveal" aria-label="Project: GST billing platform">
-            <i class="fa fa-file-invoice bc-big-icon" aria-hidden="true"></i>
-            <div class="bc-eyebrow">In Development</div>
-            <div class="bc-title">GST Billing Platform</div>
-            <div class="bc-sub">Invoicing &amp; business management for The Shine · self-hosted on VPS</div>
-            <div class="bc-actions"><a href="projects.html#billing" class="btn btn-outline-white btn-sm">Case study</a></div>
-          </article>
-
-          <!-- Experience -->
-          <article class="bc bc-4x2 reveal" style="background:linear-gradient(135deg,#0e1524,#10261d);border-color:var(--b-e)" aria-label="Current role">
-            <div class="bc-icon">🏢</div>
-            <div class="bc-eyebrow">Now</div>
-            <div class="bc-title" style="color:#fff">App Developer @ The Shine</div>
-            <div class="bc-sub" style="color:#CBD5E1">Printing, events &amp; rentals company, Coimbatore — I build its apps, websites and internal systems.</div>
-          </article>
-
-          <!-- Tools -->
-          <article class="bc bc-9x2 bc-skills reveal" aria-label="Deployment and tools">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-              <span style="font-size:1.6rem" aria-hidden="true">🛠️</span>
-              <div>
-                <div class="bc-eyebrow">Ship &amp; Deploy</div>
-                <div class="bc-title">From commit to live</div>
-              </div>
-            </div>
-            <div class="chip-cloud">
-              <span class="chip">Git / GitHub</span><span class="chip">Hostinger VPS</span><span class="chip">Docker Compose</span>
-              <span class="chip">Vercel</span><span class="chip">Cloudflare Pages</span><span class="chip">cPanel</span>
-              <span class="chip">Domain &amp; DNS</span><span class="chip">Google Play Console</span><span class="chip">EmailJS</span>
-              <span class="chip">AI-assisted coding</span><span class="chip">SEO basics</span>
-            </div>
-          </article>
-
-          <!-- CTA -->
-          <article class="bc bc-3x2 bc-cta reveal" aria-label="Contact">
-            <div style="font-size:2rem;margin-bottom:12px" aria-hidden="true">✉️</div>
-            <div style="font-family:var(--font-head);font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:14px">Let's Build Together</div>
-            <a href="contact.html" class="btn btn-outline-white btn-sm">Get In Touch</a>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════════ FEATURED PROJECTS ══════════════ -->
-    <section id="featured" aria-label="Featured projects">
-      <div class="container">
-        <div class="section-header reveal">
-          <p class="eyebrow">Real Work</p>
-          <h2>Featured <em>Projects</em></h2>
-          <p>Products I'm building and running today</p>
-        </div>
-
-        <div class="proj-grid">
-
-          <article class="proj-card reveal" aria-label="Project: Agnisiragu">
-            <div class="proj-thumb">
-              <img src="assets/img/projects/agnisiragu.webp" alt="Agnisiragu Tamil news website homepage" loading="lazy" width="1200" height="750" />
-              <span class="status-pill live">Live</span>
-            </div>
-            <div class="proj-body">
-              <h3>Agnisiragu — Tamil News Platform</h3>
-              <div class="ptags">
-                <span class="tag tag-p">Expo / React Native</span>
-                <span class="tag tag-c">NestJS + Prisma</span>
-                <span class="tag tag-g">Next.js</span>
-              </div>
-              <ul>
-                <li>Reader app live on Google Play + a reporter app for citizen journalists</li>
-                <li>NestJS + Prisma API with OTP login (MSG91), JWT and push notifications</li>
-                <li>React admin panel for moderation and a Next.js news website</li>
-              </ul>
-              <p class="prole">Role: Sole developer · The Shine</p>
-              <div class="pactions">
-                <a href="https://play.google.com/store/apps/details?id=com.agnisiragu.reader" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm"><i class="fab fa-google-play" aria-hidden="true"></i> Play Store</a>
-                <a href="projects.html#agnisiragu" class="btn btn-outline-purple btn-sm">Case Study</a>
-              </div>
-            </div>
-          </article>
-
-          <article class="proj-card reveal" aria-label="Project: TicketsRaja">
-            <div class="proj-thumb">
-              <div class="art-thumb art-tickets" role="img" aria-label="TicketsRaja illustration">
-                <i class="fa fa-ticket" aria-hidden="true"></i>
-                <span class="art-title">ticketsRaja</span>
-                <span class="art-sub">Concerts · Comedy · Sports · Nightlife</span>
-              </div>
-              <span class="status-pill dev">In development</span>
-            </div>
-            <div class="proj-body">
-              <h3>TicketsRaja — Ticketing Marketplace</h3>
-              <div class="ptags">
-                <span class="tag tag-p">Next.js</span>
-                <span class="tag tag-c">NestJS</span>
-                <span class="tag tag-g">PostgreSQL</span>
-              </div>
-              <ul>
-                <li>Organisers list events; platform earns commission</li>
-                <li>77-screen UI designed for desktop, tablet &amp; mobile</li>
-                <li>Self-hosted with Docker Compose on a Hostinger VPS</li>
-              </ul>
-              <p class="prole">Role: Lead Developer · The Shine</p>
-              <div class="pactions">
-                <a href="projects.html#ticketsraja" class="btn btn-primary btn-sm">Case Study</a>
-              </div>
-            </div>
-          </article>
-
-          <article class="proj-card reveal" aria-label="Project: GST billing platform">
-            <div class="proj-thumb">
-              <div class="art-thumb art-billing" role="img" aria-label="Billing platform illustration">
-                <i class="fa fa-file-invoice" aria-hidden="true"></i>
-                <span class="art-title">GST Billing</span>
-                <span class="art-sub">Invoices · Stock · Parties · Reports</span>
-              </div>
-              <span class="status-pill dev">In development</span>
-            </div>
-            <div class="proj-body">
-              <h3>GST Billing &amp; Business Platform</h3>
-              <div class="ptags">
-                <span class="tag tag-p">Next.js</span>
-                <span class="tag tag-c">NestJS</span>
-                <span class="tag tag-g">PostgreSQL</span>
-              </div>
-              <ul>
-                <li>Own billing software for The Shine, built from scratch</li>
-                <li>Multi-business-ready schema from day one</li>
-                <li>Planned in phases: architecture → schema → API → MVP</li>
-              </ul>
-              <p class="prole">Role: Full-Stack Developer · The Shine</p>
-              <div class="pactions">
-                <a href="projects.html#billing" class="btn btn-primary btn-sm">Case Study</a>
-              </div>
-            </div>
-          </article>
-
-        </div>
-
-        <div style="text-align:center;margin-top:44px" class="reveal">
-          <a href="projects.html" class="btn btn-primary btn-lg"><i class="fa fa-folder-open" aria-hidden="true"></i> See All Projects</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════════ SKILLS ══════════════ -->
-    <section id="skills" class="dark-section" aria-label="Technical skills">
-      <div class="container">
-        <div class="section-header reveal">
-          <p class="eyebrow">Capabilities</p>
-          <h2>My <em>Skills</em></h2>
-          <p>The tools I actually use on live projects</p>
-        </div>
-        <div class="skills-grid">
-          <article class="skill-box reveal">
-            <div class="sb-icon" aria-hidden="true">🎨</div>
-            <h4>Frontend</h4>
-            <div class="sb-chips">
-              <span class="sb-chip">HTML5</span><span class="sb-chip">CSS3</span><span class="sb-chip">JavaScript</span>
-              <span class="sb-chip">Next.js (React)</span><span class="sb-chip">Bootstrap</span><span class="sb-chip">jQuery</span>
-              <span class="sb-chip">Responsive Design</span>
-            </div>
-          </article>
-          <article class="skill-box reveal">
-            <div class="sb-icon" aria-hidden="true">⚙️</div>
-            <h4>Backend</h4>
-            <div class="sb-chips">
-              <span class="sb-chip">Python</span><span class="sb-chip">Django</span><span class="sb-chip">NestJS (Node.js)</span><span class="sb-chip">TypeScript</span><span class="sb-chip">Prisma ORM</span>
-              <span class="sb-chip">PHP</span><span class="sb-chip">REST APIs</span><span class="sb-chip">JWT Auth</span>
-            </div>
-          </article>
-          <article class="skill-box reveal">
-            <div class="sb-icon" aria-hidden="true">📱</div>
-            <h4>Mobile Apps</h4>
-            <div class="sb-chips">
-              <span class="sb-chip">React Native</span><span class="sb-chip">Expo</span><span class="sb-chip">Google Play Console</span>
-              <span class="sb-chip">OTP Login (MSG91)</span><span class="sb-chip">Push Notifications</span><span class="sb-chip">AdMob</span>
-            </div>
-          </article>
-          <article class="skill-box reveal">
-            <div class="sb-icon" aria-hidden="true">🗄️</div>
-            <h4>Databases</h4>
-            <div class="sb-chips">
-              <span class="sb-chip">PostgreSQL</span><span class="sb-chip">MySQL</span><span class="sb-chip">Firebase Firestore</span>
-              <span class="sb-chip">Redis</span><span class="sb-chip">SQLite</span><span class="sb-chip">Schema Design</span>
-            </div>
-          </article>
-          <article class="skill-box reveal">
-            <div class="sb-icon" aria-hidden="true">🚀</div>
-            <h4>Deployment &amp; Hosting</h4>
-            <div class="sb-chips">
-              <span class="sb-chip">Hostinger VPS</span><span class="sb-chip">Docker Compose</span><span class="sb-chip">Vercel</span>
-              <span class="sb-chip">Cloudflare Pages</span><span class="sb-chip">cPanel</span><span class="sb-chip">Domain &amp; DNS</span>
-            </div>
-          </article>
-          <article class="skill-box reveal">
-            <div class="sb-icon" aria-hidden="true">🔧</div>
-            <h4>Tools &amp; Services</h4>
-            <div class="sb-chips">
-              <span class="sb-chip">Git / GitHub</span><span class="sb-chip">VS Code</span><span class="sb-chip">Firebase Auth</span>
-              <span class="sb-chip">EmailJS</span><span class="sb-chip">AI-assisted coding</span><span class="sb-chip">MS Office</span>
+          <article class="work-card">
+            <div class="mark mark-billing" aria-hidden="true"><i class="ph ph-receipt"></i></div>
+            <div class="body">
+              <span class="status dev">In development</span>
+              <h3>GST billing platform</h3>
+              <p>The Shine's own invoicing and business software — GST bills, stock, parties and reports, built from scratch.</p>
+              <div class="tags"><span class="tag">Next.js</span><span class="tag">NestJS</span><span class="tag">PostgreSQL</span></div>
+              <div class="links-row"><a class="btn btn-quiet btn-sm" href="projects.html#billing">Case study <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a></div>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ══════════════ EXPERIENCE ══════════════ -->
-    <section id="experience" aria-label="Experience">
-      <div class="container">
-        <div class="section-header reveal">
-          <p class="eyebrow">Career</p>
-          <h2>Experience</h2>
-          <p>Building real products for real businesses</p>
+    <section class="sec sec-alt" aria-labelledby="servicesTitle">
+      <div class="wrap">
+        <div class="sec-head"><div><h2 id="servicesTitle">What I can build for you</h2></div></div>
+        <div class="services">
+          <div class="service"><i class="ph ph-globe" aria-hidden="true"></i><div><h3>Websites</h3><p>Business sites and landing pages that load fast, show up on Google and have contact forms that actually deliver.</p></div></div>
+          <div class="service"><i class="ph ph-code" aria-hidden="true"></i><div><h3>Web applications</h3><p>Dashboards, booking and billing systems on Next.js + NestJS or Django, with logins and admin panels.</p></div></div>
+          <div class="service"><i class="ph ph-device-mobile" aria-hidden="true"></i><div><h3>Android apps</h3><p>React Native apps with OTP login, push notifications and ads, published to Google Play for you.</p></div></div>
+          <div class="service"><i class="ph ph-cloud-arrow-up" aria-hidden="true"></i><div><h3>Hosting and launch</h3><p>Domains, DNS and servers — a VPS with Docker, Vercel or Cloudflare — set up and kept running.</p></div></div>
         </div>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="stackTitle">
+      <div class="wrap">
+        <div class="sec-head"><div><h2 id="stackTitle">Tools I work with</h2><p>What I use on live projects today.</p></div></div>
+        <div class="stack">
+          <div><h3><i class="ph ph-globe" aria-hidden="true"></i> Frontend</h3><div class="tags"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span><span class="tag">TypeScript</span><span class="tag">Next.js</span><span class="tag">React</span><span class="tag">Bootstrap</span></div></div>
+          <div><h3><i class="ph ph-stack" aria-hidden="true"></i> Backend</h3><div class="tags"><span class="tag">NestJS</span><span class="tag">Node.js</span><span class="tag">Python</span><span class="tag">Django</span><span class="tag">PHP</span><span class="tag">REST APIs</span><span class="tag">JWT</span></div></div>
+          <div><h3><i class="ph ph-device-mobile" aria-hidden="true"></i> Mobile</h3><div class="tags"><span class="tag">React Native</span><span class="tag">Expo</span><span class="tag">Push notifications</span><span class="tag">AdMob</span><span class="tag">Play Console</span></div></div>
+          <div><h3><i class="ph ph-database" aria-hidden="true"></i> Data</h3><div class="tags"><span class="tag">PostgreSQL</span><span class="tag">Prisma</span><span class="tag">MySQL</span><span class="tag">Firestore</span><span class="tag">Supabase</span><span class="tag">Redis</span></div></div>
+          <div><h3><i class="ph ph-cloud-arrow-up" aria-hidden="true"></i> Deploy</h3><div class="tags"><span class="tag">Docker</span><span class="tag">Hostinger VPS</span><span class="tag">Vercel</span><span class="tag">Cloudflare Pages</span><span class="tag">cPanel</span><span class="tag">DNS</span></div></div>
+          <div><h3><i class="ph ph-wrench" aria-hidden="true"></i> Everyday</h3><div class="tags"><span class="tag">Git</span><span class="tag">GitHub</span><span class="tag">VS Code</span><span class="tag">Firebase Auth</span><span class="tag">EmailJS</span><span class="tag">AI-assisted coding</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec sec-alt" aria-labelledby="expTitle">
+      <div class="wrap">
+        <div class="sec-head"><div><h2 id="expTitle">Experience</h2></div></div>
         <div class="timeline">
-
-          <div class="tl-item reveal">
-            <div class="tl-dot" aria-hidden="true"></div>
-            <div class="tl-meta">
-              <span class="badge badge-cyan">Full-time</span>
-              <span class="tl-period">2026 – Present</span>
-            </div>
-            <div class="tl-role">App Developer</div>
-            <div class="tl-company">@ The Shine · Coimbatore</div>
-            <ul class="tl-list">
-              <li>Built the entire Agnisiragu platform solo — reader &amp; reporter Android apps (Expo), NestJS + Prisma backend, React admin panel and Next.js website; reader app live on Google Play</li>
-              <li>Lead the build of TicketsRaja, a ticketing marketplace on Next.js, NestJS &amp; PostgreSQL</li>
-              <li>Build the company's own GST billing &amp; business platform and the Event247 website</li>
-              <li>Run hosting: Hostinger VPS with Docker, domains, Vercel deployments and Play Console releases</li>
-              <li>Own systems &amp; project management — setting up the team's tools and processes</li>
+          <div class="tl-item">
+            <div class="tl-when">2026 – present, full-time</div>
+            <h3>App Developer</h3>
+            <div class="tl-org">The Shine, Coimbatore</div>
+            <ul>
+              <li>Built the Agnisiragu news platform on my own — two Android apps, NestJS + Prisma backend, admin panel and website</li>
+              <li>Leading the build of TicketsRaja, a ticketing marketplace on Next.js, NestJS and PostgreSQL</li>
+              <li>Building the company's GST billing platform and the Event247 website</li>
+              <li>Running servers, domains, Vercel deployments and Play Console releases</li>
             </ul>
           </div>
-
-          <div class="tl-item reveal">
-            <div class="tl-dot" aria-hidden="true"></div>
-            <div class="tl-meta">
-              <span class="badge badge-purple">Internship</span>
-              <span class="tl-period">6 months</span>
-            </div>
-            <div class="tl-role">Full Stack Developer Intern</div>
-            <div class="tl-company">@ Aero Edge Media</div>
-            <ul class="tl-list">
-              <li>Developed responsive web applications with HTML, CSS and JavaScript</li>
-              <li>Integrated backends with Django and designed MySQL databases</li>
-              <li>Built and launched client websites — Aero Edge Media, Sundaram Oils and AK Sports Club</li>
+          <div class="tl-item">
+            <div class="tl-when">6-month internship</div>
+            <h3>Full Stack Developer Intern</h3>
+            <div class="tl-org">Aero Edge Media</div>
+            <ul>
+              <li>Built responsive websites with HTML, CSS, JavaScript and Django on MySQL</li>
+              <li>Launched client sites for Aero Edge Media, Sundaram Oils and AK Sports Club</li>
               <li>Built contact forms with email automation</li>
             </ul>
           </div>
-
-          <div class="tl-item reveal">
-            <div class="tl-dot" aria-hidden="true"></div>
-            <div class="tl-meta">
-              <span class="badge badge-purple">Training</span>
-              <span class="tl-period">2025</span>
-            </div>
-            <div class="tl-role">Python Full Stack Developer Program</div>
-            <div class="tl-company">@ IPCS Automation</div>
-            <ul class="tl-list">
-              <li>Learned the full-stack workflow from scratch on real-world training projects</li>
-              <li>Python, Django, MySQL and frontend fundamentals</li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ══════════════ CERTIFICATIONS ══════════════ -->
-    <section id="certs" class="dark-section" aria-label="Education and certifications">
-      <div class="container">
-        <div class="section-header reveal">
-          <p class="eyebrow">Learning</p>
-          <h2>Education &amp; <em>Certifications</em></h2>
-          <p>Formal training and continuous learning</p>
-        </div>
-        <div class="certs-grid five">
-          <article class="cert-card reveal">
-            <div class="cert-icon" aria-hidden="true">🐍</div>
-            <div class="cert-name">Python Full Stack Developer</div>
-            <div class="cert-by">IPCS Automation</div>
-            <div class="cert-year">2025</div>
-          </article>
-          <article class="cert-card reveal">
-            <div class="cert-icon" aria-hidden="true">🧑‍💻</div>
-            <div class="cert-name">Full Stack Python Developer</div>
-            <div class="cert-by">GUVI</div>
-          </article>
-          <article class="cert-card reveal">
-            <div class="cert-icon" aria-hidden="true">🌐</div>
-            <div class="cert-name">Web Developer</div>
-            <div class="cert-by">TNSDC</div>
-          </article>
-          <article class="cert-card reveal">
-            <div class="cert-icon" aria-hidden="true">🥽</div>
-            <div class="cert-name">AR/VR Development</div>
-            <div class="cert-by">InGage</div>
-          </article>
-          <article class="cert-card reveal">
-            <div class="cert-icon" aria-hidden="true">🛠️</div>
-            <div class="cert-name">Full Stack Workshop</div>
-            <div class="cert-by">App Innovation Technologies</div>
-          </article>
-        </div>
-        <div class="edu-card reveal">
-          <div class="edu-icon"><i class="fa fa-graduation-cap" aria-hidden="true"></i></div>
-          <div>
-            <div class="edu-title">B.E. — Computer Science and Engineering</div>
-            <div class="edu-sub">Asian College of Engineering &amp; Technology · 2020 – 2024</div>
+          <div class="tl-item">
+            <div class="tl-when">2025, training</div>
+            <h3>Python Full Stack Developer program</h3>
+            <div class="tl-org">IPCS Automation</div>
+            <ul><li>Python, Django, MySQL and frontend fundamentals through real-world training projects</li></ul>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ══════════════ CTA BAND ══════════════ -->
-    <section id="cta-band" aria-label="Get in touch">
-      <div class="container">
-        <div class="cta-box reveal">
-          <h2>Ready to Build Something <br><span class="grad-text">Together?</span></h2>
-          <p>Website, web app, Android app or the full deployment setup — I'm one message away.</p>
-          <div class="cta-row">
-            <a href="mailto:kaviyarasukanthavel@gmail.com" class="btn btn-primary btn-lg"><i class="fa fa-envelope" aria-hidden="true"></i> Email Me</a>
-            <a href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer" class="cta-social"><i class="fab fa-linkedin" aria-hidden="true"></i> LinkedIn</a>
-            <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" class="cta-social"><i class="fab fa-github" aria-hidden="true"></i> GitHub</a>
-            <a href="contact.html" class="btn btn-outline-cyan btn-lg"><i class="fa fa-paper-plane" aria-hidden="true"></i> Send Message</a>
+    <section class="sec" aria-labelledby="learnTitle">
+      <div class="wrap">
+        <div class="sec-head"><div><h2 id="learnTitle">Education and certifications</h2></div></div>
+        <div class="learn">
+          <div class="degree">
+            <i class="ph ph-graduation-cap" aria-hidden="true"></i>
+            <h3>B.E. Computer Science and Engineering</h3>
+            <p>Asian College of Engineering &amp; Technology, 2020 – 2024</p>
           </div>
+          <ul class="cert-list">
+            <li><b>Python Full Stack Developer</b><span>IPCS Automation, 2025</span></li>
+            <li><b>Full Stack Python Developer</b><span>GUVI</span></li>
+            <li><b>Web Developer</b><span>TNSDC</span></li>
+            <li><b>AR/VR Development</b><span>InGage</span></li>
+            <li><b>Full Stack Workshop</b><span>App Innovation Technologies</span></li>
+          </ul>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- ══════════════ FOOTER ══════════════ -->
-  <footer id="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="footer-logo-text"><img src="assets/img/logo-mark.png" alt="" width="174" height="128" class="footer-mark" /><span>Kaviyarasu</span> Portfolio</div>
-          <p class="footer-tagline">Full-Stack & App Developer · Websites, web apps and Android apps — designed, built and shipped live.
-            Based in Coimbatore, Tamil Nadu.</p>
+  <footer class="footer">
+    <img class="footer-wing" src="assets/img/logo-mark.png" alt="" width="174" height="128" />
+    <div class="wrap">
+      <div class="footer-cta">
+        <div>
+          <h2>Have a website or app in mind?</h2>
+          <a class="footer-mail" href="mailto:kaviyarasukanthavel@gmail.com">kaviyarasukanthavel@gmail.com</a>
         </div>
-        <div class="footer-col">
-          <div class="footer-col-title">Quick Links</div>
-          <nav class="footer-links" aria-label="Footer navigation">
-            <a href="index.html"><i class="fa fa-chevron-right" aria-hidden="true"></i> Home</a>
-            <a href="projects.html"><i class="fa fa-chevron-right" aria-hidden="true"></i> Projects</a>
-            <a href="about.html"><i class="fa fa-chevron-right" aria-hidden="true"></i> About</a>
-            <a href="contact.html"><i class="fa fa-chevron-right" aria-hidden="true"></i> Contact</a>
-            <a href="assets/docs/Kaviyarasu_K_Resume.pdf" download><i class="fa fa-chevron-right" aria-hidden="true"></i> Resume</a>
-          </nav>
-        </div>
-        <div class="footer-col">
-          <div class="footer-col-title">Connect</div>
-          <div class="footer-social-row">
-            <a href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer" class="footer-soc-btn" aria-label="LinkedIn"><i class="fab fa-linkedin" aria-hidden="true"></i></a>
-            <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" class="footer-soc-btn" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
-            <a href="mailto:kaviyarasukanthavel@gmail.com" class="footer-soc-btn" aria-label="Email"><i class="fa fa-envelope" aria-hidden="true"></i></a>
-            <a href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer" class="footer-soc-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
-          </div>
+        <div class="links-row">
+          <a class="btn btn-solid" href="contact.html"><i class="ph ph-paper-plane-tilt" aria-hidden="true"></i> Send a message</a>
+          <a class="btn btn-line" href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i> WhatsApp</a>
         </div>
       </div>
-      <div class="footer-bottom">
-        <p class="footer-copy">© <span data-year>2026</span> Kaviyarasu K — Built with HTML, CSS &amp; JavaScript · Firebase · Cloudflare Pages</p>
+      <div class="footer-bar">
+        <a href="index.html" class="brand"><img src="assets/img/logo-mark.png" alt="" width="174" height="128" /><span>Kaviyarasu K</span></a>
+        <nav class="footer-nav" aria-label="Footer">
+          <a href="projects.html">Projects</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="assets/docs/Kaviyarasu_K_Resume.pdf" download>Resume</a>
+        </nav>
+        <div class="footer-social">
+          <a class="icon-btn" href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="ph ph-linkedin-logo" aria-hidden="true"></i></a>
+          <a class="icon-btn" href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i></a>
+          <a class="icon-btn" href="mailto:kaviyarasukanthavel@gmail.com" aria-label="Email"><i class="ph ph-envelope-simple" aria-hidden="true"></i></a>
+        </div>
+      </div>
+      <div class="footer-fine">
+        <span>© <span data-year>2026</span> Kaviyarasu K. Coimbatore, Tamil Nadu.</span>
+        <a href="#main"><i class="ph ph-arrow-up" aria-hidden="true"></i> Back to top</a>
       </div>
     </div>
   </footer>
 
-  <button id="btt" type="button" aria-label="Back to top"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
-
-  <a href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer" class="float-wa" id="floatWa" aria-label="Chat on WhatsApp">
-    <i class="fab fa-whatsapp" aria-hidden="true"></i>
-  </a>
+  <a href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer" class="float-wa" id="floatWa" aria-label="Chat on WhatsApp"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i></a>
 
   <script src="assets/js/main.js"></script>
 </body>
