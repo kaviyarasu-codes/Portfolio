@@ -617,3 +617,20 @@ main { position: relative; z-index: 0 }
 .screens > .gallery { padding: 18px }
 @media (prefers-reduced-motion: no-preference) { .screens[open] > .gallery { animation: rise .35s var(--ease) both } }
 @media (max-width: 600px) { .sc-thumbs img.wide { display: none } .screens > .gallery { padding: 14px 10px } }
+
+/* ── Mobile-only project: phone stage + QR ── */
+.mini .thumb.phone-stage { position: relative; display: flex; align-items: flex-end; justify-content: center; gap: 18px; padding-top: 18px; background: linear-gradient(160deg, #DCE8FF, #BFD3FF 60%, #A9C3FF); overflow: hidden }
+[data-theme="dark"] .mini .thumb.phone-stage { background: linear-gradient(160deg, #1A2A4A, #13213D) }
+.mini-phone { width: 38%; max-width: 150px; padding: 6px 6px 0; background: #0D1117; border-radius: 22px 22px 0 0; box-shadow: 0 -6px 24px rgba(13, 17, 23, .18); translate: 0 6px }
+.mini-phone img { border-radius: 16px 16px 0 0; aspect-ratio: 390 / 500; object-fit: cover; object-position: top; width: 100% }
+.mini:hover .mini-phone img { transform: none }
+.stage-qr { align-self: center; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px; background: #fff; border-radius: 14px; box-shadow: var(--shadow) }
+.stage-qr img { width: 64px; height: 64px }
+.stage-qr small { font-size: .72rem; font-weight: 600; color: #0D1117 }
+.mini .screens { margin-top: 6px }
+.vm-preview { display: grid; grid-template-columns: minmax(0, 220px) 1fr; gap: 28px; align-items: center }
+.vm-qr { display: flex; flex-direction: column; align-items: flex-start; gap: 8px }
+.vm-qr img { width: 150px; height: 150px; padding: 12px; background: #fff; border-radius: 16px; border: 1px solid var(--line) }
+.vm-qr b { color: var(--ink); margin-top: 6px }
+.vm-qr p { font-size: .92rem }
+@media (max-width: 520px) { .vm-preview { grid-template-columns: 1fr; justify-items: center; text-align: center } .vm-preview .gal-item { width: 70% } .vm-qr { align-items: center } }
