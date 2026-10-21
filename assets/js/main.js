@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initProjectFilter();
   initFooterYear();
   initLocalTime();
+  initCopy();
 });
 
 /* ── THEME TOGGLE ─────────────────────────────────────── */
@@ -316,10 +317,34 @@ function initFooterYear() {
 
 /* ── LOCAL TIME in Coimbatore (hero tile) ─────────────── */
 function initLocalTime() {
-  const el = document.getElementById('localTime');
-  if (!el) return;
+  const els = document.querySelectorAll('#localTime, [data-localtime]');
+  if (!els.length) return;
   const fmt = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
-  const tick = () => { el.textContent = fmt.format(new Date()).toUpperCase() + ' IST'; };
+  const tick = () => { const t = fmt.format(new Date()).toUpperCase() + ' IST'; els.forEach(el => { el.textContent = t; }); };
   tick();
   setInterval(tick, 30000);
+}
+
+/* ── COPY TO CLIPBOARD (footer "Copy email") ─────────── */
+function initCopy() {
+  document.querySelectorAll('[data-copy]').forEach(btn => {
+    const label = btn.querySelector('span');
+    const icon = btn.querySelector('i');
+    const original = label ? label.textContent : '';
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.copy;
+      let ok = false;
+      try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+        const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { ok = document.execCommand('copy'); } catch (e2) { ok = false; }
+        ta.remove();
+      }
+      if (label) label.textContent = ok ? 'Copied' : text;
+      if (icon && ok) icon.className = 'ph ph-check';
+      btn.classList.toggle('copied', ok);
+      clearTimeout(btn._t);
+      btn._t = setTimeout(() => { if (label) label.textContent = original; if (icon) icon.className = 'ph ph-copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  });
 }

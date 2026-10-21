@@ -369,26 +369,46 @@ a.tile-small:hover .go { color: var(--ink); transform: translate(2px, -2px) }
 .message .small button { color: var(--accent); font-weight: 500; text-decoration: underline; text-underline-offset: 3px }
 
 /* ── Footer: centered, soft blue glow, dot texture ───────── */
-.footer { position: relative; overflow: hidden; margin-top: 40px; padding: 96px 0 40px; text-align: center;
+.footer { position: relative; overflow: hidden; margin-top: 40px; padding: 104px 0 0; text-align: center; border-top: 1px solid var(--line);
   background:
-    radial-gradient(ellipse 60% 70% at 50% 0%, var(--accent-soft), transparent 70%),
+    radial-gradient(ellipse 55% 60% at 50% 0%, var(--accent-soft), transparent 72%),
     radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 22px 22px,
-    var(--bg);
-  border-top: 1px solid var(--line) }
-.footer::after { content: ''; position: absolute; left: 50%; top: 0; width: min(520px, 70%); height: 2px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, var(--accent), transparent) }
+    var(--bg) }
+.footer::before { /* fade the dot texture out toward the bottom */
+  content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(transparent 35%, var(--bg) 92%) }
+.footer::after { content: ''; position: absolute; left: 50%; top: 0; width: min(560px, 70%); height: 2px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, var(--accent), transparent) }
+.footer > .wrap { position: relative; z-index: 1 }
 .footer-center { display: flex; flex-direction: column; align-items: center }
-.footer-logo { height: 56px; width: auto; filter: drop-shadow(0 6px 18px color-mix(in srgb, var(--accent) 35%, transparent)) }
-.footer h2 { margin-top: 22px; font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 600; letter-spacing: -.045em; max-width: 16ch; line-height: 1.05 }
-.footer-center > p { margin-top: 14px; color: var(--muted); font-size: 1.08rem }
-.footer-actions { justify-content: center; margin-top: 28px }
-.footer-social { display: flex; gap: 10px; margin-top: 44px }
-.footer-social .icon-btn { width: 46px; height: 46px; font-size: 1.2rem }
-.footer-social .icon-btn:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px) }
-.footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 28px; margin-top: 28px }
-.footer-nav a { color: var(--ink-2); font-weight: 500 }
+.footer-pill { display: inline-flex; padding: 6px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); margin-bottom: 30px }
+.footer-logo { height: 60px; width: auto; filter: drop-shadow(0 8px 22px color-mix(in srgb, var(--accent) 40%, transparent)) }
+@media (prefers-reduced-motion: no-preference) { .footer-logo { animation: hover-float 6s ease-in-out infinite } }
+@keyframes hover-float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+.footer h2 { margin-top: 22px; font-size: clamp(2.1rem, 5.4vw, 3.8rem); font-weight: 600; letter-spacing: -.05em; max-width: 15ch; line-height: 1.02 }
+.footer-center > p { margin-top: 16px; color: var(--muted); font-size: 1.1rem }
+.footer-actions { justify-content: center; margin-top: 30px }
+.copy-btn.copied { border-color: var(--live); color: var(--live) }
+.footer-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 30px }
+.footer-meta li { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); font-size: .88rem; font-weight: 500 }
+.footer-meta .ph { color: var(--accent); font-size: 1.05rem }
+.footer-social { display: flex; gap: 10px; margin-top: 40px }
+.footer-social .icon-btn { position: relative; width: 48px; height: 48px; font-size: 1.25rem; transition: color .2s, border-color .2s, transform .2s var(--ease) }
+.footer-social .icon-btn:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-3px) }
+.footer-social .icon-btn::after { content: attr(data-tip); position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translate(-50%, 4px); padding: 4px 9px; border-radius: 6px; background: var(--ink); color: var(--bg); font-size: .75rem; font-weight: 500; white-space: nowrap; opacity: 0; pointer-events: none; transition: .15s }
+.footer-social .icon-btn:hover::after, .footer-social .icon-btn:focus-visible::after { opacity: 1; transform: translate(-50%, 0) }
+.footer-bottom { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; margin-top: 72px; padding: 22px 0 26px; border-top: 1px solid var(--line) }
+.footer-copy { color: var(--muted); font-size: .88rem; text-align: left }
+.footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 26px }
+.footer-nav a { color: var(--ink-2); font-weight: 500; font-size: .95rem }
 .footer-nav a:hover { color: var(--accent) }
-.footer-copy { margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--line); width: min(560px, 100%); color: var(--muted); font-size: .88rem }
-@media (max-width: 560px) { .footer { padding: 72px 0 32px } .footer-social { margin-top: 36px } }
+.to-top { justify-self: end }
+.to-top:hover { color: var(--accent); border-color: var(--accent) }
+@media (max-width: 700px) {
+  .footer { padding-top: 76px }
+  .footer-bottom { grid-template-columns: 1fr; justify-items: center; text-align: center; margin-top: 52px }
+  .footer-copy { text-align: center; order: 3 }
+  .to-top { justify-self: center; order: 2 }
+  .footer-actions .btn { flex: 1 1 auto }
+}
 
 /* ── Floating WhatsApp — same pill language as the site's buttons ── */
 .float-wa { position: fixed; right: 20px; bottom: 20px; z-index: 90; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 18px 0 14px; border-radius: 999px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow); font-weight: 500; font-size: .95rem; transform: translateY(12px); opacity: 0; pointer-events: none; transition: transform .25s var(--ease), opacity .25s, border-color .2s }
