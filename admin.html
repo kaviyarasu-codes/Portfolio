@@ -8,31 +8,32 @@
     <meta name="robots" content="noindex, nofollow" />
 
     <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon-180x180.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         crossorigin="anonymous" />
 
-    <script>!function () { var t = localStorage.getItem('kk-theme') || 'dark'; document.documentElement.setAttribute('data-theme', t) }();</script>
+    <script>!function () { var t = 'dark'; try { t = localStorage.getItem('kk-theme') || 'dark' } catch (e) { } document.documentElement.setAttribute('data-theme', t) }();</script>
 
     <style>
         /* ── Tokens (match portfolio) ── */
         :root,
         [data-theme="dark"] {
-            --bg: #0F172A;
-            --bg-2: #1E293B;
-            --card: #1E293B;
-            --card-2: #334155;
-            --border: rgba(51, 65, 85, .8);
+            --bg: #0A1628;
+            --bg-2: #0C1A30;
+            --card: #0F1F36;
+            --card-2: #132745;
+            --border: #1E3A5F;
             --text: #F8FAFC;
             --text-mid: #CBD5E1;
             --text-muted: #94A3B8;
             --surface: rgba(56, 189, 248, .06);
-            --nav-bg: rgba(15, 23, 42, .93);
-            --indigo: #38BDF8;
+            --nav-bg: rgba(10, 22, 40, .9);
+            --indigo: #4FD1F5;
             --indigo-l: #7DD3FC;
             --emerald: #7CCFA4;
             --emerald-l: #A8E6CF;
@@ -40,26 +41,26 @@
             --b-i: rgba(56, 189, 248, .28);
             --b-e: rgba(124, 207, 164, .22);
             --grad-mix: linear-gradient(135deg, #38BDF8 0%, #7CCFA4 100%);
-            --grad-i: linear-gradient(135deg, #38BDF8, #0284C7);
+            --grad-i: linear-gradient(135deg, #2563EB, #3B82F6);
             --r-md: 18px;
             --t: .3s;
             --ease: cubic-bezier(.4, 0, .2, 1);
-            --font-head: 'Poppins', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --font-head: 'Bricolage Grotesque', sans-serif;
+            --font-body: 'Instrument Sans', sans-serif;
             --danger: #FB7185;
             --danger-bg: rgba(244, 63, 94, .08);
             --danger-border: rgba(244, 63, 94, .22);
         }
 
         [data-theme="light"] {
-            --bg: #E9EDF2;
-            --bg-2: #F0F4F8;
-            --card: rgba(255, 255, 255, .55);
-            --card-2: #E2EAF0;
-            --border: rgba(124, 207, 164, .20);
-            --text: #5B636A;
-            --text-mid: #5B636A;
-            --text-muted: #8A939B;
+            --bg: #F5F8FC;
+            --bg-2: #EDF2F9;
+            --card: #FFFFFF;
+            --card-2: #F1F5FB;
+            --border: #D3DEEC;
+            --text: #0A1628;
+            --text-mid: #2E425E;
+            --text-muted: #5B6F8C;
             --surface: rgba(124, 207, 164, .10);
             --nav-bg: rgba(233, 237, 242, .96);
         }
@@ -562,6 +563,22 @@
                 flex-direction: column
             }
         }
+
+        /* ── v2: filters, toast, reply ── */
+        .toolbar { display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap }
+        .chips { display: flex; gap: 8px; flex-wrap: wrap }
+        .chip-btn { padding: 7px 14px; border-radius: 999px; font-size: .78rem; font-weight: 600; background: var(--surface); color: var(--text-mid); border: 1px solid var(--border); font-family: var(--font-head) }
+        .chip-btn.active { background: var(--grad-i); color: #fff; border-color: transparent }
+        .chip-btn .n { opacity: .75; margin-left: 4px }
+        .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 12px 20px; border-radius: 12px; font-size: .85rem; box-shadow: 0 12px 40px rgba(0,0,0,.35); opacity: 0; pointer-events: none; transition: all .3s var(--ease); z-index: 1000 }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0) }
+        .toast.err { border-color: var(--danger-border); color: var(--danger) }
+        .msg-body { white-space: pre-wrap; word-break: break-word }
+        .btn[disabled] { opacity: .5; cursor: not-allowed; transform: none !important }
+        .list-footer { text-align: center; margin-top: 18px; font-size: .8rem; color: var(--text-muted) }
+        [data-theme="light"] .msg-email { color: #0284C7 }
+        [data-theme="light"] .msg-subject { color: #059669 }
+        :focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px }
     </style>
 </head>
 
@@ -570,7 +587,7 @@
     <!-- ══════ LOGIN ══════ -->
     <div class="login-wrap" id="loginBox">
         <div class="login-card">
-            <div class="lock-icon"><i class="fa fa-shield-halved"></i></div>
+            <img src="assets/img/logo-mark.png" alt="" width="120" height="88" style="height:64px;width:auto;margin:0 auto 18px;filter:drop-shadow(0 0 10px rgba(79,209,245,.4))" />
             <h2><span class="grad-text">Admin Access</span></h2>
             <p>Restricted to authorized personnel only</p>
             <div class="fg">
@@ -581,7 +598,7 @@
                 <label for="adminPassword"><i class="fa fa-lock"></i> Password</label>
                 <input id="adminPassword" type="password" placeholder="••••••••" autocomplete="current-password" />
             </div>
-            <button class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;margin-top:8px">
+            <button type="button" class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;margin-top:8px">
                 <i class="fa fa-right-to-bracket"></i> Sign In
             </button>
             <div class="login-error" id="loginError"></div>
@@ -591,90 +608,89 @@
     <!-- ══════ DASHBOARD ══════ -->
     <div class="dashboard" id="dashboard">
 
-        <!-- Top bar -->
         <div class="admin-topbar">
             <div class="container topbar-inner">
                 <div class="topbar-brand">
-                    <i class="fa fa-shield-halved"></i>
+                    <i class="fa fa-shield-halved" aria-hidden="true"></i>
                     <span>Admin Dashboard</span>
                     <span class="live-badge"><span class="pulse"></span> LIVE</span>
                 </div>
                 <div class="topbar-actions">
-                    <button class="btn btn-ghost btn-sm" id="themeToggle">
-                        <i class="fa fa-moon" id="themeIcon"></i>
+                    <a class="btn btn-ghost btn-sm" href="index.html" title="Open portfolio"><i class="fa fa-house" aria-hidden="true"></i></a>
+                    <button type="button" class="btn btn-ghost btn-sm" id="themeToggle" aria-label="Toggle theme">
+                        <i class="fa fa-sun" id="themeIcon" aria-hidden="true"></i>
                     </button>
-                    <button class="btn btn-ghost btn-sm" id="exportBtn">
-                        <i class="fa fa-file-excel"></i> Export
+                    <button type="button" class="btn btn-ghost btn-sm" id="exportBtn">
+                        <i class="fa fa-file-excel" aria-hidden="true"></i> Export All
                     </button>
-                    <button class="btn btn-danger btn-sm" id="logoutBtn">
-                        <i class="fa fa-right-from-bracket"></i> Logout
+                    <button type="button" class="btn btn-danger btn-sm" id="logoutBtn">
+                        <i class="fa fa-right-from-bracket" aria-hidden="true"></i> Logout
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="container">
-            <!-- Stats -->
+        <div class="container" style="padding-top:28px">
             <div class="stats-row" id="statsRow">
-                <div class="stat-card">
-                    <div class="stat-num" id="statTotal">0</div>
-                    <div class="stat-label">Total Messages</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" id="statToday">0</div>
-                    <div class="stat-label">Today</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" id="statWeek">0</div>
-                    <div class="stat-label">This Week</div>
-                </div>
+                <div class="stat-card"><div class="stat-num" id="statTotal">–</div><div class="stat-label">Total Messages</div></div>
+                <div class="stat-card"><div class="stat-num" id="statUnread">–</div><div class="stat-label">Unread</div></div>
+                <div class="stat-card"><div class="stat-num" id="statToday">–</div><div class="stat-label">Today</div></div>
+                <div class="stat-card"><div class="stat-num" id="statWeek">–</div><div class="stat-label">Last 7 Days</div></div>
             </div>
 
-            <!-- Search -->
             <div class="search-bar">
-                <i class="fa fa-search"></i>
-                <input id="searchInput" type="text" placeholder="Search by name, email, subject or message..." />
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <input id="searchInput" type="search" placeholder="Search by name, email, subject or message..." aria-label="Search messages" />
             </div>
 
-            <!-- Message list -->
-            <div style="display:flex;gap:10px;justify-content:flex-end;margin-bottom:16px;flex-wrap:wrap">
-                <button class="btn btn-ghost btn-sm" id="markAllReadBtn">
-                    <i class="fa fa-envelope-open"></i> Mark Visible Read
-                </button>
-                <button class="btn btn-ghost btn-sm" id="loadMoreBtn">
-                    <i class="fa fa-plus"></i> Load More
+            <div class="toolbar">
+                <div class="chips" role="toolbar" aria-label="Filter messages">
+                    <button type="button" class="chip-btn active" data-filter="all">All<span class="n" id="nAll"></span></button>
+                    <button type="button" class="chip-btn" data-filter="unread">Unread<span class="n" id="nUnread"></span></button>
+                    <button type="button" class="chip-btn" data-filter="starred">Starred<span class="n" id="nStarred"></span></button>
+                </div>
+                <button type="button" class="btn btn-ghost btn-sm" id="markAllReadBtn">
+                    <i class="fa fa-envelope-open" aria-hidden="true"></i> Mark Shown as Read
                 </button>
             </div>
+
             <div class="msg-list" id="messages"></div>
+
+            <div class="list-footer">
+                <button type="button" class="btn btn-ghost btn-sm" id="loadMoreBtn">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Load More
+                </button>
+                <div id="loadedInfo" style="margin-top:8px"></div>
+            </div>
         </div>
     </div>
 
     <!-- ══════ DELETE CONFIRM MODAL ══════ -->
-    <div class="modal-overlay" id="deleteModal">
+    <div class="modal-overlay" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="delTitle">
         <div class="modal-box">
-            <h3>🗑️ Delete Message?</h3>
+            <h3 id="delTitle">🗑️ Delete Message?</h3>
             <p>This action cannot be undone. The message will be permanently removed.</p>
             <div class="modal-actions">
-                <button class="btn btn-ghost" id="cancelDelete">Cancel</button>
-                <button class="btn btn-danger" id="confirmDelete"><i class="fa fa-trash"></i> Delete</button>
+                <button type="button" class="btn btn-ghost" id="cancelDelete">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete"><i class="fa fa-trash" aria-hidden="true"></i> Delete</button>
             </div>
         </div>
     </div>
 
-    <!-- XLSX Library -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <!-- SheetJS (pinned, official CDN) -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+            from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
         import {
-            getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
-        } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-        import {
-            getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc,
-            limit, startAfter, getDocs, updateDoc
+            getFirestore, collection, onSnapshot, query, orderBy, where, doc, deleteDoc,
+            limit, getDocs, updateDoc, writeBatch, getCountFromServer, Timestamp
         } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-        // 🔥 Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDSH6Ryd0MtbQOTiK1GYBSQa8oe65TGXpA",
             authDomain: "portfolio-contact-39c14.firebaseapp.com",
@@ -687,332 +703,305 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const contactsCol = collection(db, "contacts");
 
-        // 🔐 ONLY this email can access the dashboard
+        // UI gate only — real protection must come from Firestore security rules.
         const ALLOWED_EMAIL = "kaviyarasu.0aasai@gmail.com";
+        const PAGE_SIZE = 10;
 
+        let pages = 1;               // live window = PAGE_SIZE * pages (keeps "Load More" results live too)
         let allMessages = [];
-        let unsubscribe = null;   // Firestore listener
+        let hasMore = false;
+        let unsubscribe = null;
         let deleteTargetId = null;
-        let pageSize = 10;
-        let lastVisibleDoc = null;
-        let hasMore = true;
+        let activeFilter = "all";
 
-        // ── DOM ──
-        const loginBox = document.getElementById("loginBox");
-        const dashboard = document.getElementById("dashboard");
-        const loginError = document.getElementById("loginError");
-        const msgContainer = document.getElementById("messages");
-        const searchInput = document.getElementById("searchInput");
-        const deleteModal = document.getElementById("deleteModal");
+        const $ = (id) => document.getElementById(id);
+        const loginBox = $("loginBox"), dashboard = $("dashboard"), loginError = $("loginError");
+        const msgContainer = $("messages"), searchInput = $("searchInput"), deleteModal = $("deleteModal");
+        const loadMoreBtn = $("loadMoreBtn");
+
+        function toast(text, isErr = false) {
+            const t = $("toast");
+            t.textContent = text;
+            t.className = "toast show" + (isErr ? " err" : "");
+            clearTimeout(t._h);
+            t._h = setTimeout(() => t.className = "toast", 2600);
+        }
 
         // ── LOGIN ──
-        document.getElementById("loginBtn").addEventListener("click", async () => {
-            const email = document.getElementById("adminEmail").value.trim();
-            const pass = document.getElementById("adminPassword").value;
+        async function doLogin() {
+            const email = $("adminEmail").value.trim();
+            const pass = $("adminPassword").value;
             loginError.style.display = "none";
-
-            if (email !== ALLOWED_EMAIL) {
+            if (!email || !pass) {
+                loginError.textContent = "Enter your email and password.";
+                loginError.style.display = "block";
+                return;
+            }
+            if (email.toLowerCase() !== ALLOWED_EMAIL) {
                 loginError.textContent = "⛔ Access denied. Only the admin can log in.";
                 loginError.style.display = "block";
                 return;
             }
-
+            const btn = $("loginBtn");
+            btn.disabled = true;
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (e) {
-                loginError.textContent = "❌ Invalid credentials. Try again.";
+                loginError.textContent = e.code === "auth/too-many-requests"
+                    ? "Too many attempts. Please wait a few minutes and try again."
+                    : "❌ Invalid credentials. Try again.";
                 loginError.style.display = "block";
+            } finally {
+                btn.disabled = false;
             }
-        });
+        }
+        $("loginBtn").addEventListener("click", doLogin);
+        ["adminEmail", "adminPassword"].forEach(id =>
+            $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); }));
 
-        // Enter key to submit
-        document.getElementById("adminPassword").addEventListener("keydown", (e) => {
-            if (e.key === "Enter") document.getElementById("loginBtn").click();
-        });
-
-        // ── LOGOUT ──
-        document.getElementById("logoutBtn").addEventListener("click", () => signOut(auth));
+        $("logoutBtn").addEventListener("click", () => signOut(auth));
 
         // ── AUTH STATE ──
         onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== ALLOWED_EMAIL) {
+            const ok = user && (user.email || "").toLowerCase() === ALLOWED_EMAIL;
+            if (!ok) {
                 loginBox.style.display = "flex";
                 dashboard.style.display = "none";
                 if (unsubscribe) { unsubscribe(); unsubscribe = null; }
-                if (user && user.email !== ALLOWED_EMAIL) {
+                if (user) {
                     signOut(auth);
                     loginError.textContent = "⛔ Access denied. Unauthorized account.";
                     loginError.style.display = "block";
                 }
                 return;
             }
-
             loginBox.style.display = "none";
             dashboard.style.display = "block";
+            pages = 1;
             startLiveListener();
         });
 
-        // ── REAL-TIME LISTENER ──
-        async function startLiveListener() {
-            const firstQ = query(
-                collection(db, "contacts"),
-                orderBy("createdAt", "desc"),
-                limit(pageSize)
-            );
-
+        // ── REAL-TIME LISTENER (window grows with Load More) ──
+        function startLiveListener() {
             if (unsubscribe) unsubscribe();
-
-            unsubscribe = onSnapshot(firstQ, async (snap) => {
-                allMessages = [];
-                snap.forEach(d => {
-                    allMessages.push({ id: d.id, _doc: d, ...d.data() });
-                });
-
-                lastVisibleDoc = snap.docs[snap.docs.length - 1] || null;
-                hasMore = snap.docs.length === pageSize;
-
-                updateStats();
+            const windowSize = PAGE_SIZE * pages;
+            const q = query(contactsCol, orderBy("createdAt", "desc"), limit(windowSize));
+            unsubscribe = onSnapshot(q, (snap) => {
+                allMessages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                hasMore = snap.size === windowSize;
+                loadMoreBtn.disabled = !hasMore;
+                loadMoreBtn.innerHTML = hasMore
+                    ? '<i class="fa fa-plus" aria-hidden="true"></i> Load More'
+                    : '<i class="fa fa-check" aria-hidden="true"></i> All messages loaded';
                 renderMessages();
+                refreshCounts();
+            }, (err) => {
+                console.error(err);
+                toast("Couldn't load messages: " + (err.code || err.message), true);
             });
         }
 
-        // ── STATS ──
-        function updateStats() {
+        loadMoreBtn.addEventListener("click", () => {
+            if (!hasMore) return;
+            pages++;
+            startLiveListener();
+        });
+
+        // ── STATS: true totals from the server, not just the loaded page ──
+        async function refreshCounts() {
             const now = new Date();
             const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const weekStart = new Date(todayStart);
-            weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-
-            let today = 0, week = 0;
-            allMessages.forEach(m => {
-                if (m.createdAt && m.createdAt.toDate) {
-                    const d = m.createdAt.toDate();
-                    if (d >= todayStart) today++;
-                    if (d >= weekStart) week++;
-                }
-            });
-
-            document.getElementById("statTotal").textContent = allMessages.length;
-            document.getElementById("statToday").textContent = today;
-            document.getElementById("statWeek").textContent = week;
+            const weekStart = new Date(todayStart); weekStart.setDate(weekStart.getDate() - 6);
+            const count = async (q) => (await getCountFromServer(q)).data().count;
+            try {
+                const [total, unread, today, week] = await Promise.all([
+                    count(contactsCol),
+                    count(query(contactsCol, where("isRead", "==", false))),
+                    count(query(contactsCol, where("createdAt", ">=", Timestamp.fromDate(todayStart)))),
+                    count(query(contactsCol, where("createdAt", ">=", Timestamp.fromDate(weekStart))))
+                ]);
+                $("statTotal").textContent = total;
+                $("statUnread").textContent = unread;
+                $("statToday").textContent = today;
+                $("statWeek").textContent = week;
+                $("loadedInfo").textContent = `Showing ${allMessages.length} of ${total} messages`;
+            } catch (e) {
+                // Fallback: count what is loaded
+                console.warn("Count query failed, using loaded messages:", e);
+                $("statTotal").textContent = allMessages.length + (hasMore ? "+" : "");
+                $("statUnread").textContent = allMessages.filter(m => !m.isRead).length;
+                const isAfter = (m, d) => m.createdAt?.toDate && m.createdAt.toDate() >= d;
+                $("statToday").textContent = allMessages.filter(m => isAfter(m, todayStart)).length;
+                $("statWeek").textContent = allMessages.filter(m => isAfter(m, weekStart)).length;
+                $("loadedInfo").textContent = `Showing ${allMessages.length} messages`;
+            }
         }
 
-        // ── RENDER ──
-        function renderMessages() {
+        // ── FILTER + SEARCH ──
+        function visibleMessages() {
             const term = searchInput.value.toLowerCase().trim();
-            const filteredBase = term
-                ? allMessages.filter(m =>
-                    ((m.firstName || "") + " " + (m.lastName || "")).toLowerCase().includes(term) ||
+            return allMessages
+                .filter(m => activeFilter === "all" || (activeFilter === "unread" ? !m.isRead : !!m.isStarred))
+                .filter(m => !term ||
+                    `${m.firstName || ""} ${m.lastName || ""}`.toLowerCase().includes(term) ||
                     (m.email || "").toLowerCase().includes(term) ||
                     (m.subject || "").toLowerCase().includes(term) ||
-                    (m.message || "").toLowerCase().includes(term)
-                )
-                : allMessages;
+                    (m.message || "").toLowerCase().includes(term))
+                .sort((a, b) => (b.isStarred ? 1 : 0) - (a.isStarred ? 1 : 0)); // starred first, then newest
+        }
 
-            const filtered = [...filteredBase].sort((a, b) => {
-                const aStarred = a.isStarred ? 1 : 0;
-                const bStarred = b.isStarred ? 1 : 0;
-                if (bStarred !== aStarred) return bStarred - aStarred;
-                return 0; // preserve original order (date descending)
-            });
+        document.querySelectorAll(".chip-btn").forEach(btn => btn.addEventListener("click", () => {
+            activeFilter = btn.dataset.filter;
+            document.querySelectorAll(".chip-btn").forEach(b => b.classList.toggle("active", b === btn));
+            renderMessages();
+        }));
+        searchInput.addEventListener("input", renderMessages);
 
-            if (filtered.length === 0) {
-                msgContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fa fa-inbox"></i>
-                        <p>${term ? "No messages match your search." : "No messages yet."}</p>
-                    </div>`;
+        // ── RENDER ──
+        const esc = (str) => { const d = document.createElement("div"); d.textContent = str ?? ""; return d.innerHTML; };
+
+        function renderMessages() {
+            $("nAll").textContent = `(${allMessages.length})`;
+            $("nUnread").textContent = `(${allMessages.filter(m => !m.isRead).length})`;
+            $("nStarred").textContent = `(${allMessages.filter(m => m.isStarred).length})`;
+
+            const list = visibleMessages();
+            if (!list.length) {
+                const term = searchInput.value.trim();
+                msgContainer.innerHTML = `<div class="empty-state"><i class="fa fa-inbox"></i>
+                    <p>${term || activeFilter !== "all" ? "No messages match this view." : "No messages yet."}</p></div>`;
                 return;
             }
 
-            msgContainer.innerHTML = filtered.map((m, i) => {
-                const time = m.createdAt && m.createdAt.toDate
-                    ? m.createdAt.toDate().toLocaleString("en-IN", {
-                        dateStyle: "medium", timeStyle: "short"
-                    })
-                    : "—";
-
+            msgContainer.innerHTML = list.map((m, i) => {
+                const time = m.createdAt?.toDate
+                    ? m.createdAt.toDate().toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "—";
+                const name = `${m.firstName || ""} ${m.lastName || ""}`.trim();
+                const mailto = `mailto:${encodeURIComponent(m.email || "")}?subject=${encodeURIComponent("Re: " + (m.subject || "Your message"))}`;
                 return `
-                <div class="msg-card ${m.isRead ? "" : "unread"}" style="animation-delay:${i * 40}ms; ${!m.isRead ? 'border-left: 4px solid var(--indigo);' : ''}">
+                <div class="msg-card" style="animation-delay:${Math.min(i, 10) * 40}ms;${!m.isRead ? "border-left:4px solid var(--indigo);" : ""}">
                     <div class="msg-header">
                         <div>
                             <div class="msg-sender">
-                                ${m.isStarred ? '<i class="fa fa-star" style="color:#facc15;margin-right:6px"></i>' : ""}
-                                ${esc(m.firstName || "")} ${esc(m.lastName || "")}
-                                ${!m.isRead ? '<span style="margin-left:8px;font-size:.7rem;color:#38BDF8;font-weight:700">NEW</span>' : ""}
+                                ${m.isStarred ? '<i class="fa fa-star" style="color:#facc15;margin-right:6px" aria-hidden="true"></i>' : ""}
+                                ${esc(name || "(no name)")}
+                                ${!m.isRead ? '<span style="margin-left:8px;font-size:.7rem;color:var(--indigo);font-weight:700">NEW</span>' : ""}
                             </div>
-                            <div class="msg-email">${esc(m.email || "")}</div>
+                            <div class="msg-email">${esc(m.email)}</div>
                         </div>
-                
                         <div style="display:flex;gap:8px;flex-wrap:wrap">
-                            <button class="btn btn-ghost btn-sm msg-read-toggle" data-id="${m.id}" data-read="${m.isRead ? "1" : "0"}">
-                                <i class="fa ${m.isRead ? "fa-envelope-open" : "fa-envelope"}"></i>
-                            </button>
-                
-                            <button class="btn btn-ghost btn-sm msg-star-toggle" data-id="${m.id}" data-star="${m.isStarred ? "1" : "0"}">
-                                <i class="fa ${m.isStarred ? "fa-star" : "fa-star-half-stroke"}"></i>
-                            </button>
-                
-                            <button class="btn btn-danger btn-sm msg-delete" data-id="${m.id}">
-                                <i class="fa fa-trash"></i>
-                            </button>
+                            <a class="btn btn-ghost btn-sm" href="${mailto}" title="Reply by email" aria-label="Reply"><i class="fa fa-reply"></i></a>
+                            <button type="button" class="btn btn-ghost btn-sm" data-act="read" data-id="${m.id}" data-v="${m.isRead ? 1 : 0}"
+                                title="${m.isRead ? "Mark as unread" : "Mark as read"}" aria-label="${m.isRead ? "Mark as unread" : "Mark as read"}">
+                                <i class="fa ${m.isRead ? "fa-envelope-open" : "fa-envelope"}"></i></button>
+                            <button type="button" class="btn btn-ghost btn-sm" data-act="star" data-id="${m.id}" data-v="${m.isStarred ? 1 : 0}"
+                                title="${m.isStarred ? "Unstar" : "Star"}" aria-label="${m.isStarred ? "Unstar" : "Star"}">
+                                <i class="${m.isStarred ? "fa fa-star" : "fa-regular fa-star"}"></i></button>
+                            <button type="button" class="btn btn-danger btn-sm" data-act="delete" data-id="${m.id}" title="Delete" aria-label="Delete">
+                                <i class="fa fa-trash"></i></button>
                         </div>
                     </div>
-                
                     <div class="msg-subject"><i class="fa fa-tag" style="opacity:.5;margin-right:6px"></i>${esc(m.subject || "No subject")}</div>
-                    <div class="msg-body">${esc(m.message || "")}</div>
+                    <div class="msg-body">${esc(m.message)}</div>
                     <div class="msg-time"><i class="fa fa-clock"></i> ${time}</div>
                 </div>`;
             }).join("");
-
-            // Attach toggle handlers
-            msgContainer.querySelectorAll(".msg-read-toggle").forEach(btn => {
-                btn.addEventListener("click", async () => {
-                    const id = btn.dataset.id;
-                    const isRead = btn.dataset.read === "1";
-                    await updateDoc(doc(db, "contacts", id), {
-                        isRead: !isRead
-                    });
-                });
-            });
-
-            msgContainer.querySelectorAll(".msg-star-toggle").forEach(btn => {
-                btn.addEventListener("click", async () => {
-                    const id = btn.dataset.id;
-                    const isStarred = btn.dataset.star === "1";
-                    await updateDoc(doc(db, "contacts", id), {
-                        isStarred: !isStarred
-                    });
-                });
-            });
-
-            // Attach delete handlers
-            msgContainer.querySelectorAll(".msg-delete").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    deleteTargetId = btn.dataset.id;
-                    deleteModal.classList.add("show");
-                });
-            });
         }
 
-        function esc(str) {
-            const d = document.createElement("div");
-            d.textContent = str;
-            return d.innerHTML;
-        }
-
-        // ── SEARCH ──
-        searchInput.addEventListener("input", renderMessages);
-
-        document.getElementById("loadMoreBtn").addEventListener("click", async () => {
-            if (!lastVisibleDoc || !hasMore) return;
-
-            const nextQ = query(
-                collection(db, "contacts"),
-                orderBy("createdAt", "desc"),
-                startAfter(lastVisibleDoc),
-                limit(pageSize)
-            );
-
-            const snap = await getDocs(nextQ);
-
-            if (snap.empty) {
-                hasMore = false;
-                document.getElementById("loadMoreBtn").disabled = true;
-                return;
+        // One delegated handler for all card buttons
+        msgContainer.addEventListener("click", async (e) => {
+            const btn = e.target.closest("button[data-act]");
+            if (!btn) return;
+            const { act, id } = btn.dataset;
+            if (act === "delete") { deleteTargetId = id; deleteModal.classList.add("show"); $("cancelDelete").focus(); return; }
+            btn.disabled = true;
+            try {
+                if (act === "read") await updateDoc(doc(db, "contacts", id), { isRead: btn.dataset.v !== "1" });
+                if (act === "star") await updateDoc(doc(db, "contacts", id), { isStarred: btn.dataset.v !== "1" });
+            } catch (err) {
+                console.error(err);
+                toast("Update failed: " + (err.code || err.message), true);
+                btn.disabled = false;
             }
-
-            snap.forEach(d => {
-                const exists = allMessages.some(m => m.id === d.id);
-                if (!exists) allMessages.push({ id: d.id, _doc: d, ...d.data() });
-            });
-
-            lastVisibleDoc = snap.docs[snap.docs.length - 1] || lastVisibleDoc;
-            hasMore = snap.docs.length === pageSize;
-
-            if (!hasMore) {
-                document.getElementById("loadMoreBtn").disabled = true;
-            }
-
-            updateStats();
-            renderMessages();
         });
 
         // ── DELETE ──
-        document.getElementById("cancelDelete").addEventListener("click", () => {
-            deleteModal.classList.remove("show");
-            deleteTargetId = null;
-        });
-
-        document.getElementById("confirmDelete").addEventListener("click", async () => {
+        const closeModal = () => { deleteModal.classList.remove("show"); deleteTargetId = null; };
+        $("cancelDelete").addEventListener("click", closeModal);
+        deleteModal.addEventListener("click", (e) => { if (e.target === deleteModal) closeModal(); });
+        document.addEventListener("keydown", (e) => { if (e.key === "Escape" && deleteModal.classList.contains("show")) closeModal(); });
+        $("confirmDelete").addEventListener("click", async () => {
             if (!deleteTargetId) return;
             try {
                 await deleteDoc(doc(db, "contacts", deleteTargetId));
+                toast("Message deleted");
             } catch (e) {
                 console.error("Delete failed:", e);
+                toast("Delete failed: " + (e.code || e.message), true);
             }
-            deleteModal.classList.remove("show");
-            deleteTargetId = null;
+            closeModal();
         });
 
-        // Close modal on overlay click
-        deleteModal.addEventListener("click", (e) => {
-            if (e.target === deleteModal) {
-                deleteModal.classList.remove("show");
-                deleteTargetId = null;
-            }
-        });
-
-        // ── MARK VISIBLE READ ──
-        document.getElementById("markAllReadBtn").addEventListener("click", async () => {
-            const visibleCards = allMessages.filter(m => {
-                const term = searchInput.value.toLowerCase().trim();
-                if (!term) return true;
-                return (
-                    ((m.firstName || "") + " " + (m.lastName || "")).toLowerCase().includes(term) ||
-                    (m.email || "").toLowerCase().includes(term) ||
-                    (m.subject || "").toLowerCase().includes(term) ||
-                    (m.message || "").toLowerCase().includes(term)
-                );
-            });
-
-            for (const m of visibleCards) {
-                if (!m.isRead) {
-                    await updateDoc(doc(db, "contacts", m.id), { isRead: true });
-                }
+        // ── MARK SHOWN AS READ (single batched write) ──
+        $("markAllReadBtn").addEventListener("click", async () => {
+            const targets = visibleMessages().filter(m => !m.isRead);
+            if (!targets.length) { toast("Nothing unread in this view"); return; }
+            try {
+                const batch = writeBatch(db);
+                targets.forEach(m => batch.update(doc(db, "contacts", m.id), { isRead: true }));
+                await batch.commit();
+                toast(`Marked ${targets.length} as read`);
+            } catch (e) {
+                console.error(e);
+                toast("Couldn't mark as read: " + (e.code || e.message), true);
             }
         });
 
-        // ── EXPORT EXCEL ──
-        document.getElementById("exportBtn").addEventListener("click", () => {
-            const rows = allMessages.map(m => ({
-                Name: (m.firstName || "") + " " + (m.lastName || ""),
-                Email: m.email || "",
-                Subject: m.subject || "",
-                Message: m.message || "",
-                Date: m.createdAt && m.createdAt.toDate
-                    ? m.createdAt.toDate().toLocaleString("en-IN") : ""
-            }));
-            const ws = XLSX.utils.json_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Messages");
-            XLSX.writeFile(wb, "kaviyarasu_messages.xlsx");
+        // ── EXPORT ALL MESSAGES TO EXCEL ──
+        $("exportBtn").addEventListener("click", async () => {
+            if (!window.XLSX) { toast("Excel library failed to load", true); return; }
+            const btn = $("exportBtn");
+            btn.disabled = true;
+            try {
+                const snap = await getDocs(query(contactsCol, orderBy("createdAt", "desc")));
+                const rows = snap.docs.map(d => {
+                    const m = d.data();
+                    return {
+                        Date: m.createdAt?.toDate ? m.createdAt.toDate().toLocaleString("en-IN") : "",
+                        Name: `${m.firstName || ""} ${m.lastName || ""}`.trim(),
+                        Email: m.email || "",
+                        Subject: m.subject || "",
+                        Message: m.message || "",
+                        Read: m.isRead ? "Yes" : "No",
+                        Starred: m.isStarred ? "Yes" : "No"
+                    };
+                });
+                const ws = XLSX.utils.json_to_sheet(rows);
+                ws["!cols"] = [{ wch: 20 }, { wch: 22 }, { wch: 30 }, { wch: 30 }, { wch: 70 }, { wch: 6 }, { wch: 8 }];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Messages");
+                XLSX.writeFile(wb, `portfolio_messages_${new Date().toISOString().slice(0, 10)}.xlsx`);
+                toast(`Exported ${rows.length} messages`);
+            } catch (e) {
+                console.error(e);
+                toast("Export failed: " + (e.code || e.message), true);
+            } finally {
+                btn.disabled = false;
+            }
         });
 
-        // ── THEME TOGGLE ──
-        const themeIcon = document.getElementById("themeIcon");
-        function syncThemeIcon() {
-            const t = document.documentElement.getAttribute("data-theme");
-            themeIcon.className = t === "dark" ? "fa fa-moon" : "fa fa-sun";
-        }
+        // ── THEME TOGGLE (icon shows the theme you will switch to) ──
+        const themeIcon = $("themeIcon");
+        const syncThemeIcon = () => {
+            themeIcon.className = document.documentElement.getAttribute("data-theme") === "dark" ? "fa fa-sun" : "fa fa-moon";
+        };
         syncThemeIcon();
-
-        document.getElementById("themeToggle").addEventListener("click", () => {
-            const curr = document.documentElement.getAttribute("data-theme");
-            const next = curr === "dark" ? "light" : "dark";
+        $("themeToggle").addEventListener("click", () => {
+            const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
             document.documentElement.setAttribute("data-theme", next);
-            localStorage.setItem("kk-theme", next);
+            try { localStorage.setItem("kk-theme", next); } catch (e) { }
             syncThemeIcon();
         });
     </script>

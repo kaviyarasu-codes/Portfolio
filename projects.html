@@ -2,350 +2,390 @@
 <html lang="en">
 
 <head>
-    <!-- ── Primary Meta ─────────────────────────────── -->
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Projects | Kaviyarasu K – Full-Stack Python Developer</title>
-    <meta name="description"
-        content="Case studies for Aero Edge Media, Sundaram Oils, and AK Sports Club — built and deployed by Kaviyarasu K, Full-Stack Python Developer." />
-    <meta name="keywords"
-        content="Kaviyarasu K projects, Django web development, Aero Edge Media, Sundaram Oils, AK Sports Club, freelance web developer" />
-    <meta name="author" content="Kaviyarasu K" />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://kaviyarasu-portfolio.pages.dev/projects.html" />
+  <title>Projects | Kaviyarasu K</title>
+  <meta name="description" content="Projects by Kaviyarasu K: the Agnisiragu news platform (Play Store), TicketsRaja ticketing marketplace, a GST billing platform, Event247 and client websites." />
+  <meta name="author" content="Kaviyarasu K" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://kaviyarasu-portfolio.pages.dev/projects.html" />
 
-    <!-- ── Open Graph ───────────────────────────────── -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://kaviyarasu-portfolio.pages.dev/projects.html" />
-    <meta property="og:title" content="Projects | Kaviyarasu K" />
-    <meta property="og:description"
-        content="Full case studies — 3 live production websites built and deployed by Kaviyarasu K." />
-    <meta property="og:image" content="assets/img/og-image.jpg" />
-    <meta property="og:site_name" content="Kaviyarasu K Portfolio" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kaviyarasu-portfolio.pages.dev/projects.html" />
+  <meta property="og:title" content="Projects | Kaviyarasu K" />
+  <meta property="og:description" content="Projects by Kaviyarasu K: the Agnisiragu news platform (Play Store), TicketsRaja ticketing marketplace, a GST billing platform, Event247 and client websites." />
+  <meta property="og:image" content="https://kaviyarasu-portfolio.pages.dev/assets/img/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="Kaviyarasu K" />
+  <meta property="og:locale" content="en_IN" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Projects | Kaviyarasu K" />
+  <meta name="twitter:description" content="Projects by Kaviyarasu K: the Agnisiragu news platform (Play Store), TicketsRaja ticketing marketplace, a GST billing platform, Event247 and client websites." />
+  <meta name="twitter:image" content="https://kaviyarasu-portfolio.pages.dev/assets/img/og-image.jpg" />
 
-    <!-- ── Twitter Card ─────────────────────────────── -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Projects | Kaviyarasu K" />
-    <meta name="twitter:description" content="Full case studies — 3 live production websites." />
-    <meta name="twitter:image" content="assets/img/og-image.jpg" />
+  <meta name="theme-color" content="#F6F7F9" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48x48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon-180x180.png" />
+  <link rel="manifest" href="site.webmanifest" />
 
-    <meta name="theme-color" content="#2F2F33" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
 
-    <!-- Favicons -->
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="48x48" href="assets/img/favicon-48x48.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon-180x180.png" />
-    <link rel="manifest" href="site.webmanifest" />
-
-    <!-- ── Fonts & Icons ───────────────────────────── -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Theme: apply before CSS to prevent flash -->
-    <script>!function () { var t = localStorage.getItem('kk-theme') || 'dark'; document.documentElement.setAttribute('data-theme', t) }();</script>
-    <link rel="stylesheet" href="assets/css/style.css" />
-
-    <!-- Structured Data: Projects -->
-    <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    "name": "Projects – Kaviyarasu K",
-    "url": "https://kaviyarasu-portfolio.pages.dev/projects.html",
-    "author": { "@type": "Person", "name": "Kaviyarasu K" },
-    "description": "Full-stack web development projects and case studies."
-  }
-  </script>
+  <script>!function () { var t = 'light'; try { t = localStorage.getItem('kk-theme') || 'light' } catch (e) { } document.documentElement.setAttribute('data-theme', t) }();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
 <body>
+  <a href="#main" class="skip-link">Skip to content</a>
 
-    <!-- ══════════════ NAVBAR ══════════════ -->
-    <nav id="navbar" role="navigation" aria-label="Main navigation">
-        <div class="container nav-inner">
-            <a href="index.html" class="nav-logo" aria-label="Kaviyarasu K Portfolio Home">
-                <img src="assets/img/dark-logo.png" class="nav-logo-dark" alt="Kaviyarasu K" height="64"
-                    style="display:block" />
-                <img src="assets/img/light-logo.png" class="nav-logo-light" alt="Kaviyarasu K" height="64"
-                    style="display:none" />
-                <span class="nav-logo-name"><span class="nav-logo-first">Kaviyarasu</span></span>
-            </a>
-            <ul class="nav-links" id="navLinks" role="menubar">
-                <li role="none"><a href="index.html" role="menuitem"><i class="fa fa-house nav-icon"
-                            aria-hidden="true"></i>Home</a></li>
-                <li role="none"><a href="projects.html" class="active" role="menuitem"><i
-                            class="fa fa-folder-open nav-icon" aria-hidden="true"></i>Projects</a></li>
-                <li role="none"><a href="about.html" role="menuitem"><i class="fa fa-user nav-icon"
-                            aria-hidden="true"></i>About</a></li>
-                <li role="none"><a href="contact.html" role="menuitem"><i class="fa fa-envelope nav-icon"
-                            aria-hidden="true"></i>Contact</a></li>
-                <li class="sep" role="none" aria-hidden="true"></li>
-                <li role="none">
-                    <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode" title="Light mode">
-                        <i class="fa fa-sun" aria-hidden="true"></i>
-                        <span class="theme-label">Light Mode</span>
-                    </button>
-                </li>
-                <li role="none">
-                    <a class="btn btn-mix btn-sm" href="assets/docs/Kaviyarasu_K_Resume.pdf" download>
-                        <i class="fa fa-download" aria-hidden="true"></i> Resume
-                    </a>
-                </li>
-                <li class="nav-social-row" role="none" aria-label="Social links">
-                    <a href="mailto:kaviyarasukanthavel@gmail.com" class="nav-soc-btn" aria-label="Email"><i
-                            class="fa fa-envelope"></i></a>
-                    <a href="https://www.linkedin.com/in/kaviyarasu-kanthavel-71b556374/" target="_blank"
-                        rel="noopener noreferrer" class="nav-soc-btn" aria-label="LinkedIn"><i
-                            class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer"
-                        class="nav-soc-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                </li>
-
-            </ul>
-            <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false"
-                aria-controls="navLinks">
-                <span></span><span></span><span></span>
-            </button>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+  <header id="navbar">
+    <nav class="wrap nav-inner" aria-label="Main">
+      <a href="index.html" class="brand" aria-label="Kaviyarasu K, home">
+        <img src="assets/img/logo-mark.png" alt="" width="174" height="128" />
+        <span>Kaviyarasu</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link active" href="projects.html" aria-current="page">Projects</a>
+        <a class="nav-link" href="about.html">About</a>
+        <a class="nav-link" href="contact.html">Contact</a>
+        <div class="nav-actions">
+          <div class="nav-social">
+            <a class="icon-btn" href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="ph ph-linkedin-logo" aria-hidden="true"></i></a>
+            <a class="icon-btn" href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i></a>
+          </div>
+          <button class="icon-btn theme-toggle" type="button" aria-label="Switch to light mode" title="Light mode"><i class="ph ph-sun" aria-hidden="true"></i></button>
+          <a class="btn btn-line btn-sm" href="assets/docs/Kaviyarasu_K_Resume.pdf" download><i class="ph ph-download-simple" aria-hidden="true"></i> Resume</a>
         </div>
+      </div>
+      <button class="icon-btn hamburger" id="hamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><i class="ph ph-list" aria-hidden="true"></i></button>
     </nav>
+  </header>
 
-    <!-- ══════════════ PAGE HERO ══════════════ -->
-    <header class="page-hero" role="banner" aria-label="Projects page header">
-        <div class="hero-grid" aria-hidden="true"></div>
-        <div class="hero-blob hero-blob-1" aria-hidden="true"></div>
-        <div class="hero-blob hero-blob-2" aria-hidden="true"></div>
-        <div class="container" style="position:relative;z-index:1">
-            <div class="ph-eyebrow">
-                <span class="badge badge-cyan"><span class="dot" aria-hidden="true"></span> 3 Live Production
-                    Sites</span>
-            </div>
-            <h1>My <em>Projects</em></h1>
-            <p>Full case studies — from the first line of code to live deployment</p>
-        </div>
+  <main id="main">
+    <header class="wrap page-head">
+      <h1>Projects</h1>
+      <p>What each product does, how I built it and where it stands today.</p>
+      <div class="filter-bar" role="toolbar" aria-label="Filter projects">
+        <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" class="filter-btn" data-filter="live" aria-pressed="false">Live</button>
+        <button type="button" class="filter-btn" data-filter="dev" aria-pressed="false">In development</button>
+        <button type="button" class="filter-btn" data-filter="mobile" aria-pressed="false">Mobile apps</button>
+        <button type="button" class="filter-btn" data-filter="web" aria-pressed="false">Web</button>
+        <button type="button" class="filter-btn" data-filter="client" aria-pressed="false">Client sites</button>
+      </div>
     </header>
 
-    <!-- ══════════════ CASE STUDY 1 ══════════════ -->
-    <article class="case-study" id="aeroedgemedia" aria-label="Case study: Aero Edge Media">
-        <div class="container">
-            <div class="case-inner">
-                <div class="case-img reveal-left">
-                    <img src="assets/img/projects/aeroedgemedia.png" alt="Aero Edge Media website homepage screenshot"
-                        width="600" height="400" loading="lazy" />
-                    <span class="case-badge">Live</span>
-                </div>
-                <div class="case-content reveal-right">
-                    <div class="case-num" aria-hidden="true">01</div>
-                    <h2>Aero Edge Media</h2>
-                    <a href="https://www.aeroedgemedia.com" target="_blank" rel="noopener noreferrer" class="case-url">
-                        <i class="fa fa-globe" aria-hidden="true"></i> www.aeroedgemedia.com
-                    </a>
-                    <div class="case-tags">
-                        <span class="tag tag-p">Envato Template</span>
-                        <span class="tag tag-w">HTML / CSS / JS</span>
-                        <span class="tag tag-c">Hostinger</span>
-                        <span class="tag tag-g">Domain Setup</span>
-                    </div>
-                    <p class="case-role">Role: Freelance Full Stack Developer</p>
-                    <ul class="case-list" aria-label="Project details">
-                        <li>Customised a premium Envato template into a production-ready company website, tailored to
-                            the brand identity</li>
-                        <li>Purchased the domain, configured DNS records, and set up hosting on Hostinger</li>
-                        <li>Deployed the site live and verified full functionality across all browsers</li>
-                        <li>Optimised all pages for responsive layout, fast loading &amp; clean semantic HTML</li>
-                        <li>Coordinated with client stakeholders on design revisions, content updates &amp; final
-                            sign-off</li>
-                    </ul>
-                    <div class="case-actions">
-                        <a href="https://www.aeroedgemedia.com" target="_blank" rel="noopener noreferrer"
-                            class="btn btn-primary btn-lg">
-                            <i class="fa fa-arrow-up-right-from-square" aria-hidden="true"></i> Visit Live Site
-                        </a>
-                        <a href="contact.html" class="btn btn-outline-purple btn-lg">
-                            <i class="fa fa-briefcase" aria-hidden="true"></i> Hire Me
-                        </a>
-                    </div>
-                </div>
-            </div>
+    <div class="wrap" id="project-list">
+
+      <article class="case" id="agnisiragu" data-cats="live mobile web">
+        <div class="visual"><img src="assets/img/projects/agnisiragu.webp" alt="Agnisiragu news website home page" width="1200" height="750" /></div>
+        <div>
+          <div class="case-meta"><span class="status live">Live on Google Play</span><span><i class="ph ph-buildings" aria-hidden="true"></i> The Shine</span></div>
+          <h2>Agnisiragu news platform</h2>
+          <p class="role">Sole developer — I designed and built every part.</p>
+          <div class="tags"><span class="tag">Expo / React Native</span><span class="tag">NestJS + Prisma</span><span class="tag">React (Vite)</span><span class="tag">Next.js</span><span class="tag">TypeScript</span><span class="tag">Docker</span></div>
+          <ul>
+            <li>Citizen-journalism news: anyone can report local news, editors verify it, readers get it on web and mobile</li>
+            <li>Reader app live on Google Play and a reporter app for uploading stories, with push notifications and AdMob</li>
+            <li>NestJS + Prisma API in a TypeScript monorepo: phone OTP login (MSG91), JWT sessions, news, reporter and moderation modules</li>
+            <li>React admin panel for the editorial team: dashboard, articles, media library, notifications, local ads, reports, audit logs, team roles and support tickets</li>
+            <li>Remote app config: home layout, widgets, menus and ad placement change live from the admin panel — no Play Store update needed</li>
+            <li>Next.js website on Vercel</li>
+            <li>Handled the full Play Console release: closed testing, Data safety, content rating and production</li>
+          </ul>
+          <div class="links-row">
+            <a class="btn btn-solid" href="https://play.google.com/store/apps/details?id=com.agnisiragu.reader" target="_blank" rel="noopener noreferrer"><i class="ph ph-google-play-logo" aria-hidden="true"></i> Get the app</a>
+            <a class="btn btn-line" href="https://agnisiragu.com" target="_blank" rel="noopener noreferrer"><i class="ph ph-globe" aria-hidden="true"></i> agnisiragu.com</a>
+            <a class="btn btn-line" href="https://agnisiragu.in" target="_blank" rel="noopener noreferrer"><i class="ph ph-globe" aria-hidden="true"></i> agnisiragu.in</a>
+          </div>
         </div>
-    </article>
 
-    <!-- ══════════════ CASE STUDY 2 ══════════════ -->
-    <article class="case-study" id="sundaramoils" aria-label="Case study: Sundaram Oils">
-        <div class="container">
-            <div class="case-inner flip">
-                <div class="case-img reveal-right">
-                    <img src="assets/img/projects/sundaramoils.png" alt="Sundaram Oils website homepage screenshot"
-                        width="600" height="400" loading="lazy" />
-                    <span class="case-badge">Live</span>
-                </div>
-                <div class="case-content reveal-left">
-                    <div class="case-num" aria-hidden="true">02</div>
-                    <h2>Sundaram Oils</h2>
-                    <a href="https://sundaramoils.com/" target="_blank" rel="noopener noreferrer" class="case-url">
-                        <i class="fa fa-globe" aria-hidden="true"></i> sundaramoils.com
-                    </a>
-                    <div class="case-tags">
-                        <span class="tag tag-p">HTML5 / CSS3</span>
-                        <span class="tag tag-w">AI-Assisted Build</span>
-                        <span class="tag tag-c">Hostinger</span>
-                        <span class="tag tag-g">SEO Optimised</span>
-                    </div>
-                    <p class="case-role">Role: Freelance Full Stack Developer</p>
-                    <ul class="case-list">
-                        <li>Created the complete website using an AI-assisted workflow (Antigravity tool) for rapid,
-                            structured development</li>
-                        <li>Structured all product &amp; brand content, layout, and navigation architecture from scratch
-                        </li>
-                        <li>Published and deployed live with full hosting configuration on Hostinger</li>
-                        <li>Implemented mobile-first responsive design across all viewports and screen sizes</li>
-                        <li>Applied SEO best practices — meta tags, alt text, semantic HTML &amp; page speed
-                            optimisation</li>
-                    </ul>
-                    <div class="case-actions">
-                        <a href="https://sundaramoils.com/" target="_blank" rel="noopener noreferrer"
-                            class="btn btn-primary btn-lg">
-                            <i class="fa fa-arrow-up-right-from-square" aria-hidden="true"></i> Visit Live Site
-                        </a>
-                        <a href="contact.html" class="btn btn-outline-purple btn-lg">
-                            <i class="fa fa-briefcase" aria-hidden="true"></i> Hire Me
-                        </a>
-                    </div>
-                </div>
-            </div>
+        <details class="screens" id="agnisiragu-screens">
+          <summary>
+            <span class="sc-thumbs" aria-hidden="true">
+              <img src="assets/img/agnisiragu/app-article.webp" alt="" width="720" height="1516" loading="lazy" />
+              <img src="assets/img/agnisiragu/app-search.webp" alt="" width="720" height="1516" loading="lazy" />
+              <img class="wide" src="assets/img/agnisiragu/admin-dashboard.webp" alt="" width="1365" height="681" loading="lazy" />
+            </span>
+            <span class="sc-text"><b>View app &amp; admin screens</b><small>4 app · 3 admin panel · 1 website</small></span>
+            <i class="ph ph-caret-down sc-caret" aria-hidden="true"></i>
+          </summary>
+        <div class="gallery">
+          <div class="gal-tabs" role="tablist" aria-label="Agnisiragu screens">
+            <button type="button" role="tab" aria-selected="true" aria-controls="gal-app" id="tab-app" class="gal-tab active"><i class="ph ph-device-mobile" aria-hidden="true"></i> Reader app</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="gal-admin" id="tab-admin" class="gal-tab" tabindex="-1"><i class="ph ph-layout" aria-hidden="true"></i> Admin panel</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="gal-web" id="tab-web" class="gal-tab" tabindex="-1"><i class="ph ph-globe" aria-hidden="true"></i> Website</button>
+          </div>
+          <div class="gal-panel phones" role="tabpanel" id="gal-app" aria-labelledby="tab-app">
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/agnisiragu/app-article.webp" aria-label="Enlarge: Article view with likes, comments and share"><img src="assets/img/agnisiragu/app-article.webp" alt="Agnisiragu app article screen in Tamil" width="720" height="1516" loading="lazy" /></button><figcaption>Article view with likes, comments and share</figcaption></figure>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/agnisiragu/app-search.webp" aria-label="Enlarge: Search with word, reporter and place filters"><img src="assets/img/agnisiragu/app-search.webp" alt="Agnisiragu app search results" width="720" height="1516" loading="lazy" /></button><figcaption>Search with word, reporter and place filters</figcaption></figure>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/agnisiragu/app-menu.webp" aria-label="Enlarge: Menu with Tamil/English, district and dark mode"><img src="assets/img/agnisiragu/app-menu.webp" alt="Agnisiragu app side menu" width="720" height="1516" loading="lazy" /></button><figcaption>Menu with Tamil/English, district and dark mode</figcaption></figure>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/agnisiragu/app-splash.webp" aria-label="Enlarge: Launch screen"><img src="assets/img/agnisiragu/app-splash.webp" alt="Agnisiragu app splash screen" width="720" height="1516" loading="lazy" /></button><figcaption>Launch screen</figcaption></figure>
+          </div>
+          <div class="gal-panel browsers" role="tabpanel" id="gal-admin" aria-labelledby="tab-admin" hidden>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/agnisiragu/admin-dashboard.webp" aria-label="Enlarge: Dashboard: articles, users, breaking news and quick actions"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/agnisiragu/admin-dashboard.webp" alt="Agnisiragu admin dashboard" width="1365" height="681" loading="lazy" /></button><figcaption>Dashboard: articles, users, breaking news and quick actions</figcaption></figure>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/agnisiragu/admin-app-config.webp" aria-label="Enlarge: App Config: change the app's layout, widgets, menus and ads live"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/agnisiragu/admin-app-config.webp" alt="Agnisiragu admin app configuration screen" width="1365" height="682" loading="lazy" /></button><figcaption>App Config: change the app's layout, widgets, menus and ads live</figcaption></figure>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/agnisiragu/admin-profile.webp" aria-label="Enlarge: Admin profile with activity stats and recent articles"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/agnisiragu/admin-profile.webp" alt="Agnisiragu admin profile page" width="1358" height="678" loading="lazy" /></button><figcaption>Admin profile with activity stats and recent articles</figcaption></figure>
+          </div>
+          <div class="gal-panel browsers" role="tabpanel" id="gal-web" aria-labelledby="tab-web" hidden>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/projects/agnisiragu.webp" aria-label="Enlarge: agnisiragu.com / agnisiragu.in — the public news website"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/projects/agnisiragu.webp" alt="Agnisiragu website home page" width="1200" height="750" loading="lazy" /></button><figcaption>agnisiragu.com / agnisiragu.in — the public news website</figcaption></figure>
+          </div>
         </div>
-    </article>
+        </details>
+      </article>
 
-    <!-- ══════════════ CASE STUDY 3 ══════════════ -->
-    <article class="case-study" id="aksportsclub" aria-label="Case study: AK Sports Club">
-        <div class="container">
-            <div class="case-inner">
-                <div class="case-img reveal-left">
-                    <img src="assets/img/projects/aksportsclub.png" alt="AK Sports Club website homepage screenshot"
-                        width="600" height="400" loading="lazy" />
-                    <span class="case-badge">Live</span>
-                </div>
-                <div class="case-content reveal-right">
-                    <div class="case-num" aria-hidden="true">03</div>
-                    <h2>AK Sports Club</h2>
-                    <a href="https://aksportsclub.com/" target="_blank" rel="noopener noreferrer" class="case-url">
-                        <i class="fa fa-globe" aria-hidden="true"></i> aksportsclub.com
-                    </a>
-                    <div class="case-tags">
-                        <span class="tag tag-p">HTML / CSS / JS</span>
-                        <span class="tag tag-w">AI Tools</span>
-                        <span class="tag tag-c">Full Deployment</span>
-                    </div>
-                    <p class="case-role">Role: Freelance Full Stack Developer</p>
-                    <ul class="case-list">
-                        <li>Built the website rapidly using AI tools combined with precision manual editing for quality
-                            assurance</li>
-                        <li>Managed the complete site structure — pages, navigation, content, imagery &amp; internal
-                            linking</li>
-                        <li>Provided full deployment support including hosting setup and DNS configuration</li>
-                        <li>Delivered a sporty, energetic design that authentically reflects the club's brand identity
-                        </li>
-                        <li>Verified cross-browser &amp; cross-device compatibility before and after launch</li>
-                    </ul>
-                    <div class="case-actions">
-                        <a href="https://aksportsclub.com/" target="_blank" rel="noopener noreferrer"
-                            class="btn btn-primary btn-lg">
-                            <i class="fa fa-arrow-up-right-from-square" aria-hidden="true"></i> Visit Live Site
-                        </a>
-                        <a href="contact.html" class="btn btn-outline-purple btn-lg">
-                            <i class="fa fa-briefcase" aria-hidden="true"></i> Hire Me
-                        </a>
-                    </div>
-                </div>
-            </div>
+      <article class="case" id="ticketsraja" data-cats="dev web">
+        <div class="visual"><div class="art mark-tickets" role="img" aria-label="TicketsRaja"><i class="ph ph-ticket" aria-hidden="true"></i></div></div>
+        <div>
+          <div class="case-meta"><span class="status dev">In development</span><span><i class="ph ph-map-pin" aria-hidden="true"></i> Launching in Coimbatore</span></div>
+          <h2>TicketsRaja ticketing marketplace</h2>
+          <p class="role">Lead developer at The Shine.</p>
+          <div class="tags"><span class="tag">Next.js</span><span class="tag">NestJS</span><span class="tag">PostgreSQL</span><span class="tag">Redis</span><span class="tag">Docker Compose</span></div>
+          <ul>
+            <li>Organisers list concerts, comedy, sports and nightlife events themselves; the platform earns a commission</li>
+            <li>Designed all 77 screens for desktop, tablet and mobile before writing backend code</li>
+            <li>At launch: password and Google sign-in, general-admission tickets, weekly organiser payouts and automatic refunds on cancellation</li>
+            <li>Self-hosted on a Hostinger VPS with Docker Compose; seat maps come in phase 2</li>
+          </ul>
         </div>
-    </article>
+      </article>
 
-    <!-- ══════════════ CTA ══════════════ -->
-    <section id="cta-band" aria-label="Hire me call to action">
-        <div class="container">
-            <div class="cta-box reveal">
-                <h2>Want a Website <span class="grad-text">Like These?</span></h2>
-                <p>I handle everything — design, code, domain, hosting &amp; deployment. One developer, one price, zero
-                    headache.</p>
-                <div class="cta-row">
-                    <a href="mailto:kaviyarasukanthavel@gmail.com" class="btn btn-primary btn-lg">
-                        <i class="fa fa-envelope" aria-hidden="true"></i> kaviyarasukanthavel@gmail.com
-                    </a>
-                    <a href="contact.html" class="btn btn-outline-cyan btn-lg">
-                        <i class="fa fa-paper-plane" aria-hidden="true"></i> Let's Talk
-                    </a>
-                    <a href="assets/docs/Kaviyarasu_K_Resume.pdf" download class="btn btn-mix btn-lg">
-                        <i class="fa fa-download" aria-hidden="true"></i> My Resume
-                    </a>
-                </div>
-            </div>
+      <article class="case" id="billing" data-cats="dev web">
+        <div class="visual"><div class="art mark-billing" role="img" aria-label="GST billing platform"><i class="ph ph-receipt" aria-hidden="true"></i></div></div>
+        <div>
+          <div class="case-meta"><span class="status dev">In development</span><span><i class="ph ph-buildings" aria-hidden="true"></i> Internal product for The Shine</span></div>
+          <h2>GST billing and business platform</h2>
+          <p class="role">Full-stack developer at The Shine.</p>
+          <div class="tags"><span class="tag">Next.js</span><span class="tag">NestJS</span><span class="tag">PostgreSQL</span><span class="tag">Hostinger VPS</span></div>
+          <ul>
+            <li>The company's own billing software — own code, UI and branding instead of a paid subscription</li>
+            <li>Planned first: requirements, architecture, database schema, API design and roadmap</li>
+            <li>Ready for more than one business from day one, launching with one</li>
+            <li>Next up: WhatsApp notifications, online payments, barcode and thermal printing, mobile apps</li>
+          </ul>
         </div>
-    </section>
+      </article>
 
-    <!-- ══════════════ FOOTER ══════════════ -->
-    <footer id="footer" role="contentinfo">
-        <div class="container">
-            <div class="footer-grid">
+      <article class="case" id="event247" data-cats="dev web">
+        <div class="visual"><div class="art mark-event" role="img" aria-label="Event247"><i class="ph ph-confetti" aria-hidden="true"></i></div></div>
+        <div>
+          <div class="case-meta"><span class="status dev">In development</span><span><i class="ph ph-buildings" aria-hidden="true"></i> The Shine</span></div>
+          <h2>Event247 rentals, sales and printing</h2>
+          <p class="role">Full-stack developer at The Shine.</p>
+          <div class="tags"><span class="tag">PHP</span><span class="tag">MySQL</span><span class="tag">Hostinger</span></div>
+          <ul>
+            <li>Catalogue website for an event-equipment rental, sales and printing business</li>
+            <li>Custom PHP + MySQL chosen over WordPress to fit shared hosting and load in under 2 seconds</li>
+            <li>One product catalogue covers rentals, sales and printing, so the admin stays simple</li>
+            <li>Site map, database and phased build plan done; admin panel is next</li>
+          </ul>
+        </div>
+      </article>
 
-                <!-- Brand -->
-                <div class="footer-brand">
-                    <div class="footer-logo-text"><span>Kaviyarasu</span> Portfolio</div>
-                    <p class="footer-tagline">Full-Stack Python Developer · Building responsive, SEO-friendly websites
-                        and web apps from start to live deployment.</p>
-                </div>
+      <article class="case" id="portfolio-system" data-cats="live web">
+        <div class="visual"><div class="art mark-system" role="img" aria-label="Portfolio contact system"><i class="ph ph-tray" aria-hidden="true"></i></div></div>
+        <div>
+          <div class="case-meta"><span class="status live">Live</span><span><i class="ph ph-github-logo" aria-hidden="true"></i> Open source</span></div>
+          <h2>This portfolio's contact system</h2>
+          <p class="role">Designer and developer.</p>
+          <div class="tags"><span class="tag">HTML / CSS / JS</span><span class="tag">Firebase Firestore</span><span class="tag">Firebase Auth</span><span class="tag">EmailJS</span><span class="tag">Cloudflare Pages</span></div>
+          <ul>
+            <li>Every message is saved to Firestore, emailed to me, and the sender gets an automatic reply</li>
+            <li>Private admin dashboard: live inbox, search, unread and starred filters, Excel export</li>
+            <li>Deploys automatically from GitHub to Cloudflare Pages</li>
+          </ul>
+          <div class="links-row">
+            <a class="btn btn-solid" href="contact.html"><i class="ph ph-paper-plane-tilt" aria-hidden="true"></i> Try the form</a>
+            <a class="btn btn-line" href="https://github.com/kaviyarasu-codes/Portfolio" target="_blank" rel="noopener noreferrer"><i class="ph ph-github-logo" aria-hidden="true"></i> Source code</a>
+          </div>
+        </div>
+      </article>
 
-                <!-- Quick Links -->
-                <div class="footer-col">
-                    <div class="footer-col-title">Quick Links</div>
-                    <nav class="footer-links" aria-label="Footer navigation">
-                        <a href="index.html"><i class="fa fa-chevron-right"></i> Home</a>
-                        <a href="projects.html"><i class="fa fa-chevron-right"></i> Projects</a>
-                        <a href="about.html"><i class="fa fa-chevron-right"></i> About</a>
-                        <a href="contact.html"><i class="fa fa-chevron-right"></i> Contact</a>
-                        <a href="assets/docs/Kaviyarasu_K_Resume.pdf" download><i class="fa fa-chevron-right"></i>
-                            Resume</a>
-                    </nav>
-                </div>
-
-                <!-- Social -->
-                <div class="footer-col">
-                    <div class="footer-col-title">Connect</div>
-                    <div class="footer-social-row">
-                        <a href="https://www.linkedin.com/in/kaviyarasu-kanthavel-71b556374/" target="_blank"
-                            rel="noopener noreferrer" class="footer-soc-btn" aria-label="LinkedIn"><i
-                                class="fab fa-linkedin"></i></a>
-                        <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer"
-                            class="footer-soc-btn" aria-label="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="mailto:kaviyarasukanthavel@gmail.com" class="footer-soc-btn" aria-label="Email"><i
-                                class="fa fa-envelope"></i></a>
+      <section class="group" id="more" aria-labelledby="moreTitle">
+        <div class="group-head"><h2 id="moreTitle">Smaller builds</h2></div>
+        <div class="minis two">
+          <article class="mini" id="vishal-mobiles" data-cats="live web client">
+            <div class="thumb phone-stage">
+              <span class="mini-phone"><img src="assets/img/projects/vishal-phone.webp" alt="Vishal Mobiles page on a phone: shop logo and buttons for Instagram, Facebook, WhatsApp, Google reviews, Maps and YouTube" width="390" height="844" loading="lazy" /></span>
+              <span class="stage-qr"><img src="assets/img/vishal-qr.svg" alt="" width="64" height="64" /><small>Scan me</small></span>
+            </div>
+            <div class="body">
+              <span class="status live">Live</span>
+              <h3>Vishal Mobiles one-QR page</h3>
+              <p>Built only for phones: one QR code on the shop counter opens every link — Instagram, Facebook, WhatsApp, Google reviews, Maps and YouTube.</p>
+              <div class="tags"><span class="tag">Mobile-only</span><span class="tag">HTML / CSS</span><span class="tag">GitHub Pages</span></div>
+              <div class="links-row">
+                <a class="btn btn-line btn-sm" href="https://kaviyarasu-codes.github.io/vishal-mobiles-site/" target="_blank" rel="noopener noreferrer"><i class="ph ph-device-mobile" aria-hidden="true"></i> Open page</a>
+                <a class="btn btn-quiet btn-sm" href="https://github.com/kaviyarasu-codes/vishal-mobiles-site" target="_blank" rel="noopener noreferrer"><i class="ph ph-github-logo" aria-hidden="true"></i> Code</a>
+              </div>
+              <details class="screens" id="vishal-screens">
+                <summary>
+                  <span class="sc-thumbs" aria-hidden="true"><img src="assets/img/projects/vishal-phone.webp" alt="" width="390" height="844" loading="lazy" /></span>
+                  <span class="sc-text"><b>View on a phone</b><small>Mobile screen · scan to try it</small></span>
+                  <i class="ph ph-caret-down sc-caret" aria-hidden="true"></i>
+                </summary>
+                <div class="gallery">
+                  <div class="vm-preview">
+                    <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/projects/vishal-phone.webp" aria-label="Enlarge: Vishal Mobiles on a phone"><img src="assets/img/projects/vishal-phone.webp" alt="Vishal Mobiles page on a phone" width="390" height="844" loading="lazy" /></button><figcaption>As customers see it after scanning</figcaption></figure>
+                    <div class="vm-qr">
+                      <img src="assets/img/vishal-qr.svg" alt="QR code that opens the Vishal Mobiles page" width="160" height="160" />
+                      <b>Scan with your phone</b>
+                      <p>The same idea the shop uses on its counter: one scan, every link.</p>
                     </div>
+                  </div>
                 </div>
-
+              </details>
             </div>
-
-            <!-- Copyright -->
-            <div class="footer-bottom">
-                <p class="footer-copy">© 2025 Kaviyarasu — Built with HTML, CSS &amp; JavaScript</p>
+          </article>
+          <article class="mini" id="aeroedge-hr" data-cats="dev mobile">
+            <div class="thumb mark-hr" aria-hidden="true"><i class="ph ph-user-circle-gear"></i></div>
+            <div class="body">
+              <span class="status dev">Prototype</span>
+              <h3>AeroEdge HR attendance app</h3>
+              <p>Early prototype in Expo Router and Supabase: sign-up and sign-in with sessions, tab navigation and a profile screen; attendance, leave and reports screens are scaffolded.</p>
+              <div class="links-row"><a class="btn btn-quiet btn-sm" href="https://github.com/kaviyarasu-codes/aeroedge_HR_app" target="_blank" rel="noopener noreferrer"><i class="ph ph-github-logo" aria-hidden="true"></i> Code</a></div>
             </div>
+          </article>
         </div>
-    </footer>
+      </section>
 
-    <button id="btt" aria-label="Back to top"><i class="fa fa-arrow-up" aria-hidden="true"></i></button>
-    <!-- WhatsApp Float -->
-    <a href="https://wa.me/919092266940?text=hi%20kavi%20%2C%20I%20came%20%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!%F0%9F%98%8A"
-        target="_blank" rel="noopener noreferrer" class="float-wa" id="floatWa" aria-label="Chat on WhatsApp">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+      <section class="group" id="archive" aria-labelledby="archiveTitle">
+        <div class="group-head">
+          <h2 id="archiveTitle">Earlier client websites</h2>
+          <p>Built and launched during my internship at Aero Edge Media. The client domains have since lapsed, so these show the sites as delivered; the code is on GitHub.</p>
+        </div>
+        <div class="minis">
+          <article class="mini" data-cats="client web">
+            <div class="thumb"><img src="assets/img/projects/aeroedgemedia.webp" alt="Aero Edge Media website as delivered" width="1200" height="683" loading="lazy" /></div>
+            <div class="body">
+              <span class="status archived">Archived</span>
+              <h3>Aero Edge Media</h3>
+              <p>Agency website from a customised template; bought the domain, set up DNS and hosting, and launched it.</p>
+              <div class="links-row"><a class="btn btn-quiet btn-sm" href="https://github.com/kaviyarasu-codes/aero_website_without_Django" target="_blank" rel="noopener noreferrer"><i class="ph ph-github-logo" aria-hidden="true"></i> Code</a></div>
+            </div>
+          </article>
+          <article class="mini" data-cats="client web">
+            <div class="thumb"><img src="assets/img/projects/sundaramoils.webp" alt="Sundaram Oils website as delivered" width="1200" height="681" loading="lazy" /></div>
+            <div class="body">
+              <span class="status archived">Archived</span>
+              <h3>Sundaram Oils</h3>
+              <p>Brand and product site with a mobile-first layout, on-page SEO and a PHP contact form.</p>
+              <div class="links-row"><a class="btn btn-quiet btn-sm" href="https://github.com/kaviyarasu-codes/Oil_website" target="_blank" rel="noopener noreferrer"><i class="ph ph-github-logo" aria-hidden="true"></i> Code</a></div>
+            </div>
+          </article>
+          <article class="mini" data-cats="client web">
+            <div class="thumb"><img src="assets/img/projects/aksportsclub.webp" alt="AK Sports Club website as delivered" width="1200" height="682" loading="lazy" /></div>
+            <div class="body">
+              <span class="status archived">Archived</span>
+              <h3>AK Sports Club</h3>
+              <p>Website for a 360° turf club in Coimbatore, with hosting, DNS and cross-device testing.</p>
+              <div class="links-row"><a class="btn btn-quiet btn-sm" href="https://github.com/kaviyarasu-codes/aksportsclub" target="_blank" rel="noopener noreferrer"><i class="ph ph-github-logo" aria-hidden="true"></i> Code</a></div>
+            </div>
+          </article>
+        </div>
+      </section>
 
-    <script src="assets/js/main.js"></script>
+      <p class="filter-empty" id="filterEmpty">Nothing in this category yet.</p>
+    </div>
+
+    <dialog class="lightbox" id="lightbox" aria-label="Screenshot preview">
+      <button type="button" class="icon-btn lb-close" aria-label="Close"><i class="ph ph-x" aria-hidden="true"></i></button>
+      <img alt="" />
+      <p class="lb-cap"></p>
+    </dialog>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-hero">
+        <div class="footer-signup">
+          <span class="footer-status"><span class="status live">Available for new projects</span></span>
+          <h2>Have a project in mind?</h2>
+          <p>Leave your email and I'll get back to you within 24 hours.</p>
+          <form class="signup" action="contact.html" method="get">
+            <label class="sr-only" for="footerEmail">Your email</label>
+            <input id="footerEmail" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+            <button class="btn btn-solid" type="submit">Continue <i class="ph ph-arrow-right" aria-hidden="true"></i></button>
+          </form>
+          <div class="footer-qr">
+            <img src="assets/img/whatsapp-qr.svg" alt="QR code that opens a WhatsApp chat with Kaviyarasu" width="88" height="88" />
+            <div>
+              <b>Scan to chat on WhatsApp</b>
+              <span>Or tap: <a href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer">+91 90922 66940</a></span>
+            </div>
+          </div>
+        </div>
+          <div class="footer-art" id="footerArt" aria-hidden="true">
+            <div class="logo-anim" id="bf">
+              <span class="la-halo"></span>
+              <img class="la-left" src="assets/img/logo-neon-left.webp" alt="" width="281" height="472" />
+              <div class="la-right">
+                <img src="assets/img/logo-neon-right.webp" alt="" width="349" height="472" />
+                <span class="la-sweep"></span>
+                <span class="la-spot"></span>
+              </div>
+            </div>
+          </div>
+      </div>
+
+      <div class="footer-links">
+        <nav class="footer-col" aria-label="Pages">
+          <h3>Pages</h3>
+          <a href="index.html">Home</a>
+          <a href="projects.html">Projects</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="assets/docs/Kaviyarasu_K_Resume.pdf" download>Resume</a>
+        </nav>
+        <nav class="footer-col" aria-label="Projects">
+          <h3>Projects</h3>
+          <a href="projects.html#agnisiragu">Agnisiragu</a>
+          <a href="projects.html#ticketsraja">TicketsRaja</a>
+          <a href="projects.html#billing">GST billing platform</a>
+          <a href="projects.html#event247">Event247</a>
+          <a href="projects.html#vishal-mobiles">Vishal Mobiles</a>
+        </nav>
+        <nav class="footer-col" aria-label="Connect">
+          <h3>Connect</h3>
+          <a href="mailto:kaviyarasukanthavel@gmail.com">Email</a>
+          <a href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://play.google.com/store/apps/details?id=com.agnisiragu.reader" target="_blank" rel="noopener noreferrer">Google Play</a>
+        </nav>
+        <div class="footer-col">
+          <h3>Based in</h3>
+          <span class="footer-val"><i class="ph ph-map-pin" aria-hidden="true"></i> Coimbatore, India</span>
+          <span class="footer-val"><i class="ph ph-clock" aria-hidden="true"></i> <span data-localtime>IST</span></span>
+          <span class="footer-val"><i class="ph ph-lightning" aria-hidden="true"></i> Replies within 24 hours</span>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© <span data-year>2026</span> Kaviyarasu K. All rights reserved.</p>
+        <div class="footer-social">
+          <a class="icon-btn" href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="ph ph-linkedin-logo" aria-hidden="true"></i></a>
+          <a class="icon-btn" href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i></a>
+          <a class="icon-btn" href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i></a>
+          <a class="icon-btn" href="mailto:kaviyarasukanthavel@gmail.com" aria-label="Email"><i class="ph ph-envelope-simple" aria-hidden="true"></i></a>
+          <a class="icon-btn to-top" href="#main" aria-label="Back to top"><i class="ph ph-arrow-up" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer" class="float-wa" id="floatWa" aria-label="Chat on WhatsApp"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i><span>Chat</span></a>
+
+  <script src="assets/js/main.js"></script>
 </body>
 
 </html>

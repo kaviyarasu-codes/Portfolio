@@ -1,0 +1,16 @@
+# Cloudflare Pages response headers
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/admin.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/thank-you.html
+  X-Robots-Tag: noindex
+
+/assets/img/*
+  Cache-Control: public, max-age=604800
