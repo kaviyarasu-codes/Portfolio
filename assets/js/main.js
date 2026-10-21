@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initGlow();
   initProgress();
   initButterfly();
+  initGallery();
 });
 
 /* ── THEME TOGGLE ─────────────────────────────────────── */
@@ -402,4 +403,48 @@ function initButterfly() {
   };
   footer.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; art.style.setProperty('--hover', 1); if (!raf) raf = requestAnimationFrame(frame); });
   footer.addEventListener('pointerleave', () => { art.style.setProperty('--hover', 0); logo.style.setProperty('--rx', '0deg'); logo.style.setProperty('--ry', '0deg'); });
+}
+
+/* ── PROJECT SCREENS GALLERY: tabs + lightbox ─────────── */
+function initGallery() {
+  document.querySelectorAll('.gallery').forEach(g => {
+    const tabs = [...g.querySelectorAll('[role="tab"]')];
+    const select = (tab, focus) => {
+      tabs.forEach(t => {
+        const on = t === tab;
+        t.classList.toggle('active', on);
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        const panel = document.getElementById(t.getAttribute('aria-controls'));
+        if (panel) panel.hidden = !on;
+      });
+      if (focus) tab.focus();
+    };
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          e.preventDefault();
+          select(tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length], true);
+        }
+      });
+    });
+  });
+
+  const box = document.getElementById('lightbox');
+  if (!box || typeof box.showModal !== 'function') return;
+  const img = box.querySelector('img');
+  const cap = box.querySelector('.lb-cap');
+  let opener = null;
+  document.querySelectorAll('.gal-open').forEach(btn => btn.addEventListener('click', () => {
+    opener = btn;
+    const fig = btn.closest('figure');
+    img.src = btn.dataset.full;
+    img.alt = btn.querySelector('img')?.alt || '';
+    cap.textContent = fig?.querySelector('figcaption')?.textContent || '';
+    box.showModal();
+  }));
+  box.querySelector('.lb-close').addEventListener('click', () => box.close());
+  box.addEventListener('click', (e) => { if (e.target === box) box.close(); });
+  box.addEventListener('close', () => { img.src = ''; opener?.focus(); });
 }

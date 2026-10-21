@@ -96,12 +96,37 @@
             <li>Citizen-journalism news: anyone can report local news, editors verify it, readers get it on web and mobile</li>
             <li>Reader app live on Google Play and a reporter app for uploading stories, with push notifications and AdMob</li>
             <li>NestJS + Prisma API in a TypeScript monorepo: phone OTP login (MSG91), JWT sessions, news, reporter and moderation modules</li>
-            <li>React admin panel for the editorial team and a Next.js website on Vercel</li>
+            <li>React admin panel for the editorial team: dashboard, articles, media library, notifications, local ads, reports, audit logs, team roles and support tickets</li>
+            <li>Remote app config: home layout, widgets, menus and ad placement change live from the admin panel — no Play Store update needed</li>
+            <li>Next.js website on Vercel</li>
             <li>Handled the full Play Console release: closed testing, Data safety, content rating and production</li>
           </ul>
           <div class="links-row">
             <a class="btn btn-solid" href="https://play.google.com/store/apps/details?id=com.agnisiragu.reader" target="_blank" rel="noopener noreferrer"><i class="ph ph-google-play-logo" aria-hidden="true"></i> Get the app</a>
             <a class="btn btn-line" href="https://agnisiragu.com" target="_blank" rel="noopener noreferrer"><i class="ph ph-globe" aria-hidden="true"></i> agnisiragu.com</a>
+            <a class="btn btn-quiet" href="#agnisiragu-screens"><i class="ph ph-images" aria-hidden="true"></i> See the screens</a>
+          </div>
+        </div>
+
+        <div class="gallery" id="agnisiragu-screens">
+          <div class="gal-tabs" role="tablist" aria-label="Agnisiragu screens">
+            <button type="button" role="tab" aria-selected="true" aria-controls="gal-app" id="tab-app" class="gal-tab active"><i class="ph ph-device-mobile" aria-hidden="true"></i> Reader app</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="gal-admin" id="tab-admin" class="gal-tab" tabindex="-1"><i class="ph ph-layout" aria-hidden="true"></i> Admin panel</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="gal-web" id="tab-web" class="gal-tab" tabindex="-1"><i class="ph ph-globe" aria-hidden="true"></i> Website</button>
+          </div>
+          <div class="gal-panel phones" role="tabpanel" id="gal-app" aria-labelledby="tab-app">
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/agnisiragu/app-article.webp" aria-label="Enlarge: Article view with likes, comments and share"><img src="assets/img/agnisiragu/app-article.webp" alt="Agnisiragu app article screen in Tamil" width="720" height="1516" loading="lazy" /></button><figcaption>Article view with likes, comments and share</figcaption></figure>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/agnisiragu/app-search.webp" aria-label="Enlarge: Search with word, reporter and place filters"><img src="assets/img/agnisiragu/app-search.webp" alt="Agnisiragu app search results" width="720" height="1516" loading="lazy" /></button><figcaption>Search with word, reporter and place filters</figcaption></figure>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/agnisiragu/app-menu.webp" aria-label="Enlarge: Menu with Tamil/English, district and dark mode"><img src="assets/img/agnisiragu/app-menu.webp" alt="Agnisiragu app side menu" width="720" height="1516" loading="lazy" /></button><figcaption>Menu with Tamil/English, district and dark mode</figcaption></figure>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/agnisiragu/app-splash.webp" aria-label="Enlarge: Launch screen"><img src="assets/img/agnisiragu/app-splash.webp" alt="Agnisiragu app splash screen" width="720" height="1516" loading="lazy" /></button><figcaption>Launch screen</figcaption></figure>
+          </div>
+          <div class="gal-panel browsers" role="tabpanel" id="gal-admin" aria-labelledby="tab-admin" hidden>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/agnisiragu/admin-dashboard.webp" aria-label="Enlarge: Dashboard: articles, users, breaking news and quick actions"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/agnisiragu/admin-dashboard.webp" alt="Agnisiragu admin dashboard" width="1365" height="681" loading="lazy" /></button><figcaption>Dashboard: articles, users, breaking news and quick actions</figcaption></figure>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/agnisiragu/admin-app-config.webp" aria-label="Enlarge: App Config: change the app's layout, widgets, menus and ads live"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/agnisiragu/admin-app-config.webp" alt="Agnisiragu admin app configuration screen" width="1365" height="682" loading="lazy" /></button><figcaption>App Config: change the app's layout, widgets, menus and ads live</figcaption></figure>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/agnisiragu/admin-profile.webp" aria-label="Enlarge: Admin profile with activity stats and recent articles"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/agnisiragu/admin-profile.webp" alt="Agnisiragu admin profile page" width="1358" height="678" loading="lazy" /></button><figcaption>Admin profile with activity stats and recent articles</figcaption></figure>
+          </div>
+          <div class="gal-panel browsers" role="tabpanel" id="gal-web" aria-labelledby="tab-web" hidden>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/projects/agnisiragu.webp" aria-label="Enlarge: agnisiragu.com — the public news website"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/projects/agnisiragu.webp" alt="Agnisiragu website home page" width="1200" height="750" loading="lazy" /></button><figcaption>agnisiragu.com — the public news website</figcaption></figure>
           </div>
         </div>
       </article>
@@ -238,6 +263,12 @@
 
       <p class="filter-empty" id="filterEmpty">Nothing in this category yet.</p>
     </div>
+
+    <dialog class="lightbox" id="lightbox" aria-label="Screenshot preview">
+      <button type="button" class="icon-btn lb-close" aria-label="Close"><i class="ph ph-x" aria-hidden="true"></i></button>
+      <img alt="" />
+      <p class="lb-cap"></p>
+    </dialog>
 
   </main>
 
