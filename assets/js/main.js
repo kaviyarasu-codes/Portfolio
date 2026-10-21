@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCopy();
   initGlow();
   initProgress();
+  initButterfly();
 });
 
 /* ── THEME TOGGLE ─────────────────────────────────────── */
@@ -378,4 +379,34 @@ function initProgress() {
   window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
   window.addEventListener('resize', update);
   update();
+}
+
+/* ── FOOTER BUTTERFLY: nodes light up near the pointer, body tilts toward it ── */
+function initButterfly() {
+  const art = document.getElementById('footerArt');
+  const footer = document.querySelector('.footer');
+  if (!art || !footer || REDUCED_MOTION) return;
+  const bf = document.getElementById('bf');
+  const nodes = [...art.querySelectorAll('.bf-node')];
+  const traces = [...art.querySelectorAll('.bf-trace')];
+  let raf = 0, px = 0, py = 0;
+  const frame = () => {
+    raf = 0;
+    const box = art.getBoundingClientRect();
+    const cx = box.left + box.width / 2, cy = box.top + box.height / 2;
+    const tilt = Math.max(-8, Math.min(8, (px - cx) / box.width * 10));
+    bf.style.setProperty('--tilt', tilt.toFixed(2) + 'deg');
+    nodes.forEach((n, i) => {
+      const r = n.getBoundingClientRect();
+      const d = Math.hypot(px - (r.left + r.width / 2), py - (r.top + r.height / 2));
+      const v = Math.max(0, 1 - d / 220);
+      n.style.setProperty('--i', v.toFixed(3));
+      if (traces[i]) traces[i].style.setProperty('--i', v.toFixed(3));
+    });
+  };
+  footer.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; art.style.setProperty('--hover', 1); if (!raf) raf = requestAnimationFrame(frame); });
+  footer.addEventListener('pointerleave', () => {
+    art.style.setProperty('--hover', 0); bf.style.setProperty('--tilt', '0deg');
+    nodes.forEach(n => n.style.setProperty('--i', 0)); traces.forEach(t => t.style.setProperty('--i', 0));
+  });
 }

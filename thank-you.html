@@ -87,7 +87,7 @@
 
   <footer class="footer">
     <div class="wrap">
-      <div class="footer-top">
+      <div class="footer-hero">
         <div class="footer-signup">
           <h2>Have a project in mind?</h2>
           <p>Leave your email and I'll get back to you within 24 hours.</p>
@@ -104,7 +104,60 @@
             </div>
           </div>
         </div>
+          <div class="footer-art" id="footerArt" aria-hidden="true">
+            <svg viewBox="40 40 340 270">
+              <defs>
+                <linearGradient id="bfWing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3EE" /><stop offset="1" stop-color="#2F6BFF" /></linearGradient>
+                <linearGradient id="bfLine" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2F6BFF" /><stop offset="1" stop-color="#22D3EE" /></linearGradient>
+                <radialGradient id="bfHalo"><stop offset="0" stop-color="#2F6BFF" stop-opacity=".45" /><stop offset="1" stop-color="#2F6BFF" stop-opacity="0" /></radialGradient>
+              </defs>
+              <circle cx="200" cy="170" r="150" fill="url(#bfHalo)" class="bf-halo" />
+              <g class="bf" id="bf">
+                <g class="bf-wing">
+                  <path d="M194 150 C160 72 92 44 56 66 C30 84 52 140 194 164 Z" fill="url(#bfWing)" />
+                  <path d="M194 172 C146 172 86 196 94 246 C102 292 156 270 194 192 Z" fill="url(#bfWing)" opacity=".85" />
+                  <path d="M188 152 C150 100 100 76 72 84" class="bf-vein" />
+                  <path d="M188 178 C150 196 118 220 116 246" class="bf-vein" />
+                </g>
+                <g class="bf-circuit">
+                <path class="bf-trace" pathLength="100" d="M207 140 L238 112 L296 112 L324 84" />
+                <path class="bf-pulse" pathLength="100" d="M207 140 L238 112 L296 112 L324 84" style="--d:0.00s" />
+                <path class="bf-trace" pathLength="100" d="M207 150 L262 150 L288 126 L352 126" />
+                <path class="bf-pulse" pathLength="100" d="M207 150 L262 150 L288 126 L352 126" style="--d:0.45s" />
+                <path class="bf-trace" pathLength="100" d="M207 161 L318 161" />
+                <path class="bf-pulse" pathLength="100" d="M207 161 L318 161" style="--d:0.90s" />
+                <path class="bf-trace" pathLength="100" d="M262 161 L284 183 L356 183" />
+                <path class="bf-pulse" pathLength="100" d="M262 161 L284 183 L356 183" style="--d:1.35s" />
+                <path class="bf-trace" pathLength="100" d="M207 173 L246 204 L328 204" />
+                <path class="bf-pulse" pathLength="100" d="M207 173 L246 204 L328 204" style="--d:1.80s" />
+                <path class="bf-trace" pathLength="100" d="M207 183 L232 230 L288 230 L310 256" />
+                <path class="bf-pulse" pathLength="100" d="M207 183 L232 230 L288 230 L310 256" style="--d:2.25s" />
+                <path class="bf-trace" pathLength="100" d="M207 191 L214 262 L248 288" />
+                <path class="bf-pulse" pathLength="100" d="M207 191 L214 262 L248 288" style="--d:2.70s" />
+                <circle class="bf-hollow" cx="296" cy="112" r="4" />
+                <circle class="bf-hollow" cx="288" cy="126" r="4" />
+                <circle class="bf-hollow" cx="284" cy="183" r="4" />
+                <circle class="bf-hollow" cx="288" cy="230" r="4" />
+                <circle class="bf-hollow" cx="214" cy="262" r="4" />
+                <circle class="bf-node" cx="324" cy="84" r="6" />
+                <circle class="bf-node" cx="352" cy="126" r="6" />
+                <circle class="bf-node" cx="318" cy="161" r="6" />
+                <circle class="bf-node" cx="356" cy="183" r="6" />
+                <circle class="bf-node" cx="328" cy="204" r="6" />
+                <circle class="bf-node" cx="310" cy="256" r="6" />
+                <circle class="bf-node" cx="248" cy="288" r="6" />
+                </g>
+                <path d="M196 112 C190 92 182 82 172 76" class="bf-antenna" />
+                <path d="M204 112 C210 92 218 82 228 76" class="bf-antenna" />
+                <circle cx="172" cy="76" r="3.5" fill="#22D3EE" /><circle cx="228" cy="76" r="3.5" fill="#22D3EE" />
+                <ellipse cx="200" cy="168" rx="7.5" ry="56" fill="url(#bfWing)" />
+                <circle cx="200" cy="112" r="9" fill="#22D3EE" />
+              </g>
+            </svg>
+          </div>
+      </div>
 
+      <div class="footer-links">
         <nav class="footer-col" aria-label="Pages">
           <h3>Pages</h3>
           <a href="index.html">Home</a>
@@ -129,28 +182,19 @@
           <a href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer">GitHub</a>
           <a href="https://play.google.com/store/apps/details?id=com.agnisiragu.reader" target="_blank" rel="noopener noreferrer">Google Play</a>
         </nav>
-      </div>
-
-      <div class="footer-mid">
-        <div>
-          <span class="footer-label">Based in</span>
-          <span class="footer-val"><i class="ph ph-map-pin" aria-hidden="true"></i> Coimbatore, India · <span data-localtime>IST</span></span>
-        </div>
-        <div>
-          <span class="footer-label">Follow</span>
+        <div class="footer-col">
+          <h3>Based in</h3>
+          <span class="footer-val"><i class="ph ph-map-pin" aria-hidden="true"></i> Coimbatore, India</span>
+          <span class="footer-val"><i class="ph ph-clock" aria-hidden="true"></i> <span data-localtime>IST</span></span>
           <div class="footer-social">
             <a class="icon-btn" href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="ph ph-linkedin-logo" aria-hidden="true"></i></a>
             <a class="icon-btn" href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i></a>
             <a class="icon-btn" href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i></a>
-            <a class="icon-btn" href="mailto:kaviyarasukanthavel@gmail.com" aria-label="Email"><i class="ph ph-envelope-simple" aria-hidden="true"></i></a>
           </div>
         </div>
       </div>
 
-      <div class="footer-wordmark" aria-hidden="true">
-        <img src="assets/img/logo-mark.png" alt="" width="174" height="128" />
-        <span>Kaviyarasu</span>
-      </div>
+      <div class="footer-wordmark" aria-hidden="true"><span>Kaviyarasu</span></div>
 
       <div class="footer-bottom">
         <p>© <span data-year>2026</span> Kaviyarasu K. All rights reserved.</p>
