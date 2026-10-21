@@ -17,7 +17,7 @@ const store = {
 };
 
 /* 0. THEME – apply immediately to avoid a flash of the wrong theme */
-document.documentElement.setAttribute('data-theme', store.get('kk-theme') || 'dark');
+document.documentElement.setAttribute('data-theme', store.get('kk-theme') || 'light');
 
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTicker();
   initProjectFilter();
   initFooterYear();
+  initLocalTime();
 });
 
 /* ── THEME TOGGLE ─────────────────────────────────────── */
@@ -40,7 +41,7 @@ function initTheme() {
   const buttons = document.querySelectorAll('.theme-toggle');
   if (!buttons.length) return;
 
-  const current = () => document.documentElement.getAttribute('data-theme') || 'dark';
+  const current = () => document.documentElement.getAttribute('data-theme') || 'light';
 
   const sync = (theme) => {
     buttons.forEach(btn => {
@@ -53,7 +54,7 @@ function initTheme() {
       btn.setAttribute('title', toLight ? 'Light mode' : 'Dark mode');
     });
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0A1628' : '#F5F8FC');
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#0B0D12' : '#F6F7F9');
   };
 
   sync(current());
@@ -304,4 +305,14 @@ function initProjectFilter() {
 function initFooterYear() {
   const y = String(new Date().getFullYear());
   document.querySelectorAll('[data-year]').forEach(el => { el.textContent = y; });
+}
+
+/* ── LOCAL TIME in Coimbatore (hero tile) ─────────────── */
+function initLocalTime() {
+  const el = document.getElementById('localTime');
+  if (!el) return;
+  const fmt = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata' });
+  const tick = () => { el.textContent = fmt.format(new Date()).toUpperCase() + ' IST'; };
+  tick();
+  setInterval(tick, 30000);
 }
