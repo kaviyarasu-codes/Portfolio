@@ -35,6 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initFooterYear();
   initLocalTime();
   initCopy();
+  initGlow();
+  initProgress();
 });
 
 /* ── THEME TOGGLE ─────────────────────────────────────── */
@@ -347,4 +349,33 @@ function initCopy() {
       btn._t = setTimeout(() => { if (label) label.textContent = original; if (icon) icon.className = 'ph ph-copy'; btn.classList.remove('copied'); }, 2000);
     });
   });
+}
+
+/* ── CARD SPOTLIGHT (mouse-follow glow) ───────────────── */
+function initGlow() {
+  if (REDUCED_MOTION || !window.matchMedia('(hover: hover)').matches) return;
+  const cards = document.querySelectorAll('.tile-small, .work-feature, .work-card, .service, .mini, .case, .stack > div, .tl-item, .step');
+  cards.forEach(card => {
+    card.classList.add('glow');
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+}
+
+/* ── SCROLL PROGRESS BAR ──────────────────────────────── */
+function initProgress() {
+  const bar = document.getElementById('progressBar');
+  if (!bar) return;
+  let raf = 0;
+  const update = () => {
+    raf = 0;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0) + '%';
+  };
+  window.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+  window.addEventListener('resize', update);
+  update();
 }

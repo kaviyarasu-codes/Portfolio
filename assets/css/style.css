@@ -438,3 +438,82 @@ a.tile-small:hover .go { color: var(--ink); transform: translate(2px, -2px) }
 .ftile-val { word-break: normal; overflow-wrap: anywhere; font-size: 1rem }
 @media (max-width: 900px) { .footer-tiles { grid-template-columns: 1fr 1fr } }
 @media (max-width: 560px) { .footer-tiles { grid-template-columns: 1fr } }
+
+/* ══════════════════════════════════════════════════════════
+   v4.1 POLISH — depth, interaction, process, footer card
+══════════════════════════════════════════════════════════ */
+
+/* Scroll progress bar */
+.progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 200; pointer-events: none }
+.progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), #22D3EE); border-radius: 0 3px 3px 0; transition: width .1s linear }
+
+/* Depth behind hero + page headers (matches the footer) */
+.hero, .page-head { position: relative }
+.hero::before, .page-head::before {
+  content: ''; position: absolute; inset: -120px 0 0 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 55% at 20% 10%, var(--accent-soft), transparent 70%),
+    radial-gradient(ellipse 40% 45% at 85% 20%, color-mix(in srgb, #22D3EE 12%, transparent), transparent 70%),
+    radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 22px 22px;
+  -webkit-mask-image: linear-gradient(#000 40%, transparent);
+  mask-image: linear-gradient(#000 40%, transparent);
+}
+main { position: relative; z-index: 0 }
+
+/* Section headings: a touch bigger and tighter */
+.sec h2, .group-head h2 { letter-spacing: -.04em }
+.sec-head h2 { font-size: clamp(2rem, 3.6vw, 2.9rem) }
+
+/* Mouse-follow spotlight + lift on cards */
+.glow { --mx: 50%; --my: 50%; transition: border-color .25s, transform .25s var(--ease), box-shadow .25s }
+.glow::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s;
+  background: radial-gradient(420px circle at var(--mx) var(--my), color-mix(in srgb, var(--accent) 10%, transparent), transparent 45%) }
+.glow:hover::after { opacity: 1 }
+.glow:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); transform: translateY(-2px); box-shadow: var(--shadow) }
+.work-feature, .work-card, .service, .mini, .case, .stack > div, .tl-item, .cert-list, .step, .ftile { position: relative }
+.tile-accent.glow::after { background: radial-gradient(420px circle at var(--mx) var(--my), rgba(255, 255, 255, .22), transparent 45%) }
+.tile-accent.glow:hover { border-color: var(--accent) }
+
+/* Screenshot zoom on hover */
+.work-feature .shot img, .case .visual img, .mini .thumb img, .tile-photo img { transition: transform .6s var(--ease) }
+.work-feature:hover .shot img, .case:hover .visual img, .mini:hover .thumb img, .tile-photo:hover img { transform: scale(1.035) }
+.mini .thumb.contain img { transform: none !important }
+
+/* Buttons: crisper hover */
+.btn-line:hover { border-color: var(--accent); color: var(--accent) }
+.btn-solid { box-shadow: 0 6px 16px -6px color-mix(in srgb, var(--ink) 45%, transparent) }
+.btn-solid:hover { box-shadow: 0 8px 22px -6px color-mix(in srgb, var(--accent) 60%, transparent) }
+
+/* Hero intro tile: faint butterfly watermark */
+.tile-intro::before { content: ''; position: absolute; right: -40px; bottom: -50px; width: 300px; height: 230px; background: url('../img/logo-mark.png') no-repeat center / contain; opacity: .07; pointer-events: none }
+@media (max-width: 600px) { .tile-intro::before { width: 200px; height: 150px; right: -40px; bottom: -40px } }
+
+/* How I work — a real sequence */
+.process { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; counter-reset: none }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 26px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 10px; overflow: hidden }
+.step-n { position: absolute; top: 18px; right: 22px; font-size: 2.6rem; font-weight: 700; letter-spacing: -.05em; color: transparent; -webkit-text-stroke: 1px var(--line-strong); line-height: 1 }
+.step > .ph { width: 44px; height: 44px; border-radius: var(--r-sm); display: grid; place-items: center; font-size: 1.35rem; color: #fff; background: linear-gradient(145deg, var(--accent), #22D3EE); margin-bottom: 6px }
+.step h3 { font-size: 1.15rem }
+.step p { font-size: .95rem }
+@media (max-width: 1000px) { .process { grid-template-columns: 1fr 1fr } }
+@media (max-width: 560px) { .process { grid-template-columns: 1fr } }
+
+/* Education card: gradient in both themes */
+.degree { background: linear-gradient(150deg, #1E3A8A 0%, var(--accent) 55%, #22D3EE 120%); color: #fff; border: 0 }
+.degree h3, .degree p { color: #fff }
+.degree p { opacity: .85 }
+.degree .ph, [data-theme="light"] .degree .ph, :root:not([data-theme="dark"]) .degree .ph { color: #fff; opacity: .9 }
+
+/* Status pill in hero gets a surface so it reads as a badge */
+.tile-intro .status { align-self: flex-start; padding: 6px 12px; border-radius: 999px; background: color-mix(in srgb, var(--live) 10%, transparent) }
+
+/* Footer: content inside a glowing card with gradient border */
+.footer { padding-top: 88px }
+.footer-card { position: relative; padding: 64px 32px 56px; border-radius: 32px; background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: blur(6px);
+  border: 1px solid transparent;
+  background-image: linear-gradient(color-mix(in srgb, var(--surface) 88%, transparent), color-mix(in srgb, var(--surface) 88%, transparent)), linear-gradient(135deg, color-mix(in srgb, var(--accent) 55%, transparent), var(--line) 40%, var(--line) 60%, color-mix(in srgb, #22D3EE 55%, transparent));
+  background-origin: border-box; background-clip: padding-box, border-box;
+  box-shadow: 0 30px 80px -40px color-mix(in srgb, var(--accent) 45%, transparent) }
+.footer-card .footer-pill { margin-bottom: 26px }
+.footer-bottom { margin-top: 40px }
+@media (max-width: 600px) { .footer { padding-top: 56px } .footer-card { padding: 44px 18px 40px; border-radius: 24px } }
