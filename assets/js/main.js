@@ -229,10 +229,17 @@ function initSmoothScroll() {
 function initFloatingWhatsApp() {
   const wa = document.getElementById('floatWa');
   if (!wa) return;
+  // Show after a little scroll; hide again once the footer (which has its own WhatsApp tile) is on screen
+  const footer = document.querySelector('.footer');
+  let footerVisible = false;
   const update = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    wa.classList.toggle('show', max < 200 || window.scrollY / max > 0.15);
+    const scrolled = max < 200 || window.scrollY / max > 0.15;
+    wa.classList.toggle('show', scrolled && !footerVisible);
   };
+  if (footer && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => { footerVisible = e.isIntersecting; update(); }, { threshold: 0.05 }).observe(footer);
+  }
   window.addEventListener('scroll', update, { passive: true });
   window.addEventListener('resize', update);
   update();
