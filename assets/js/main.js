@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initProgress();
   initButterfly();
   initGallery();
+  initScreensHash();
 });
 
 /* ── THEME TOGGLE ─────────────────────────────────────── */
@@ -447,4 +448,14 @@ function initGallery() {
   box.querySelector('.lb-close').addEventListener('click', () => box.close());
   box.addEventListener('click', (e) => { if (e.target === box) box.close(); });
   box.addEventListener('close', () => { img.src = ''; opener?.focus(); });
+}
+
+/* open a collapsed screens panel when linked to directly (projects.html#agnisiragu-screens) */
+function initScreensHash() {
+  const openFromHash = () => {
+    const el = location.hash && document.getElementById(location.hash.slice(1));
+    if (el && el.tagName === 'DETAILS') { el.open = true; el.scrollIntoView({ block: 'start' }); }
+  };
+  openFromHash();
+  window.addEventListener('hashchange', openFromHash);
 }
