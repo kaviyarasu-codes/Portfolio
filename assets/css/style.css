@@ -368,46 +368,27 @@ a.tile-small:hover .go { color: var(--ink); transform: translate(2px, -2px) }
 .message .small { font-size: .9rem; color: var(--muted); margin-top: 20px }
 .message .small button { color: var(--accent); font-weight: 500; text-decoration: underline; text-underline-offset: 3px }
 
-/* ── Footer: light, bento contact tiles + columns + wordmark ── */
-.footer { border-top: 1px solid var(--line); padding-top: 72px; overflow: hidden }
-.footer-tiles { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 14px }
-.ftile { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 28px; min-height: 180px; padding: 26px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); transition: border-color .2s, transform .2s var(--ease) }
-.ftile:hover { border-color: var(--line-strong) }
-.ftile-label { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--muted); font-weight: 500 }
-.ftile-label .ph { font-size: 1.15rem; color: var(--accent) }
-.ftile-val { font-size: 1.05rem; font-weight: 600; color: var(--ink); word-break: break-all; letter-spacing: -.01em }
-.ftile-big { font-size: clamp(1.6rem, 3vw, 2.4rem); font-weight: 600; letter-spacing: -.04em; line-height: 1.08; max-width: 18ch; color: inherit }
-.ftile-go { position: absolute; top: 24px; right: 24px; font-size: 1.2rem; color: var(--muted); transition: transform .2s var(--ease), color .2s }
-.ftile:hover .ftile-go { transform: translate(3px, -3px); color: var(--ink) }
-.ftile-main { background: var(--accent); border-color: var(--accent); color: #fff }
-.ftile-main .ftile-label, .ftile-main .ftile-go { color: rgba(255, 255, 255, .85) }
-.ftile-main:hover { border-color: var(--accent-ink) }
-.ftile-main:hover .ftile-go { color: #fff }
-
-.footer-cols { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 32px; padding: 56px 0 8px }
-.footer-brand p { margin-top: 14px; max-width: 34ch; color: var(--muted); font-size: .95rem }
-.footer-cols nav { display: flex; flex-direction: column; gap: 10px }
-.footer-cols h3 { font-size: .9rem; font-weight: 600; color: var(--ink); letter-spacing: 0; margin-bottom: 4px }
-.footer-cols nav a { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); font-size: .95rem; width: fit-content }
-.footer-cols nav a .ph { color: var(--muted); font-size: 1.05rem }
-.footer-cols nav a:hover, .footer-cols nav a:hover .ph { color: var(--accent) }
-.footer-note { margin-top: 4px }
-
-.footer-word { font-size: clamp(4rem, 17vw, 15.5rem); font-weight: 700; letter-spacing: -.06em; line-height: .78; color: transparent; -webkit-text-stroke: 1px var(--line-strong); text-align: center; margin: 40px 0 -.08em; user-select: none; white-space: nowrap }
-.footer-fine { display: flex; justify-content: space-between; gap: 16px; padding: 22px 0 26px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; flex-wrap: wrap; position: relative; background: var(--bg) }
-.footer-fine a { display: inline-flex; align-items: center; gap: 6px }
-.footer-fine a:hover { color: var(--ink) }
-@media (max-width: 900px) {
-  .footer-tiles { grid-template-columns: 1fr 1fr }
-  .ftile-main { grid-column: 1 / -1 }
-  .footer-cols { grid-template-columns: 1fr 1fr; gap: 28px }
-  .footer-brand { grid-column: 1 / -1 }
-}
-@media (max-width: 560px) {
-  .footer { padding-top: 56px }
-  .footer-tiles { grid-template-columns: 1fr }
-  .ftile { min-height: 140px; border-radius: var(--r) }
-}
+/* ── Footer: centered, soft blue glow, dot texture ───────── */
+.footer { position: relative; overflow: hidden; margin-top: 40px; padding: 96px 0 40px; text-align: center;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 0%, var(--accent-soft), transparent 70%),
+    radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 22px 22px,
+    var(--bg);
+  border-top: 1px solid var(--line) }
+.footer::after { content: ''; position: absolute; left: 50%; top: 0; width: min(520px, 70%); height: 2px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, var(--accent), transparent) }
+.footer-center { display: flex; flex-direction: column; align-items: center }
+.footer-logo { height: 56px; width: auto; filter: drop-shadow(0 6px 18px color-mix(in srgb, var(--accent) 35%, transparent)) }
+.footer h2 { margin-top: 22px; font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 600; letter-spacing: -.045em; max-width: 16ch; line-height: 1.05 }
+.footer-center > p { margin-top: 14px; color: var(--muted); font-size: 1.08rem }
+.footer-actions { justify-content: center; margin-top: 28px }
+.footer-social { display: flex; gap: 10px; margin-top: 44px }
+.footer-social .icon-btn { width: 46px; height: 46px; font-size: 1.2rem }
+.footer-social .icon-btn:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px) }
+.footer-nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 28px; margin-top: 28px }
+.footer-nav a { color: var(--ink-2); font-weight: 500 }
+.footer-nav a:hover { color: var(--accent) }
+.footer-copy { margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--line); width: min(560px, 100%); color: var(--muted); font-size: .88rem }
+@media (max-width: 560px) { .footer { padding: 72px 0 32px } .footer-social { margin-top: 36px } }
 
 /* ── Floating WhatsApp — same pill language as the site's buttons ── */
 .float-wa { position: fixed; right: 20px; bottom: 20px; z-index: 90; display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 18px 0 14px; border-radius: 999px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow); font-weight: 500; font-size: .95rem; transform: translateY(12px); opacity: 0; pointer-events: none; transition: transform .25s var(--ease), opacity .25s, border-color .2s }
