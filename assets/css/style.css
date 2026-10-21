@@ -419,28 +419,38 @@ a.tile-small:hover .go { color: var(--ink); transform: translate(2px, -2px) }
 .footer-links .footer-val { display: flex; align-items: center; gap: 8px; color: var(--f-ink-2); font-size: .95rem; font-weight: 400 }
 .footer-links .footer-social { margin-top: 6px }
 
-/* Interactive circuit butterfly */
-.footer-art { position: relative; justify-self: center; width: min(460px, 100%); touch-action: pan-y }
-.footer-art svg { width: 100%; height: auto; overflow: visible }
-.bf { transform-origin: 200px 168px; transform: rotate(var(--tilt, 0deg)); transition: transform .5s var(--ease) }
-.bf-wing { transform-origin: 200px 168px }
-.bf-wing path:not(.bf-vein) { filter: drop-shadow(0 6px 22px rgba(47, 107, 255, .45)) }
-.bf-vein { fill: none; stroke: rgba(255, 255, 255, .35); stroke-width: 1.4; stroke-linecap: round }
-.bf-antenna { fill: none; stroke: #22D3EE; stroke-width: 2; stroke-linecap: round }
-.bf-circuit { transform-origin: 200px 168px }
-.bf-trace { fill: none; stroke: url(#bfLine); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; opacity: calc(.45 + var(--i, 0) * .55) }
-.bf-pulse { fill: none; stroke: #E0F7FF; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 7 93; stroke-dashoffset: 100; opacity: 0 }
-.bf-node { fill: #22D3EE; transform-box: fill-box; transform-origin: center; transform: scale(calc(1 + var(--i, 0) * .7)); filter: drop-shadow(0 0 calc(4px + var(--i, 0) * 12px) #22D3EE); transition: transform .2s, filter .2s }
-.bf-hollow { fill: var(--f-bg); stroke: #5B8CFF; stroke-width: 2 }
-.bf-halo { opacity: calc(.6 + var(--hover, 0) * .4); transition: opacity .4s }
+/* Animated real logo (neon artwork split at the body) */
+.footer-art { position: relative; justify-self: center; width: min(440px, 100%); perspective: 900px }
+.logo-anim { position: relative; display: flex; aspect-ratio: 630 / 472; transform-style: preserve-3d;
+  transform: rotateX(var(--ry, 0deg)) rotateY(var(--rx, 0deg)); transition: transform .45s var(--ease) }
+.la-left { width: 44.6%; height: 100%; transform-origin: 100% 52%; position: relative; z-index: 1 }
+.la-right { position: relative; width: 55.4%; height: 100%; transform-origin: 0% 52% }
+.la-right img { width: 100%; height: 100% }
+.la-halo { position: absolute; inset: -18%; border-radius: 50%; background: radial-gradient(circle, rgba(47, 107, 255, .45), rgba(34, 211, 238, .12) 40%, transparent 68%); filter: blur(8px); opacity: calc(.65 + var(--hover, 0) * .35); transition: opacity .4s; pointer-events: none }
+/* light effects are clipped to the circuit wing's own pixels */
+.la-sweep, .la-spot { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen;
+  -webkit-mask: url('../img/logo-neon-right.webp') center / 100% 100% no-repeat; mask: url('../img/logo-neon-right.webp') center / 100% 100% no-repeat }
+.la-sweep { background: linear-gradient(100deg, transparent 35%, rgba(255, 255, 255, .95) 50%, transparent 65%) no-repeat; background-size: 250% 100%; background-position: 160% 0; opacity: .9 }
+.la-spot { background: radial-gradient(circle 90px at var(--lx, 50%) var(--ly, 50%), rgba(255, 255, 255, .95), rgba(160, 230, 255, .5) 40%, transparent 70%); opacity: var(--hover, 0); transition: opacity .3s }
 @media (prefers-reduced-motion: no-preference) {
-  .bf-wing { animation: flap 4.5s ease-in-out infinite }
-  .bf-circuit { animation: flap-r 4.5s ease-in-out infinite }
-  .bf-pulse { animation: pulse-run 3.2s linear infinite; animation-delay: var(--d, 0s) }
+  .la-left { animation: wing-flap 4s ease-in-out infinite }
+  .la-right { animation: wing-flap-r 4s ease-in-out infinite }
+  .la-sweep { animation: sweep 3.6s ease-in-out infinite 1s }
+  .logo-anim { animation: hover-y 6s ease-in-out infinite }
 }
-@keyframes flap { 0%, 100% { transform: scaleX(1) } 50% { transform: scaleX(.9) } }
-@keyframes flap-r { 0%, 100% { transform: scaleX(1) } 50% { transform: scaleX(.94) } }
-@keyframes pulse-run { 0% { stroke-dashoffset: 100; opacity: 0 } 8% { opacity: 1 } 70% { opacity: 1 } 85%, 100% { stroke-dashoffset: 0; opacity: 0 } }
+@keyframes wing-flap { 0%, 100% { transform: scaleX(1) skewY(0) } 50% { transform: scaleX(.84) skewY(-2deg) } }
+@keyframes wing-flap-r { 0%, 100% { transform: scaleX(1) } 50% { transform: scaleX(.95) } }
+@keyframes sweep { 0% { background-position: 160% 0 } 55%, 100% { background-position: -60% 0 } }
+@keyframes hover-y { 0%, 100% { translate: 0 0 } 50% { translate: 0 -8px } }
+
+/* small footer refinements */
+.footer-status { display: inline-flex; padding: 6px 12px; border-radius: 999px; background: rgba(52, 211, 153, .1); border: 1px solid rgba(52, 211, 153, .25); margin-bottom: 18px }
+.footer .status.live { color: #34D399 }
+.footer-wordmark img { height: clamp(42px, 8vw, 110px); width: auto }
+.footer-wordmark span { font-size: clamp(3rem, 12vw, 10.5rem) }
+.footer-bottom .footer-social { gap: 8px }
+.footer-bottom .to-top { margin-left: 6px; background: #fff; color: #0D1117; border-color: #fff }
+.footer-bottom .to-top:hover { background: var(--accent); color: #fff; border-color: var(--accent) }
 
 @media (max-width: 900px) {
   .footer-hero { grid-template-columns: 1fr; padding-top: 56px }

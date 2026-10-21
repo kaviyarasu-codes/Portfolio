@@ -381,32 +381,25 @@ function initProgress() {
   update();
 }
 
-/* ── FOOTER BUTTERFLY: nodes light up near the pointer, body tilts toward it ── */
+/* ── FOOTER LOGO: tilts toward the pointer, circuit lights up under it ── */
 function initButterfly() {
   const art = document.getElementById('footerArt');
   const footer = document.querySelector('.footer');
-  if (!art || !footer || REDUCED_MOTION) return;
-  const bf = document.getElementById('bf');
-  const nodes = [...art.querySelectorAll('.bf-node')];
-  const traces = [...art.querySelectorAll('.bf-trace')];
+  if (!art || !footer || REDUCED_MOTION || !window.matchMedia('(hover: hover)').matches) return;
+  const logo = document.getElementById('bf');
+  const right = art.querySelector('.la-right');
   let raf = 0, px = 0, py = 0;
   const frame = () => {
     raf = 0;
-    const box = art.getBoundingClientRect();
-    const cx = box.left + box.width / 2, cy = box.top + box.height / 2;
-    const tilt = Math.max(-8, Math.min(8, (px - cx) / box.width * 10));
-    bf.style.setProperty('--tilt', tilt.toFixed(2) + 'deg');
-    nodes.forEach((n, i) => {
-      const r = n.getBoundingClientRect();
-      const d = Math.hypot(px - (r.left + r.width / 2), py - (r.top + r.height / 2));
-      const v = Math.max(0, 1 - d / 220);
-      n.style.setProperty('--i', v.toFixed(3));
-      if (traces[i]) traces[i].style.setProperty('--i', v.toFixed(3));
-    });
+    const b = art.getBoundingClientRect();
+    const nx = Math.max(-1, Math.min(1, (px - (b.left + b.width / 2)) / (b.width / 2)));
+    const ny = Math.max(-1, Math.min(1, (py - (b.top + b.height / 2)) / (b.height / 2)));
+    logo.style.setProperty('--rx', (nx * 14).toFixed(2) + 'deg');
+    logo.style.setProperty('--ry', (-ny * 10).toFixed(2) + 'deg');
+    const r = right.getBoundingClientRect();
+    right.style.setProperty('--lx', ((px - r.left) / r.width * 100).toFixed(1) + '%');
+    right.style.setProperty('--ly', ((py - r.top) / r.height * 100).toFixed(1) + '%');
   };
   footer.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; art.style.setProperty('--hover', 1); if (!raf) raf = requestAnimationFrame(frame); });
-  footer.addEventListener('pointerleave', () => {
-    art.style.setProperty('--hover', 0); bf.style.setProperty('--tilt', '0deg');
-    nodes.forEach(n => n.style.setProperty('--i', 0)); traces.forEach(t => t.style.setProperty('--i', 0));
-  });
+  footer.addEventListener('pointerleave', () => { art.style.setProperty('--hover', 0); logo.style.setProperty('--rx', '0deg'); logo.style.setProperty('--ry', '0deg'); });
 }
