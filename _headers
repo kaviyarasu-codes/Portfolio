@@ -14,3 +14,13 @@
 
 /assets/img/*
   Cache-Control: public, max-age=604800
+
+/site-audit.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://www.gstatic.com 'sha256-2f5F5wqou84oI3Z/we6xxQmtINEaOaibIMtdJ+MMeng='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.gstatic.com; frame-src https://portfolio-contact-39c14.firebaseapp.com; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; form-action 'self'
+
+/site-audit
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://www.gstatic.com 'sha256-2f5F5wqou84oI3Z/we6xxQmtINEaOaibIMtdJ+MMeng='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.gstatic.com; frame-src https://portfolio-contact-39c14.firebaseapp.com; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; form-action 'self'

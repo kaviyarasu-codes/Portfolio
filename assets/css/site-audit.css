@@ -1,0 +1,188 @@
+/* Site Audit tool (site-audit.html) — builds on the tokens in style.css */
+
+.sa {
+  --crit: #B42318;
+  --high: #C2410C;
+  --med: #A16207;
+  --low: #1D4ED8;
+  --info: #475569;
+  --good: #047857;
+  --ok: #A16207;
+  --bad: #B42318;
+  --muted: #646C79;
+}
+[data-theme="dark"] .sa {
+  --crit: #F87171;
+  --high: #FB923C;
+  --med: #FACC15;
+  --low: #93C5FD;
+  --info: #CBD5E1;
+  --good: #34D399;
+  --ok: #FACC15;
+  --bad: #F87171;
+  --muted: #9AA3B2;
+}
+
+.sa [hidden] { display: none !important }
+.sa-wrap { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 16px }
+.sa-top { position: sticky; top: 0; z-index: 10; background: var(--nav-bg); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line) }
+.sa-top-inner { display: flex; align-items: center; justify-content: space-between; min-height: 60px; gap: 12px }
+.sa-brand { display: flex; align-items: center; gap: 10px; font-weight: 700 }
+.sa-brand img { width: 34px; height: auto }
+.sa-top-actions { display: flex; gap: 8px; align-items: center }
+.sa-icon-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; background: var(--surface) }
+.sa-icon-btn svg, .sa-drop svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
+
+main.sa-wrap { padding-top: 24px; padding-bottom: 64px; display: grid; gap: 16px }
+.sa-boot { text-align: center; padding: 48px 0 }
+.sa-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 22px; box-shadow: var(--shadow-sm); min-width: 0 }
+.sa-card h1 { font-size: clamp(1.4rem, 3vw, 1.9rem); line-height: 1.2; margin-bottom: 14px }
+.sa-card h2 { font-size: 1.2rem; margin-bottom: 12px }
+.sa-card h3 { font-size: 1rem; margin: 18px 0 8px }
+.sa-muted { color: var(--muted) }
+.sa-small { font-size: .85rem }
+.sa-error { color: var(--bad); font-weight: 500; margin: 8px 0 }
+.sa-note { color: var(--muted); font-size: .88rem; margin-top: 10px }
+.sa-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
+
+/* Forms */
+.sa label:not(.sa-check):not(.sa-drop) { display: block; font-weight: 600; font-size: .9rem; margin: 12px 0 6px }
+.sa input[type=text], .sa input[type=email], .sa input[type=password] { width: 100%; min-width: 0; height: 46px; padding: 0 14px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: var(--surface-2); font-size: 1rem }
+.sa input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px }
+.sa-row { display: flex; gap: 10px }
+.sa-row input { flex: 1 }
+.sa-options { display: grid; gap: 8px; margin-top: 14px }
+.sa-check { display: flex; gap: 10px; align-items: flex-start; font-size: .93rem; cursor: pointer }
+.sa-check input { width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent); flex: none }
+.sa-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; font-weight: 600; border: 1px solid transparent; white-space: nowrap }
+.sa-btn-primary { background: var(--ink); color: var(--bg) }
+.sa-btn-primary:disabled { opacity: .5; cursor: progress }
+.sa-btn-ghost { border-color: var(--line-strong); background: var(--surface) }
+.sa-btn-ghost:hover { border-color: var(--ink-2) }
+.sa-login { max-width: 420px; margin: 40px auto; width: 100% }
+.sa-login .sa-btn { width: 100%; margin-top: 16px }
+
+/* Tabs */
+.sa-tabs { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); margin-bottom: 8px; max-width: 100% }
+.sa-tabs [role=tab] { padding: 8px 16px; border-radius: 999px; font-weight: 600; font-size: .92rem; color: var(--ink-2) }
+.sa-tabs [aria-selected=true] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm) }
+.sa-drop { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 28px 16px; margin: 12px 0 4px; border: 2px dashed var(--line-strong); border-radius: var(--r); cursor: pointer; background: var(--surface-2) }
+.sa-drop svg { width: 30px; height: 30px; color: var(--accent) }
+.sa-drop.is-over, .sa-drop:hover { border-color: var(--accent) }
+.sa-drop small { color: var(--muted); overflow-wrap: anywhere }
+#panelApk .sa-btn { margin-top: 16px }
+
+/* Progress */
+.sa-steps { display: grid; gap: 10px }
+.sa-step { display: grid; grid-template-columns: 18px 1fr; column-gap: 10px; align-items: center }
+.sa-step-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-strong) }
+.sa-step-note { grid-column: 2; font-size: .85rem; color: var(--muted); overflow-wrap: anywhere }
+.sa-step-note:empty { display: none }
+.sa-step[data-state=running] .sa-step-dot { border-color: var(--accent); border-top-color: transparent; animation: sa-spin .8s linear infinite }
+.sa-step[data-state=done] .sa-step-dot { background: var(--good); border-color: var(--good) }
+.sa-step[data-state=error] .sa-step-dot { background: var(--bad); border-color: var(--bad) }
+.sa-step[data-state=error] .sa-step-note { color: var(--bad) }
+.sa-step[data-state=skipped] { color: var(--muted) }
+.sa-step[data-state=skipped] .sa-step-dot { border-style: dashed }
+@keyframes sa-spin { to { transform: rotate(360deg) } }
+@media (prefers-reduced-motion: reduce) { .sa-step[data-state=running] .sa-step-dot, .sa-spinner { animation-duration: 3s } }
+
+/* Results */
+#results { display: grid; gap: 16px; min-width: 0 }
+.sa-res-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px }
+.sa-res-head > div:first-child { min-width: 0 }
+.sa-kicker { font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--accent-ink) }
+.sa-target { overflow-wrap: anywhere; font-size: clamp(1.1rem, 2.6vw, 1.5rem) !important; margin: 2px 0 4px !important }
+.sa-res-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-start }
+.sa-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px }
+.sa-tiles-facts { margin-top: 10px }
+.sa-tile { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px 12px; background: var(--surface-2); min-width: 0 }
+.sa-tile-label { display: block; font-size: .78rem; color: var(--muted); text-transform: capitalize }
+.sa-tile b { display: block; font-size: 1.3rem; line-height: 1.3; overflow-wrap: anywhere }
+.sa-tiles-facts .sa-tile b { font-size: 1rem }
+.sa-tile small { color: var(--muted); font-size: .78rem }
+.sa-tile.is-good b, .sa-history-score.is-good { color: var(--good) }
+.sa-tile.is-ok b, .sa-history-score.is-ok { color: var(--ok) }
+.sa-tile.is-bad b, .sa-history-score.is-bad { color: var(--bad) }
+.sev-tile.sev-critical b { color: var(--crit) }
+.sev-tile.sev-high b { color: var(--high) }
+.sev-tile.sev-medium b { color: var(--med) }
+.sev-tile.sev-low b { color: var(--low) }
+
+.sa-two { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start }
+.sa-two.is-single { grid-template-columns: minmax(0, 1fr) }
+.sa-shot { padding: 14px; text-align: center; position: sticky; top: 76px }
+.sa-shot img { width: 100%; height: auto; border-radius: var(--r-sm); border: 1px solid var(--line) }
+.sa-shot figcaption { margin-top: 8px }
+
+.sa-badge { display: inline-block; font-size: .72rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; flex: none }
+.sev-critical .sa-badge, .sa-badge.sev-critical { color: var(--crit) }
+.sa-badge.sev-high { color: var(--high) }
+.sa-badge.sev-medium { color: var(--med) }
+.sa-badge.sev-low { color: var(--low) }
+.sa-badge.sev-info { color: var(--info) }
+.sa-tag { font-size: .72rem; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); text-transform: capitalize }
+
+.sa-ai-summary { font-size: 1.02rem; line-height: 1.65 }
+.sa-ai-loading { display: flex; gap: 10px; align-items: center; color: var(--muted); padding: 12px 0 }
+.sa-spinner { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line-strong); border-top-color: var(--accent); animation: sa-spin .8s linear infinite }
+.sa-priorities { display: grid; gap: 10px; counter-reset: p }
+.sa-priority { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 12px 14px; background: var(--surface-2) }
+.sa-priority-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px }
+.sa-priority-head strong { flex: 1 1 200px; min-width: 0 }
+.sa-effort { font-size: .8rem; color: var(--muted) }
+.sa-priority p { font-size: .94rem; overflow-wrap: anywhere }
+.sa-fix { margin-top: 6px; white-space: pre-wrap }
+.sa-ai-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 24px }
+.sa-bullets { display: grid; gap: 6px; padding-left: 18px; list-style: disc; font-size: .94rem }
+.sa-bullets li { overflow-wrap: anywhere }
+.sa-bullets.is-good li::marker { color: var(--good) }
+.sa-cols { columns: 2 220px; display: block }
+.sa-quote { border-left: 3px solid var(--accent); padding: 8px 14px; background: var(--accent-soft); border-radius: 0 var(--r-xs) var(--r-xs) 0; margin-bottom: 10px; white-space: pre-wrap }
+
+.sa-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px }
+.sa-chip { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line-strong); font-size: .85rem; font-weight: 500; min-height: 34px }
+.sa-chip[aria-pressed=true] { background: var(--ink); color: var(--bg); border-color: var(--ink) }
+.sa-chip:disabled { opacity: .45; cursor: default }
+.sa-findings { display: grid; gap: 8px }
+.sa-finding, .sa-detail { border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface) }
+.sa-finding summary, .sa-detail summary { cursor: pointer; padding: 11px 14px; display: flex; gap: 10px; align-items: center; font-weight: 500; overflow-wrap: anywhere }
+.sa-detail summary { font-weight: 600 }
+.sa-finding[open], .sa-detail[open] { background: var(--surface-2) }
+.sa-finding dl { padding: 0 14px 12px; display: grid; gap: 4px }
+.sa-finding dt { font-size: .78rem; font-weight: 700; color: var(--muted); margin-top: 6px }
+.sa-finding dd { overflow-wrap: anywhere; font-size: .93rem }
+.sa-pre { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .84rem !important }
+.sa-detail { margin-bottom: 8px }
+.sa-detail > :not(summary) { margin: 0 14px 14px }
+.sa-table { width: calc(100% - 28px); border-collapse: collapse; font-size: .88rem; table-layout: fixed }
+.sa-table th { width: 32%; text-align: left; font-weight: 600; color: var(--ink-2); padding: 7px 10px 7px 0; vertical-align: top; overflow-wrap: anywhere }
+.sa-table td { padding: 7px 0; border-top: 1px solid var(--line); overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem }
+.sa-table tr:first-child td, .sa-table tr:first-child th { border-top: 0 }
+.sa-table th { border-top: 1px solid var(--line) }
+
+.sa-history { display: grid; gap: 6px }
+.sa-history-item { width: 100%; display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 12px; text-align: left; padding: 10px 12px; border-radius: var(--r-sm); border: 1px solid var(--line) }
+.sa-history-item:hover { border-color: var(--line-strong); background: var(--surface-2) }
+.sa-history-score { grid-row: span 2; font-weight: 700; font-size: 1.15rem; align-self: center }
+.sa-history-target { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500 }
+
+@media (max-width: 760px) {
+  .sa-two { grid-template-columns: minmax(0, 1fr) }
+  .sa-shot { position: static; max-width: 340px; justify-self: center }
+  .sa-row { flex-direction: column }
+  .sa-row .sa-btn { width: 100% }
+  .sa-card { padding: 16px }
+  .sa-tabs { display: flex }
+  .sa-tabs [role=tab] { flex: 1; padding: 8px 10px }
+  .sa-table th { width: 38% }
+}
+
+@media print {
+  .sa-top, .sa-run, #progress, .no-print, .skip-link, #historyTitle, #history, #historyTitle + ul { display: none !important }
+  section:has(#history) { display: none !important }
+  .sa-card { box-shadow: none; break-inside: avoid-page }
+  .sa-finding, .sa-detail { break-inside: avoid }
+  .sa-shot { position: static }
+  body { background: #fff }
+}

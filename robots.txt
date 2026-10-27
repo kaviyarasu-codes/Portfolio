@@ -2,5 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /thank-you.html
+Disallow: /site-audit.html
+Disallow: /api/
 
 Sitemap: https://kaviyarasu-portfolio.pages.dev/sitemap.xml

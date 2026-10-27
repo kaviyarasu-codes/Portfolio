@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Site Audit | Kaviyarasu K</title>
+  <meta name="description" content="Private website, web app and Android APK audit tool." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#F6F7F9" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>!function () { var t = 'light'; try { t = localStorage.getItem('kk-theme') || 'light' } catch (e) { } document.documentElement.setAttribute('data-theme', t) }();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/site-audit.css" />
+</head>
+
+<body class="sa">
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="sa-top">
+    <div class="sa-wrap sa-top-inner">
+      <a href="/" class="sa-brand"><img src="assets/img/logo-mark.png" alt="" width="174" height="128" /><span>Site Audit</span></a>
+      <div class="sa-top-actions">
+        <button type="button" class="sa-icon-btn" id="themeBtn" aria-label="Switch to dark mode" title="Theme">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></svg>
+        </button>
+        <button type="button" class="sa-btn sa-btn-ghost" id="signOutBtn" hidden>Sign out</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="sa-wrap">
+    <!-- Sign in -->
+    <section id="loginView" class="sa-card sa-login" hidden aria-labelledby="loginTitle">
+      <h1 id="loginTitle">Owner sign-in</h1>
+      <p class="sa-muted">This tool is private. Sign in with your admin account.</p>
+      <form id="loginForm" novalidate>
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" required />
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required />
+        <p class="sa-error" id="loginError" role="alert" hidden></p>
+        <button class="sa-btn sa-btn-primary" type="submit" id="loginBtn">Sign in</button>
+      </form>
+    </section>
+
+    <p id="bootMsg" class="sa-muted sa-boot">Loading…</p>
+
+    <!-- Tool -->
+    <div id="toolView" hidden>
+      <section class="sa-card sa-run" aria-labelledby="runTitle">
+        <h1 id="runTitle">Audit a website, web app or Android app</h1>
+        <div class="sa-tabs" role="tablist" aria-label="What to audit">
+          <button type="button" role="tab" id="tabWeb" aria-selected="true" aria-controls="panelWeb">Website / web app</button>
+          <button type="button" role="tab" id="tabApk" aria-selected="false" aria-controls="panelApk" tabindex="-1">Android APK</button>
+        </div>
+
+        <form id="panelWeb" class="sa-panel" role="tabpanel" aria-labelledby="tabWeb">
+          <label for="urlInput">Address</label>
+          <div class="sa-row">
+            <input id="urlInput" type="text" inputmode="url" autocomplete="url" placeholder="example.com or https://app.example.com/login" required />
+            <button class="sa-btn sa-btn-primary" type="submit" id="runWebBtn">Run audit</button>
+          </div>
+          <div class="sa-options">
+            <label class="sa-check"><input type="checkbox" id="optLighthouse" checked /> Google Lighthouse (speed, accessibility, SEO + phone screenshot)</label>
+            <label class="sa-check"><input type="checkbox" id="optAiWeb" checked /> AI review by Claude</label>
+            <label class="sa-check"><input type="checkbox" id="permWeb" required /> I own this site or have the owner's permission to review it</label>
+          </div>
+          <p class="sa-note">Checks only what a normal visitor's browser sees: the page, its links and files, security headers, cookies, robots/sitemap and public DNS. Nothing is submitted or attacked.</p>
+        </form>
+
+        <form id="panelApk" class="sa-panel" role="tabpanel" aria-labelledby="tabApk" hidden>
+          <label for="apkInput" class="sa-drop" id="dropZone">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg>
+            <span><b>Choose an APK</b> or drop it here</span>
+            <small id="apkName">.apk, .apks or .xapk · analysed in your browser, the file is never uploaded</small>
+          </label>
+          <input id="apkInput" type="file" accept=".apk,.apks,.xapk,application/vnd.android.package-archive" class="sa-visually-hidden" />
+          <div class="sa-options">
+            <label class="sa-check"><input type="checkbox" id="optAiApk" checked /> AI review by Claude (sends the findings only, not the APK)</label>
+            <label class="sa-check"><input type="checkbox" id="permApk" required /> This is my app or I have the owner's permission to review it</label>
+          </div>
+          <button class="sa-btn sa-btn-primary" type="submit" id="runApkBtn">Analyse APK</button>
+        </form>
+      </section>
+
+      <section id="progress" class="sa-card" hidden aria-live="polite" aria-label="Progress">
+        <ol id="steps" class="sa-steps"></ol>
+      </section>
+
+      <div id="results" hidden></div>
+
+      <section class="sa-card" aria-labelledby="historyTitle">
+        <h2 id="historyTitle">Recent audits <small class="sa-muted">(stored in this browser only)</small></h2>
+        <ul id="history" class="sa-history"></ul>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="assets/js/site-audit.js"></script>
+</body>
+
+</html>
