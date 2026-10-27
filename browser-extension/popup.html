@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Site Inspector</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="top">
+    <img id="favicon" class="fav" alt="" width="20" height="20" src="icons/icon32.png" />
+    <div class="site">
+      <strong id="host">Site Inspector</strong>
+      <small id="status">Scanning this page…</small>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button type="button" role="tab" id="tabTech" aria-selected="true" aria-controls="viewTech">Technologies</button>
+    <button type="button" role="tab" id="tabIssues" aria-selected="false" aria-controls="viewIssues" tabindex="-1">Quick issues <span id="issueCount" class="count"></span></button>
+  </nav>
+
+  <main>
+    <section id="viewTech" role="tabpanel" aria-labelledby="tabTech"></section>
+    <section id="viewIssues" role="tabpanel" aria-labelledby="tabIssues" hidden></section>
+  </main>
+
+  <footer class="actions">
+    <button type="button" id="auditBtn" class="primary">Full audit ↗</button>
+    <button type="button" id="copyBtn">Copy list</button>
+  </footer>
+  <p class="note">Checked inside your browser. Nothing is sent anywhere.</p>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

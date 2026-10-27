@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Site Inspector by Kaviyarasu",
+  "short_name": "Site Inspector",
+  "version": "1.0.0",
+  "description": "See what any website is built with (CMS, frameworks, versions, hosting, analytics) plus quick issues. Runs locally; nothing is sent anywhere.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Inspect this site",
+    "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" }
+  },
+  "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
+  "permissions": ["activeTab", "scripting", "contextMenus"],
+  "background": { "service_worker": "background.js", "type": "module" },
+  "content_security_policy": { "extension_pages": "script-src 'self'; object-src 'none'" }
+}

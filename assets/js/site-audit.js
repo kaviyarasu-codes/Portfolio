@@ -831,4 +831,8 @@ function renderHistory() {
     h('span', { class: 'sa-muted sa-small', text: `${x.kind === 'apk' ? 'APK' : 'Web'} · ${new Date(x.date).toLocaleDateString()}${x.grade ? ` · AI ${x.grade}` : ''}` })))));
 }
 
+// Opened from the Site Inspector extension: /site-audit?url=https://example.com
+const presetUrl = new URLSearchParams(location.search).get('url');
+if (presetUrl && /^https?:\/\//i.test(presetUrl)) $('urlInput').value = presetUrl;
+
 initAuth();

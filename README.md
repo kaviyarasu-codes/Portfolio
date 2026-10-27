@@ -62,3 +62,12 @@ npx wrangler pages dev .                      # then open http://127.0.0.1:8788/
 ## Firestore rules
 
 `firestore.rules` holds the security rules for the contact form. Paste them into Firebase console → Firestore Database → Rules → Publish whenever they change.
+
+## Site Inspector browser extension (`browser-extension/`)
+
+A Chrome/Edge extension (Manifest V3), like Wappalyzer: click its icon on any website to see languages, CMS/builders, frameworks and library versions, hosting, analytics, chat, payments and forms, plus quick issues (HTTPS, security headers, outdated libraries, mixed content, viewport, alt text). It also reads the live page's JavaScript (e.g. `jQuery.fn.jquery`, React/Vue markers), so it finds things a server-side check cannot. Everything runs in the browser; nothing is sent anywhere. "Full audit" (and the right-click menu) opens `/site-audit?url=…`.
+
+- Uses the same detection rules as the Site Audit (`functions/_lib/tech.js`, copied in by `build.sh`).
+- Permissions: `activeTab` + `scripting` (access only to the tab you click on), `contextMenus`.
+- Build the download: `bash browser-extension/build.sh` → `assets/downloads/site-inspector.zip` (linked from `/site-audit`).
+- Install: unzip → `chrome://extensions` → Developer mode → Load unpacked. Publishing to the Chrome Web Store needs a one-time US$5 developer account.

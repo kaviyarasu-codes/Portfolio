@@ -182,6 +182,19 @@ function cmpVersion(a, b) {
   return 0;
 }
 
+/** Known-vulnerable and end-of-life versions among detected technologies. */
+export function versionFindings(technologies) {
+  const findings = [];
+  for (const t of technologies) {
+    for (const issue of KNOWN_ISSUES.filter((k) => k.name === t.name)) {
+      if (!(issue.below === '999' || (t.version && cmpVersion(t.version, issue.below) < 0))) continue;
+      const eol = issue.id === 'TECH-EOL';
+      findings.push({ severity: issue.severity, id: issue.id || 'TECH-OUTDATED-LIB', title: `${t.name}${t.version ? ` ${t.version}` : ''} ${eol ? 'is end of life' : 'has known security issues'}`, detail: issue.note, fix: issue.fix });
+    }
+  }
+  return findings;
+}
+
 /**
  * @param {{html:string, headers:Object, cookies:string[], srcs:string[], js:string}} input
  */
@@ -212,14 +225,7 @@ export function detectTechnologies({ html = '', headers = {}, cookies = [], srcs
   for (const t of found) for (const l of t.langs) if (!langs.has(l)) langs.set(l, t.category === C.backend || t.category === C.cms ? 'confirmed' : 'likely');
   const databases = [...new Set(found.map((t) => t.db).filter(Boolean))];
 
-  const findings = [];
-  for (const t of found) {
-    for (const issue of KNOWN_ISSUES.filter((k) => k.name === t.name)) {
-      if (!(issue.below === '999' || (t.version && cmpVersion(t.version, issue.below) < 0))) continue;
-      const eol = issue.id === 'TECH-EOL';
-      findings.push({ severity: issue.severity, id: issue.id || 'TECH-OUTDATED-LIB', title: `${t.name}${t.version ? ` ${t.version}` : ''} ${eol ? 'is end of life' : 'has known security issues'}`, detail: issue.note, fix: issue.fix });
-    }
-  }
+  const findings = versionFindings(found);
   const wp = found.find((t) => t.name === 'WordPress');
   if (wp && wp.version) findings.push({ severity: 'low', id: 'TECH-WP-VERSION', title: `WordPress version ${wp.version} is public`, detail: 'The version number helps attackers pick known exploits.', fix: 'Hide the generator tag (security plugin) and keep WordPress, themes and plugins updated.' });
 
