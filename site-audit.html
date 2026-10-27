@@ -73,7 +73,12 @@
               </label>
             </div>
             <label class="sa-check"><input type="checkbox" id="optPageShots" checked /> Phone screenshot + Lighthouse for every page (slower, about 30 s per 2 pages)</label>
-            <label class="sa-check"><input type="checkbox" id="optAiWeb" checked /> AI review and step-by-step fix plan (free Cloudflare AI)</label>
+            <div class="sa-check-row">
+              <label class="sa-check"><input type="checkbox" id="optAiWeb" checked /> AI review and step-by-step fix plan (free Cloudflare AI)</label>
+              <label class="sa-inline-select" for="optLangWeb">Language
+                <select id="optLangWeb" class="sa-lang" aria-label="Language of the AI review"><option value="en">English</option><option value="ta">தமிழ் (Tamil)</option><option value="tanglish">Tanglish</option><option value="hi">हिन्दी (Hindi)</option></select>
+              </label>
+            </div>
             <label class="sa-check"><input type="checkbox" id="permWeb" required /> I own this site or have the owner's permission to review it</label>
           </div>
           <p class="sa-note">Checks only what a normal visitor's browser sees: every page, its links and files, the public JavaScript, security headers, cookies, robots/sitemap and public DNS. Nothing is submitted, guessed or attacked.</p>
@@ -87,7 +92,12 @@
           </label>
           <input id="apkInput" type="file" accept=".apk,.apks,.xapk,application/vnd.android.package-archive" class="sa-visually-hidden" />
           <div class="sa-options">
-            <label class="sa-check"><input type="checkbox" id="optAiApk" checked /> AI review and fix plan (sends the findings only, not the APK)</label>
+            <div class="sa-check-row">
+              <label class="sa-check"><input type="checkbox" id="optAiApk" checked /> AI review and fix plan (sends the findings only, not the APK)</label>
+              <label class="sa-inline-select" for="optLangApk">Language
+                <select id="optLangApk" class="sa-lang" aria-label="Language of the AI review"><option value="en">English</option><option value="ta">தமிழ் (Tamil)</option><option value="tanglish">Tanglish</option><option value="hi">हिन्दी (Hindi)</option></select>
+              </label>
+            </div>
             <label class="sa-check"><input type="checkbox" id="permApk" required /> This is my app or I have the owner's permission to review it</label>
           </div>
           <button class="sa-btn sa-btn-primary" type="submit" id="runApkBtn">Analyse APK</button>
@@ -99,6 +109,16 @@
       </section>
 
       <div id="results" hidden></div>
+
+      <section class="sa-card" id="ownerChecklist" aria-labelledby="checklistTitle">
+        <h2 id="checklistTitle">Security checklist for website owners</h2>
+        <p class="sa-muted">Simple habits that prevent most website problems. Share it with clients along with their report.</p>
+        <div class="sa-checklist" id="checklistBody"></div>
+        <div class="sa-res-actions">
+          <button type="button" class="sa-btn sa-btn-ghost" id="copyChecklistBtn">Copy checklist</button>
+          <button type="button" class="sa-btn sa-btn-ghost" id="downloadChecklistBtn">Download as text</button>
+        </div>
+      </section>
 
       <section class="sa-card" aria-labelledby="historyTitle">
         <h2 id="historyTitle">Recent audits <small class="sa-muted">(stored in this browser only)</small></h2>

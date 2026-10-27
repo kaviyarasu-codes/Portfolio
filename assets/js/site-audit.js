@@ -124,6 +124,18 @@ async function api(path, body) {
   return data;
 }
 
+/* ── Review language (remembered in this browser) ───────── */
+
+for (const id of ['optLangWeb', 'optLangApk']) {
+  const sel = $(id);
+  const saved = store.get('sa-lang');
+  if (saved && [...sel.options].some((o) => o.value === saved)) sel.value = saved;
+  sel.addEventListener('change', () => {
+    store.set('sa-lang', sel.value);
+    for (const other of ['optLangWeb', 'optLangApk']) $(other).value = sel.value;
+  });
+}
+
 /* ── Tabs ───────────────────────────────────────────────── */
 
 const tabs = [$('tabWeb'), $('tabApk')];
@@ -319,7 +331,9 @@ async function runAi(results, stepIndex) {
   try {
     const { screenshot, ai, ...payload } = results;
     if (payload.pages) payload.pages = payload.pages.map(({ screenshot: _s, ...p }) => p);
-    const out = await api('/api/explain', { results: payload });
+    const language = $(results.kind === 'apk' ? 'optLangApk' : 'optLangWeb').value;
+    const out = await api('/api/explain', { results: payload, language });
+    results.ai_language = language;
     results.ai = out.review;
     results.ai_model = out.model;
     results.ai_provider = out.provider;
@@ -523,6 +537,135 @@ function pagesSection(r) {
   return sec;
 }
 
+/* ── Since the last audit ───────────────────────────────── */
+
+function auditKey(r) {
+  if (r.kind === 'apk') return `apk:${r.app?.package || r.target}`;
+  try { return `web:${new URL(r.final_url || r.target).hostname.replace(/^www\./, '')}`; } catch { return `web:${r.target}`; }
+}
+
+// Counts in titles change between runs ("3 images…" → "1 image…"), so compare without digits.
+const issueKey = (f) => `${f.id}|${f.title.replace(/\d+/g, '#')}`;
+
+function previousAudit(r) {
+  const key = auditKey(r);
+  const prev = readHistory()
+    .filter((x) => x.id !== r.id && (x.key || auditKey({ kind: x.kind, target: x.target })) === key && x.date < r.checked_at)
+    .sort((a, b) => (a.date < b.date ? 1 : -1))[0];
+  if (!prev) return null;
+  try { return JSON.parse(store.get(`sa-r-${prev.id}`) || 'null'); } catch { return null; }
+}
+
+function compareSection(r) {
+  const prev = previousAudit(r);
+  if (!prev || !Array.isArray(prev.findings)) return null;
+  const now = allFindings(r);
+  const before = allFindings(prev);
+  const nowKeys = new Set(now.map(issueKey));
+  const beforeKeys = new Set(before.map(issueKey));
+  const fixed = before.filter((f) => !nowKeys.has(issueKey(f)));
+  const added = now.filter((f) => !beforeKeys.has(issueKey(f)));
+  const still = now.filter((f) => beforeKeys.has(issueKey(f)));
+  const diff = r.score - prev.score;
+  const list = (items, empty) => (items.length
+    ? h('ul', { class: 'sa-bullets' }, items.slice(0, 15).map((f) => h('li', {}, badge(f.severity), ' ', f.title)), items.length > 15 ? h('li', { class: 'sa-muted', text: `…and ${items.length - 15} more` }) : null)
+    : h('p', { class: 'sa-muted sa-small', text: empty }));
+  return h('section', { class: 'sa-card', id: 'compareSection', 'aria-labelledby': 'cmpTitle' },
+    h('h2', { id: 'cmpTitle', text: 'Since the last audit' }),
+    h('p', { class: 'sa-muted', text: `Compared with ${new Date(prev.checked_at).toLocaleString()}.` }),
+    h('div', { class: 'sa-tiles' },
+      tile('Score change', `${diff > 0 ? '+' : ''}${diff}`, { cls: diff > 0 ? 'is-good' : diff < 0 ? 'is-bad' : '', sub: `${prev.score} → ${r.score}` }),
+      tile('Fixed', String(fixed.length), { cls: fixed.length ? 'is-good' : '' }),
+      tile('New', String(added.length), { cls: added.length ? 'is-bad' : '' }),
+      tile('Still open', String(still.length))),
+    h('div', { class: 'sa-ai-grid' },
+      h('div', {}, h('h3', { text: 'Fixed since last time' }), list(fixed, 'Nothing fixed yet.')),
+      h('div', {}, h('h3', { text: 'New problems' }), list(added, 'No new problems.'))));
+}
+
+/* ── Copy a short summary for WhatsApp / email ──────────── */
+
+function summaryText(r) {
+  const merged = allFindings(r).filter((f) => ['critical', 'high', 'medium'].includes(f.severity));
+  const name = r.kind === 'apk' ? `${r.app?.package || r.target}${r.app?.version_name ? ` v${r.app.version_name}` : ''}` : (() => { try { return new URL(r.final_url || r.target).hostname; } catch { return r.target; } })();
+  const lines = [
+    `${r.kind === 'apk' ? 'App' : 'Website'} check: ${name} (${new Date(r.checked_at).toLocaleDateString()})`,
+    `Score: ${r.score}/100${r.ai?.grade && r.ai.grade !== '–' ? ` · Grade ${r.ai.grade}` : ''}`,
+  ];
+  if (merged.length) {
+    lines.push('', 'Top things to fix:');
+    merged.slice(0, 5).forEach((f, i) => lines.push(`${i + 1}. ${f.title}${f.pages?.length > 1 ? ` (${f.pages.length} pages)` : ''}`));
+    if (merged.length > 5) lines.push(`…plus ${merged.length - 5} more in the full report.`);
+  } else lines.push('', 'No important problems found.');
+  if (r.ai?.strengths?.length) lines.push('', `Good: ${r.ai.strengths.slice(0, 2).join('; ')}`);
+  lines.push('', 'I can help fix these. Full report available on request.', '– Kaviyarasu K, https://kaviyarasu-portfolio.pages.dev');
+  return lines.join('\n');
+}
+
+async function copyText(text, what) {
+  try {
+    await navigator.clipboard.writeText(text);
+    notice('Copied', `${what} copied. Paste it into WhatsApp, email or a document.`);
+  } catch {
+    notice('Copy failed', 'Your browser blocked the clipboard. Use Download instead.', { kind: 'error' });
+  }
+}
+
+function downloadText(text, filename) {
+  const a = h('a', { href: URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' })), download: filename });
+  document.body.append(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+/* ── Security checklist for website owners ─────────────── */
+
+const OWNER_CHECKLIST = [
+  ['Accounts and passwords', [
+    'Use a password manager and a different long password for hosting, domain, email and website admin.',
+    'Turn on two-step login (2FA) for the domain registrar, hosting, email, Google/Cloudflare and website admin accounts.',
+    'Remove old admin accounts (ex-staff, agencies, test users) and give each person their own login.',
+  ]],
+  ['Updates', [
+    'Update WordPress/CMS core, themes and plugins every month (or turn on automatic updates).',
+    'Delete plugins and themes you do not use.',
+    'Ask your host to use a supported PHP version (8.2 or newer).',
+  ]],
+  ['Backups', [
+    'Keep automatic daily backups of files and database, stored outside the hosting account.',
+    'Test restoring a backup at least twice a year.',
+  ]],
+  ['Domain and email', [
+    'Turn on domain auto-renew with a card that will not expire, and keep the transfer lock on.',
+    'Add SPF, DKIM and DMARC records so others cannot send email pretending to be you.',
+    'Keep DNS records tidy: delete records for old sites and services you no longer use.',
+  ]],
+  ['Website', [
+    'Always use HTTPS and redirect http:// to https://.',
+    'Protect admin and login pages with login limits, a CAPTCHA and 2FA.',
+    'Never put passwords or secret API keys in website code; keep them on the server.',
+    'Publish a privacy policy and get consent before tracking where the law requires it.',
+  ]],
+  ['People', [
+    'Teach staff to spot fake login pages and urgent "pay now" emails.',
+    'Keep a contact for emergencies: who to call if the site is down or hacked.',
+    'Run a website check every few months and after big changes.',
+  ]],
+];
+
+function checklistText() {
+  return ['Security checklist for website owners', '', ...OWNER_CHECKLIST.flatMap(([group, items]) => [group, ...items.map((t) => `[ ] ${t}`), '']), 'Prepared by Kaviyarasu K – https://kaviyarasu-portfolio.pages.dev'].join('\n');
+}
+
+function renderChecklist() {
+  $('checklistBody').replaceChildren(...OWNER_CHECKLIST.map(([group, items]) => h('div', { class: 'sa-tech-group' },
+    h('span', { class: 'sa-tile-label', text: group }),
+    h('ul', { class: 'sa-bullets' }, items.map((t) => h('li', { text: t }))))));
+}
+renderChecklist();
+$('copyChecklistBtn').addEventListener('click', () => copyText(checklistText(), 'Checklist'));
+$('downloadChecklistBtn').addEventListener('click', () => downloadText(checklistText(), 'website-security-checklist.txt'));
+
 /* ── Results rendering ──────────────────────────────────── */
 
 function badge(sev) { return h('span', { class: `sa-badge sev-${sev}`, text: SEV_LABEL[sev] || sev }); }
@@ -562,6 +705,7 @@ function renderResults(r, { keepScroll = false } = {}) {
       h('h2', { class: 'sa-target', text: r.final_url || r.target }),
       h('p', { class: 'sa-muted sa-small', text: `Checked ${new Date(r.checked_at).toLocaleString()}${r.final_url && r.final_url !== r.target ? ` · started at ${r.target}` : ''}` })),
     h('div', { class: 'sa-res-actions no-print' },
+      h('button', { class: 'sa-btn sa-btn-primary', type: 'button', onclick: () => copyText(summaryText(r), 'Summary'), text: 'Copy summary for WhatsApp / email' }),
       h('button', { class: 'sa-btn sa-btn-ghost', type: 'button', onclick: () => downloadJson(r), text: 'Download JSON' }),
       h('button', { class: 'sa-btn sa-btn-ghost', type: 'button', onclick: printReport, text: 'Print / Save PDF' })));
 
@@ -573,6 +717,7 @@ function renderResults(r, { keepScroll = false } = {}) {
   container.replaceChildren(...[
     h('section', { class: 'sa-card' }, header, h('div', { class: 'sa-tiles' }, tiles), h('div', { class: 'sa-tiles sa-tiles-facts' }, facts)),
     h('div', { class: `sa-two ${side ? '' : 'is-single'}` }, aiPanel(r), side),
+    compareSection(r),
     planSection(r),
     techSection(r),
     r.kind === 'website' ? pagesSection(r) : null,
@@ -661,7 +806,7 @@ function saveHistory(r) {
   const { screenshot, ...lean } = r;
   if (lean.pages) lean.pages = lean.pages.map(({ screenshot: _s, ...p }) => p);
   let list = readHistory().filter((x) => x.id !== r.id);
-  list.unshift({ id: r.id, kind: r.kind, target: r.final_url || r.target, score: r.score, grade: r.ai?.grade || null, date: r.checked_at });
+  list.unshift({ id: r.id, kind: r.kind, key: auditKey(r), target: r.final_url || r.target, score: r.score, grade: r.ai?.grade || null, date: r.checked_at });
   for (const old of list.slice(HISTORY_MAX)) store.del(`sa-r-${old.id}`);
   list = list.slice(0, HISTORY_MAX);
   // If storage is full, drop the oldest saved results until it fits.
