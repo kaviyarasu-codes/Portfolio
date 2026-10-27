@@ -7,6 +7,8 @@ const UA = 'Mozilla/5.0 (compatible; KaviyarasuSiteAudit/1.0; +https://kaviyaras
 const MAX_HTML = 2 * 1024 * 1024;
 const LINK_CHECK_LIMIT = 15;
 const ASSET_CHECK_LIMIT = 12;
+// Cloudflare's free plan allows 50 outgoing requests per invocation; keep headroom.
+const SUBREQUEST_BUDGET = 46;
 
 function finding(severity, id, title, detail, fix, extra = {}) {
   return { severity, id, title, detail, fix, ...extra };
@@ -343,10 +345,12 @@ async function pool(items, size, fn) {
   return out;
 }
 
-async function checkUrl(url) {
+async function checkUrl(url, budget) {
+  if (budget.left <= 0) return { url, status: -1, error: 'not checked (request limit)' };
   try {
+    budget.left--;
     let { res, ms } = await timedFetch(url, { method: 'HEAD' }, 10000);
-    if ([403, 405, 501].includes(res.status)) ({ res, ms } = await timedFetch(url, { method: 'GET' }, 10000));
+    if ([403, 405, 501].includes(res.status) && budget.left > 0) { budget.left--; ({ res, ms } = await timedFetch(url, { method: 'GET' }, 10000)); }
     await res.body?.cancel();
     return { url, status: res.status, ms };
   } catch (e) {
@@ -357,9 +361,12 @@ async function checkUrl(url) {
 export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
   const target = normalizeTarget(input, { allowLocal });
   const started = Date.now();
+  const budget = { left: SUBREQUEST_BUDGET };
   const findings = [];
 
   const { chain, res, ms } = await followRedirects(target.href);
+  // Fixed requests: redirect hops, http:// check, robots/security.txt/sitemap, 4 DNS lookups.
+  budget.left -= chain.length + 1 + 3 + 4;
   const finalUrl = new URL(chain[chain.length - 1].url);
   const headers = Object.fromEntries(res.headers);
   const setCookies = typeof res.headers.getSetCookie === 'function' ? res.headers.getSetCookie() : [];
@@ -404,13 +411,13 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
   const assets = uniq(page.assets).slice(0, ASSET_CHECK_LIMIT);
 
   const [linkResults, assetResults, robots, securityTxt, sitemap, dns, samples] = await Promise.all([
-    pool(toCheck, 5, checkUrl),
-    pool(assets, 5, checkUrl),
+    pool(toCheck, 5, (u) => checkUrl(u, budget)),
+    pool(assets, 5, (u) => checkUrl(u, budget)),
     timedFetch(`${finalUrl.origin}/robots.txt`, {}, 8000).then(async ({ res: r }) => (r.ok ? (await readText(r, 64 * 1024)).text : null)).catch(() => null),
     timedFetch(`${finalUrl.origin}/.well-known/security.txt`, {}, 8000).then(async ({ res: r }) => (r.ok ? (await readText(r, 16 * 1024)).text : null)).catch(() => null),
     timedFetch(`${finalUrl.origin}/sitemap.xml`, {}, 8000).then(async ({ res: r }) => ({ status: r.status, body: r.ok ? (await readText(r, 256 * 1024)).text : '' })).catch(() => null),
     dnsChecks(finalUrl.hostname).catch((e) => ({ error: e.message, findings: [] })),
-    pool([0, 1], 1, async () => { const r = await checkUrl(finalUrl.href); return r.ms; }),
+    checkUrl(finalUrl.href, budget).then((r) => (r.ms ? [r.ms] : [])),
   ]);
 
   // Bot-blocking sites return 403/429 (or refuse the connection) to automated

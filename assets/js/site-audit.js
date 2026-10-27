@@ -374,7 +374,7 @@ function detailsSection(r) {
     block('Redirects and response', table([...r.redirect_chain.map((c, i) => [`Hop ${i + 1}`, `${c.status} ${c.url} (${c.ms} ms)`]), ['http:// check', r.http_redirect ? (r.http_redirect.error || `${r.http_redirect.status} → ${r.http_redirect.location || '(no redirect)'}`) : 'n/a'], ['Repeat response times', (r.response_ms?.repeat || []).map((m) => `${m} ms`)]]));
     block('Security headers', table([...Object.entries(r.security_headers?.headers || {}), ['Cookies', (r.security_headers?.cookies || []).map((c) => `${c.name} (${[c.secure && 'Secure', c.httpOnly && 'HttpOnly', c.sameSite && `SameSite=${c.sameSite}`].filter(Boolean).join(', ') || 'no flags'})`)]]));
     const bad = [...(r.links?.checked || []), ...(r.links?.assets_checked || [])].filter((l) => l.status !== 200);
-    block('Links and files that did not return 200', bad.length ? table(bad.map((l) => [String(l.status || l.error), l.url])) : h('p', { class: 'sa-muted', text: 'All checked links and files returned 200.' }));
+    block('Links and files that did not return 200', bad.length ? table(bad.map((l) => [l.status > 0 ? String(l.status) : l.error, l.url])) : h('p', { class: 'sa-muted', text: 'All checked links and files returned 200.' }));
     block('DNS and email', table([['Domain', r.dns?.domain], ['SPF', r.dns?.spf], ['DMARC', r.dns?.dmarc], ['MX', r.dns?.mx], ['CAA', r.dns?.caa], ['robots.txt', r.robots_txt ? 'present' : 'missing'], ['sitemap.xml', r.sitemap ? `${r.sitemap.status}${r.sitemap.urls ? `, ${r.sitemap.urls} URLs` : ''}` : 'missing'], ['security.txt', r.security_txt ? 'present' : 'missing']]));
     if (r.lighthouse) {
       const m = r.lighthouse.metrics;
