@@ -1,0 +1,4 @@
+Contact: mailto:kaviyarasukanthavel@gmail.com
+Expires: 2027-10-27T00:00:00.000Z
+Preferred-Languages: en, ta
+Canonical: https://kaviyarasu-portfolio.pages.dev/.well-known/security.txt

@@ -36,12 +36,13 @@ Only checks what a normal visitor's browser sees; nothing is submitted, brute-fo
 
 ### Setup (Cloudflare Pages → your project → Settings → Variables and secrets, for Production and Preview)
 
-| Name | Value |
-|---|---|
-| `ANTHROPIC_API_KEY` (secret) | Your Claude API key from console.anthropic.com |
-| `FIREBASE_PROJECT_ID` | `portfolio-contact-39c14` |
-| `ADMIN_UID` | Your Firebase Auth user UID (Firebase console → Authentication → Users). Or set `ADMIN_EMAIL` instead. |
-| `PAGESPEED_API_KEY` (optional) | Google Cloud API key with the PageSpeed Insights API enabled (raises the free quota) |
+| Name | Required | Value |
+|---|---|---|
+| `ANTHROPIC_API_KEY` (secret) | yes, for the AI review | Your Claude API key from console.anthropic.com |
+| `PAGESPEED_API_KEY` (secret) | recommended | Google Cloud API key with the PageSpeed Insights API enabled (the keyless quota is small) |
+| `ADMIN_UID` | optional | Your Firebase Auth user UID, to lock the tool to that exact account. Without it, the admin email from `admin.html` / the Firestore rules is used. |
+
+Redeploy after changing variables (Deployments → ⋯ → Retry deployment).
 
 Sign in at `/site-audit` with your admin account (the same login as `/admin`). Every `/api/*` call verifies your Firebase sign-in token on the server, so nobody else can use the tool or your API credit. Each AI review costs roughly a few cents of Claude API usage.
 
@@ -52,3 +53,7 @@ printf 'DEV_BYPASS_AUTH=true\nALLOW_LOCAL_TARGETS=true\nANTHROPIC_API_KEY=sk-ant
 npx wrangler pages dev .                      # then open http://127.0.0.1:8788/site-audit?dev
 ```
 `DEV_BYPASS_AUTH` only works on localhost and must never be set in Cloudflare.
+
+## Firestore rules
+
+`firestore.rules` holds the security rules for the contact form. Paste them into Firebase console → Firestore Database → Rules → Publish whenever they change.

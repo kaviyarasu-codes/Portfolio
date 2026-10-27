@@ -3,10 +3,14 @@
 // to other sites). No SDK: the token is an RS256 JWT checked with WebCrypto
 // against Google's published keys.
 //
-// Environment (Cloudflare Pages → Settings → Variables and secrets):
-//   FIREBASE_PROJECT_ID  e.g. portfolio-contact-39c14
-//   ADMIN_UID            Firebase Auth UID of the owner (preferred), or
-//   ADMIN_EMAIL          owner's sign-in email
+// Optional environment overrides (Cloudflare Pages → Settings → Variables and secrets):
+//   FIREBASE_PROJECT_ID  defaults to this site's Firebase project
+//   ADMIN_UID            Firebase Auth UID of the owner (strictest), or
+//   ADMIN_EMAIL          owner's sign-in email (defaults to the admin.html account,
+//                        matching the Firestore rules)
+
+const DEFAULT_PROJECT_ID = 'portfolio-contact-39c14';
+const DEFAULT_ADMIN_EMAIL = 'kaviyarasu.0aasai@gmail.com';
 
 const JWKS_URL = 'https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com';
 let jwksCache = { keys: null, expires: 0 };
@@ -33,8 +37,6 @@ export class AuthError extends Error {}
 
 /** Returns the verified token payload, or throws AuthError. */
 export async function verifyFirebaseToken(token, env) {
-  if (!env.FIREBASE_PROJECT_ID) throw new AuthError('Server is missing FIREBASE_PROJECT_ID.');
-  if (!env.ADMIN_UID && !env.ADMIN_EMAIL) throw new AuthError('Server is missing ADMIN_UID or ADMIN_EMAIL.');
   const parts = (token || '').split('.');
   if (parts.length !== 3) throw new AuthError('Missing or malformed sign-in token.');
 
@@ -49,14 +51,14 @@ export async function verifyFirebaseToken(token, env) {
   if (!valid) throw new AuthError('Invalid token signature.');
 
   const now = Math.floor(Date.now() / 1000);
-  const project = env.FIREBASE_PROJECT_ID;
+  const project = env.FIREBASE_PROJECT_ID || DEFAULT_PROJECT_ID;
   if (payload.aud !== project || payload.iss !== `https://securetoken.google.com/${project}`) throw new AuthError('Token is for a different Firebase project.');
   if (!(payload.exp > now - 30) || !(payload.iat <= now + 30)) throw new AuthError('Sign-in expired. Please sign in again.');
   if (!payload.sub) throw new AuthError('Token has no user.');
 
   const ok = env.ADMIN_UID
     ? payload.sub === env.ADMIN_UID
-    : (payload.email || '').toLowerCase() === env.ADMIN_EMAIL.toLowerCase();
+    : (payload.email || '').toLowerCase() === (env.ADMIN_EMAIL || DEFAULT_ADMIN_EMAIL).toLowerCase();
   if (!ok) throw new AuthError('This account is not allowed to use the audit tool.');
   return payload;
 }

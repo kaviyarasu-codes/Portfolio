@@ -43,6 +43,18 @@ function h(tag, props = {}, ...children) {
   return el;
 }
 
+/* ── Styled notice dialog (replaces window.alert) ───────── */
+
+function notice(title, message, { kind = 'info', focusAfter = null } = {}) {
+  const dlg = $('saDialog');
+  dlg.dataset.kind = kind;
+  $('saDialogTitle').textContent = title;
+  $('saDialogText').textContent = message;
+  dlg.onclose = () => { if (focusAfter) focusAfter.focus(); };
+  if (typeof dlg.showModal === 'function') dlg.showModal(); else window.alert(`${title}\n\n${message}`);
+}
+$('saDialog').addEventListener('click', (e) => { if (e.target === e.currentTarget) e.currentTarget.close(); });
+
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
@@ -156,8 +168,8 @@ $('panelWeb').addEventListener('submit', async (e) => {
   e.preventDefault();
   if (busy) return;
   const url = $('urlInput').value.trim();
-  if (!url) { $('urlInput').focus(); return; }
-  if (!$('permWeb').checked) { alert('Please confirm you own this site or have permission to review it.'); $('permWeb').focus(); return; }
+  if (!url) { notice('Add a website address', 'Paste a link such as example.com or https://app.example.com/login.', { focusAfter: $('urlInput') }); return; }
+  if (!$('permWeb').checked) { notice('Permission needed', 'Tick the box to confirm you own this site or have the owner\'s permission to review it.', { focusAfter: $('permWeb') }); return; }
   const useLh = $('optLighthouse').checked;
   const useAi = $('optAiWeb').checked;
   setBusy(true);
@@ -209,8 +221,8 @@ $('panelApk').addEventListener('submit', async (e) => {
   e.preventDefault();
   if (busy) return;
   const file = apkInput.files[0];
-  if (!file) { alert('Choose an APK file first.'); return; }
-  if (!$('permApk').checked) { alert('Please confirm this is your app or you have permission to review it.'); $('permApk').focus(); return; }
+  if (!file) { notice('No APK selected', 'Choose an .apk, .apks or .xapk file, or drop it onto the upload box. It is analysed in your browser and never uploaded.', { focusAfter: $('apkInput') }); return; }
+  if (!$('permApk').checked) { notice('Permission needed', 'Tick the box to confirm this is your app or you have the owner\'s permission to review it.', { focusAfter: $('permApk') }); return; }
   const useAi = $('optAiApk').checked;
   setBusy(true);
   $('results').hidden = true;
@@ -434,7 +446,7 @@ function renderHistory() {
   ul.replaceChildren(...list.map((x) => h('li', {},
     h('button', { type: 'button', class: 'sa-history-item', onclick: () => {
       const raw = store.get(`sa-r-${x.id}`);
-      if (!raw) { alert('The saved result is no longer available.'); return; }
+      if (!raw) { notice('Result not available', 'This saved audit was removed to free up browser storage. Run the audit again to see it.', { kind: 'error' }); return; }
       $('progress').hidden = true;
       renderResults(JSON.parse(raw));
     } },

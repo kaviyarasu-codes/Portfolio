@@ -58,7 +58,7 @@
           <button type="button" role="tab" id="tabApk" aria-selected="false" aria-controls="panelApk" tabindex="-1">Android APK</button>
         </div>
 
-        <form id="panelWeb" class="sa-panel" role="tabpanel" aria-labelledby="tabWeb">
+        <form id="panelWeb" class="sa-panel" role="tabpanel" aria-labelledby="tabWeb" novalidate>
           <label for="urlInput">Address</label>
           <div class="sa-row">
             <input id="urlInput" type="text" inputmode="url" autocomplete="url" placeholder="example.com or https://app.example.com/login" required />
@@ -72,7 +72,7 @@
           <p class="sa-note">Checks only what a normal visitor's browser sees: the page, its links and files, security headers, cookies, robots/sitemap and public DNS. Nothing is submitted or attacked.</p>
         </form>
 
-        <form id="panelApk" class="sa-panel" role="tabpanel" aria-labelledby="tabApk" hidden>
+        <form id="panelApk" class="sa-panel" role="tabpanel" aria-labelledby="tabApk" hidden novalidate>
           <label for="apkInput" class="sa-drop" id="dropZone">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0-4 4m4-4 4 4M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" /></svg>
             <span><b>Choose an APK</b> or drop it here</span>
@@ -99,6 +99,15 @@
       </section>
     </div>
   </main>
+
+  <dialog id="saDialog" class="sa-dialog" aria-labelledby="saDialogTitle" aria-describedby="saDialogText">
+    <form method="dialog">
+      <span class="sa-dialog-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 8v5M12 16h.01" /></svg></span>
+      <h2 id="saDialogTitle">Notice</h2>
+      <p id="saDialogText"></p>
+      <button class="sa-btn sa-btn-primary" value="ok" autofocus>OK</button>
+    </form>
+  </dialog>
 
   <script type="module" src="assets/js/site-audit.js"></script>
 </body>

@@ -14,8 +14,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-        crossorigin="anonymous" />
+    <link rel="stylesheet" href="/assets/vendor/fontawesome/css/all.min.css" />
 
     <script>!function () { var t = 'dark'; try { t = localStorage.getItem('kk-theme') || 'dark' } catch (e) { } document.documentElement.setAttribute('data-theme', t) }();</script>
 
@@ -616,7 +615,7 @@
                     <span class="live-badge"><span class="pulse"></span> LIVE</span>
                 </div>
                 <div class="topbar-actions">
-                    <a class="btn btn-ghost btn-sm" href="index.html" title="Open portfolio"><i class="fa fa-house" aria-hidden="true"></i></a>
+                    <a class="btn btn-ghost btn-sm" href="/" title="Open portfolio"><i class="fa fa-house" aria-hidden="true"></i></a>
                     <button type="button" class="btn btn-ghost btn-sm" id="themeToggle" aria-label="Toggle theme">
                         <i class="fa fa-sun" id="themeIcon" aria-hidden="true"></i>
                     </button>
@@ -863,7 +862,7 @@
         searchInput.addEventListener("input", renderMessages);
 
         // ── RENDER ──
-        const esc = (str) => { const d = document.createElement("div"); d.textContent = str ?? ""; return d.innerHTML; };
+        const esc = (str) => String(str ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
         function renderMessages() {
             $("nAll").textContent = `(${allMessages.length})`;
@@ -896,13 +895,13 @@
                         </div>
                         <div style="display:flex;gap:8px;flex-wrap:wrap">
                             <a class="btn btn-ghost btn-sm" href="${mailto}" title="Reply by email" aria-label="Reply"><i class="fa fa-reply"></i></a>
-                            <button type="button" class="btn btn-ghost btn-sm" data-act="read" data-id="${m.id}" data-v="${m.isRead ? 1 : 0}"
+                            <button type="button" class="btn btn-ghost btn-sm" data-act="read" data-id="${esc(m.id)}" data-v="${m.isRead ? 1 : 0}"
                                 title="${m.isRead ? "Mark as unread" : "Mark as read"}" aria-label="${m.isRead ? "Mark as unread" : "Mark as read"}">
                                 <i class="fa ${m.isRead ? "fa-envelope-open" : "fa-envelope"}"></i></button>
-                            <button type="button" class="btn btn-ghost btn-sm" data-act="star" data-id="${m.id}" data-v="${m.isStarred ? 1 : 0}"
+                            <button type="button" class="btn btn-ghost btn-sm" data-act="star" data-id="${esc(m.id)}" data-v="${m.isStarred ? 1 : 0}"
                                 title="${m.isStarred ? "Unstar" : "Star"}" aria-label="${m.isStarred ? "Unstar" : "Star"}">
                                 <i class="${m.isStarred ? "fa fa-star" : "fa-regular fa-star"}"></i></button>
-                            <button type="button" class="btn btn-danger btn-sm" data-act="delete" data-id="${m.id}" title="Delete" aria-label="Delete">
+                            <button type="button" class="btn btn-danger btn-sm" data-act="delete" data-id="${esc(m.id)}" title="Delete" aria-label="Delete">
                                 <i class="fa fa-trash"></i></button>
                         </div>
                     </div>

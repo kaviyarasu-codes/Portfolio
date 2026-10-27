@@ -1,24 +1,39 @@
 # Cloudflare Pages response headers
+# CSP: only the listed hosts may supply code, styles, fonts and connections. Inline scripts
+# stay allowed because the pages use small inline scripts (theme, contact form, admin).
+# /site-audit gets a second, stricter policy; browsers enforce both, so the stricter wins.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://api.emailjs.com; frame-src https://portfolio-contact-39c14.firebaseapp.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'; upgrade-insecure-requests
 
 /admin.html
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/admin
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
 
 /thank-you.html
   X-Robots-Tag: noindex
 
+/thank-you
+  X-Robots-Tag: noindex
+
 /assets/img/*
   Cache-Control: public, max-age=604800
+
+/assets/vendor/*
+  Cache-Control: public, max-age=2592000
 
 /site-audit.html
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://www.gstatic.com 'sha256-2f5F5wqou84oI3Z/we6xxQmtINEaOaibIMtdJ+MMeng='; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.gstatic.com; frame-src https://portfolio-contact-39c14.firebaseapp.com; frame-ancestors 'none'; base-uri 'none'; object-src 'none'; form-action 'self'
 
 /site-audit
   X-Robots-Tag: noindex, nofollow

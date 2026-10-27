@@ -68,7 +68,7 @@ main.sa-wrap { padding-top: 24px; padding-bottom: 64px; display: grid; gap: 16px
 .sa-tabs [aria-selected=true] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm) }
 .sa-drop { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 28px 16px; margin: 12px 0 4px; border: 2px dashed var(--line-strong); border-radius: var(--r); cursor: pointer; background: var(--surface-2) }
 .sa-drop svg { width: 30px; height: 30px; color: var(--accent) }
-.sa-drop.is-over, .sa-drop:hover { border-color: var(--accent) }
+.sa-drop.is-over, .sa-drop:hover, .sa-drop:has(+ input:focus-visible) { border-color: var(--accent) }
 .sa-drop small { color: var(--muted); overflow-wrap: anywhere }
 #panelApk .sa-btn { margin-top: 16px }
 
@@ -166,6 +166,20 @@ main.sa-wrap { padding-top: 24px; padding-bottom: 64px; display: grid; gap: 16px
 .sa-history-item:hover { border-color: var(--line-strong); background: var(--surface-2) }
 .sa-history-score { grid-row: span 2; font-weight: 700; font-size: 1.15rem; align-self: center }
 .sa-history-target { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500 }
+
+/* Notice dialog */
+.sa-dialog { margin: auto; border: 1px solid var(--line); border-radius: var(--r); padding: 0; width: min(420px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); box-shadow: 0 24px 60px -12px rgba(13, 17, 23, .35) }
+.sa-dialog::backdrop { background: rgba(13, 17, 23, .45); backdrop-filter: blur(3px) }
+.sa-dialog form { padding: 24px; display: grid; gap: 10px; justify-items: start }
+.sa-dialog h2 { font-size: 1.15rem }
+.sa-dialog p { color: var(--ink-2); line-height: 1.55 }
+.sa-dialog .sa-btn { justify-self: end; min-width: 96px; margin-top: 6px }
+.sa-dialog-icon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-ink) }
+.sa-dialog-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round }
+.sa-dialog[data-kind=error] .sa-dialog-icon { background: color-mix(in srgb, var(--bad) 14%, transparent); color: var(--bad) }
+.sa-dialog[open] { animation: sa-pop .16s var(--ease) }
+@keyframes sa-pop { from { opacity: 0; transform: translateY(8px) scale(.98) } }
+@media (prefers-reduced-motion: reduce) { .sa-dialog[open] { animation: none } }
 
 @media (max-width: 760px) {
   .sa-two { grid-template-columns: minmax(0, 1fr) }

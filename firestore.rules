@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// Paste into Firebase console → Firestore Database → Rules → Publish.
+// Kept in the repo so rule changes are reviewed (not secret; Cloudflare serves it as a plain file).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "kaviyarasu.0aasai@gmail.com";
+    }
+
+    // Exactly what contact.html sends, with the form's own length limits.
+    function isValidMessage(d) {
+      return d.keys().hasOnly(['firstName', 'lastName', 'email', 'subject', 'message', 'isRead', 'isStarred', 'createdAt'])
+        && d.keys().hasAll(['firstName', 'email', 'subject', 'message', 'isRead', 'isStarred', 'createdAt'])
+        && d.firstName is string && d.firstName.size() > 0 && d.firstName.size() <= 60
+        && (!('lastName' in d) || (d.lastName is string && d.lastName.size() <= 60))
+        && d.email is string && d.email.size() <= 120 && d.email.matches('^[^@ ]+@[^@ ]+[.][^@ ]{2,}$')
+        && d.subject is string && d.subject.size() > 0 && d.subject.size() <= 120
+        && d.message is string && d.message.size() >= 10 && d.message.size() <= 3000
+        && d.isRead == false
+        && d.isStarred == false
+        && d.createdAt == request.time;
+    }
+
+    match /contacts/{doc} {
+      // Visitors can only add a well-formed message; they can never read one back.
+      allow create: if isValidMessage(request.resource.data);
+      allow read, delete: if isAdmin();
+      // The inbox only flips read/starred flags.
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['isRead', 'isStarred'])
+        && request.resource.data.isRead is bool
+        && request.resource.data.isStarred is bool;
+    }
+  }
+}
