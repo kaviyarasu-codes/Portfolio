@@ -490,8 +490,10 @@ async function dnsChecks(hostname) {
   const [txt, dmarc, mx, caa, ns, aRaw, aaaa] = await Promise.all([doh(domain, 'TXT'), doh(`_dmarc.${domain}`, 'TXT'), doh(domain, 'MX'), doh(domain, 'CAA'), doh(domain, 'NS'), dohRaw(hostname, 'A'), doh(hostname, 'AAAA')]);
   const a = answers(aRaw, 'A');
   const cname = answers(aRaw, 'CNAME');
-  const f = [...analyzeSpf(txt, mx.length > 0), ...analyzeDmarc(dmarc)];
-  if (!caa.length) f.push(finding('info', 'DNS-CAA', 'No CAA record', 'Any certificate authority may issue certificates for this domain.', 'Add a CAA record naming your certificate provider.'));
+  // On a hosting platform's address (e.g. *.pages.dev) the owner cannot add DNS records.
+  const platform = PLATFORM_SUFFIX.test(hostname);
+  const f = platform ? [] : [...analyzeSpf(txt, mx.length > 0), ...analyzeDmarc(dmarc)];
+  if (!caa.length && !platform) f.push(finding('info', 'DNS-CAA', 'No CAA record', 'Any certificate authority may issue certificates for this domain.', 'Add a CAA record naming your certificate provider.'));
   if (!aaaa.length && a.length) f.push(finding('info', 'NET-NO-IPV6', 'No IPv6 address', 'Visitors on IPv6-only mobile networks go through slower translation.', 'Enable IPv6 at your host or CDN (Cloudflare does this automatically).'));
   if (aRaw.Status === 0 && !aRaw.AD && !PLATFORM_SUFFIX.test(hostname)) f.push(finding('info', 'DNS-NO-DNSSEC', 'DNSSEC is not enabled', 'DNS answers for this domain are not signed, so they could be spoofed on some networks.', 'Turn on DNSSEC at your DNS provider and registrar (one click on Cloudflare).'));
   return { domain, spf: txt.filter((r) => /^v=spf1/i.test(r)), dmarc, mx, caa, ns, a, aaaa, cname, dnssec: !!aRaw.AD, dns_provider: dnsProvider(ns), mail_provider: mailProvider(mx), findings: f };
@@ -507,6 +509,8 @@ async function pool(items, size, fn) {
   }));
   return out;
 }
+
+const isBroken = (r) => r.status === 404 || r.status === 410 || (r.status >= 500 && r.status <= 599);
 
 async function checkUrl(url, budget) {
   if (budget.left <= 0) return { url, status: -1, error: 'not checked (request limit)' };
@@ -614,14 +618,15 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
 
   // Bot-blocking sites return 403/429 (or refuse the connection) to automated
   // checks, so only clear "not found"/server errors count as broken.
-  const broken = linkResults.filter((r) => r.status === 404 || r.status === 410 || r.status >= 500);
+  // 999 (LinkedIn) and other non-standard codes mean "bot blocked", not broken.
+  const broken = linkResults.filter(isBroken);
   const unreachable = linkResults.filter((r) => r.status === 0);
   if (unreachable.length) findings.push(finding('low', 'BUG-UNREACHABLE-LINK', `${unreachable.length} link(s) could not be reached`, unreachable.map((r) => `${r.error} ${r.url}`).join('\n'), 'Open them in a browser: the site may be down, the domain expired, or it may just block automated checks.'));
   const brokenInternal = broken.filter((r) => new URL(r.url).host === finalUrl.host);
   const brokenExternal = broken.filter((r) => new URL(r.url).host !== finalUrl.host);
   if (brokenInternal.length) findings.push(finding('high', 'BUG-BROKEN-LINK', `${brokenInternal.length} broken link(s) to your own pages`, brokenInternal.map((r) => `${r.status || r.error} ${r.url}`).join('\n'), 'Fix the links or add 301 redirects to the new pages.'));
   if (brokenExternal.length) findings.push(finding('medium', 'BUG-BROKEN-EXTERNAL', `${brokenExternal.length} broken link(s) to other sites`, brokenExternal.map((r) => `${r.status || r.error} ${r.url}`).join('\n'), 'Update or remove the dead links.'));
-  const brokenAssets = assetResults.filter((r) => r.status === 404 || r.status === 410 || r.status >= 500);
+  const brokenAssets = assetResults.filter(isBroken);
   if (brokenAssets.length) findings.push(finding('high', 'BUG-MISSING-ASSET', `${brokenAssets.length} missing image/script/style file(s)`, brokenAssets.map((r) => `${r.status} ${r.url}`).join('\n'), 'Upload the missing files or fix their paths; missing scripts often break features.'));
 
   if (robots === null) findings.push(finding('info', 'SEO-NO-ROBOTS', 'No robots.txt', 'Not required, but useful to point crawlers to your sitemap.', 'Add robots.txt with a Sitemap: line.'));
@@ -718,7 +723,7 @@ export async function runPageAudit(input, { allowLocal = false } = {}) {
     pool([...internal.slice(0, 10), ...external.slice(0, 8)], 5, (u) => checkUrl(u, budget)),
     pool(res.status < 400 ? uniq(page.assets).slice(0, 10) : [], 5, (u) => checkUrl(u, budget)),
   ]);
-  const bad = (r) => r.status === 404 || r.status === 410 || r.status >= 500;
+  const bad = isBroken;
   const brokenLinks = linkResults.filter(bad);
   if (brokenLinks.length) findings.push(finding('high', 'BUG-BROKEN-LINK', `${brokenLinks.length} broken link(s) on this page`, brokenLinks.map((r) => `${r.status} ${r.url}`).join('\n'), 'Fix or remove these links.'));
   const brokenAssets = assetResults.filter(bad);

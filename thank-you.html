@@ -37,7 +37,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/assets/vendor/phosphor/regular/style.css" />
 
-  <script>!function () { var t = 'light'; try { t = localStorage.getItem('kk-theme') || 'light' } catch (e) { } document.documentElement.setAttribute('data-theme', t) }();</script>
+  <script src="/assets/js/theme-init.js" data-default="light"></script>
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
@@ -152,7 +152,7 @@
       </div>
 
       <div class="footer-bottom">
-        <p>© <span data-year>2026</span> Kaviyarasu K. All rights reserved.</p>
+        <p>© <span data-year>2026</span> Kaviyarasu K. All rights reserved. · <a href="/privacy">Privacy policy</a></p>
         <div class="footer-social">
           <a class="icon-btn" href="https://www.linkedin.com/in/kaviyarasu-kanthavel/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="ph ph-linkedin-logo" aria-hidden="true"></i></a>
           <a class="icon-btn" href="https://github.com/kaviyarasu-codes" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><i class="ph ph-github-logo" aria-hidden="true"></i></a>
@@ -167,20 +167,7 @@
   <a href="https://wa.me/919092266940?text=Hi%20Kavi%2C%20I%20came%20across%20your%20portfolio%20and%20would%20love%20to%20connect%20with%20you!" target="_blank" rel="noopener noreferrer" class="float-wa" id="floatWa" aria-label="Chat on WhatsApp"><i class="ph ph-whatsapp-logo" aria-hidden="true"></i><span>Chat</span></a>
 
   <script src="assets/js/main.js"></script>
-  <script>
-    (function () {
-      var seconds = 15, el = document.getElementById('countdown');
-      var timer = setInterval(function () {
-        seconds--;
-        if (el) el.textContent = seconds;
-        if (seconds <= 0) { clearInterval(timer); window.location.href = '/'; }
-      }, 1000);
-      document.getElementById('stayBtn').addEventListener('click', function () {
-        clearInterval(timer);
-        document.getElementById('countdownWrap').textContent = 'You can stay on this page.';
-      });
-    })();
-  </script>
+  <script src="/assets/js/thank-you.js"></script>
 </body>
 
 </html>

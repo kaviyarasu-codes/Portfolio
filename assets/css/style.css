@@ -634,3 +634,12 @@ main { position: relative; z-index: 0 }
 .vm-qr b { color: var(--ink); margin-top: 6px }
 .vm-qr p { font-size: .92rem }
 @media (max-width: 520px) { .vm-preview { grid-template-columns: 1fr; justify-items: center; text-align: center } .vm-preview .gal-item { width: 70% } .vm-qr { align-items: center } }
+
+/* Privacy policy and form notice */
+.legal { padding-bottom: 72px }
+.legal > * { max-width: 72ch }
+.legal h2 { font-size: 1.35rem; font-weight: 600; letter-spacing: -.02em; margin: 32px 0 10px }
+.legal p, .legal li { color: var(--ink-2); line-height: 1.7 }
+.legal ul { list-style: disc; padding-left: 22px; display: grid; gap: 8px }
+.legal a, .footer-bottom p a, .form-privacy a { text-decoration: underline; text-underline-offset: 3px }
+.form-privacy { margin-top: 10px; font-size: .85rem; color: var(--muted); text-align: center }
