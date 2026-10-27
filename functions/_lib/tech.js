@@ -165,6 +165,12 @@ const KNOWN_ISSUES = [
   { name: 'Lodash', below: '4.17.21', severity: 'medium', note: 'Lodash before 4.17.21 has command-injection/prototype-pollution issues (CVE-2021-23337, CVE-2020-8203).', fix: 'Upgrade Lodash to 4.17.21+.' },
   { name: 'Moment.js', below: '2.29.4', severity: 'low', note: 'Moment before 2.29.4 has a ReDoS issue (CVE-2022-31129), and Moment is no longer developed.', fix: 'Upgrade to 2.29.4+ or move to date-fns / Day.js / Intl.' },
   { name: 'AngularJS (1.x, end of life)', below: '999', severity: 'medium', note: 'AngularJS reached end of life in January 2022 and gets no security fixes.', fix: 'Plan a migration to a supported framework.' },
+  // End-of-life platforms: no more security fixes, so new holes stay open forever.
+  { name: 'PHP', below: '8.2', severity: 'medium', id: 'TECH-EOL', note: 'This PHP version is past its end of life (PHP 8.1 support ended 31 Dec 2025) and no longer gets security fixes.', fix: 'Switch to PHP 8.3 or newer in the hosting panel (test the site on a copy first).' },
+  { name: 'Bootstrap', below: '5.0.0', severity: 'low', id: 'TECH-EOL', note: 'Bootstrap 3 and 4 are end of life and get no more fixes.', fix: 'Plan an upgrade to Bootstrap 5.' },
+  { name: 'jQuery', below: '3.0.0', severity: 'low', id: 'TECH-EOL', note: 'jQuery 1.x and 2.x are end of life.', fix: 'Upgrade to jQuery 3.7+ (use jQuery Migrate to find breaking code).' },
+  { name: 'Apache', below: '2.4.0', severity: 'medium', id: 'TECH-EOL', note: 'Apache 2.2 and older are end of life.', fix: 'Upgrade the web server or move to a maintained host.' },
+  { name: 'Microsoft IIS', below: '8.5', severity: 'medium', id: 'TECH-EOL', note: 'This IIS version ships with an end-of-life Windows Server.', fix: 'Move to a supported Windows Server / IIS 10.' },
 ];
 
 function cmpVersion(a, b) {
@@ -208,9 +214,10 @@ export function detectTechnologies({ html = '', headers = {}, cookies = [], srcs
 
   const findings = [];
   for (const t of found) {
-    const issue = KNOWN_ISSUES.find((k) => k.name === t.name);
-    if (issue && (issue.below === '999' || (t.version && cmpVersion(t.version, issue.below) < 0))) {
-      findings.push({ severity: issue.severity, id: 'TECH-OUTDATED-LIB', title: `${t.name}${t.version ? ` ${t.version}` : ''} has known security issues`, detail: issue.note, fix: issue.fix });
+    for (const issue of KNOWN_ISSUES.filter((k) => k.name === t.name)) {
+      if (!(issue.below === '999' || (t.version && cmpVersion(t.version, issue.below) < 0))) continue;
+      const eol = issue.id === 'TECH-EOL';
+      findings.push({ severity: issue.severity, id: issue.id || 'TECH-OUTDATED-LIB', title: `${t.name}${t.version ? ` ${t.version}` : ''} ${eol ? 'is end of life' : 'has known security issues'}`, detail: issue.note, fix: issue.fix });
     }
   }
   const wp = found.find((t) => t.name === 'WordPress');

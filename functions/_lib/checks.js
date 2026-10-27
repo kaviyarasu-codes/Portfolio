@@ -282,6 +282,7 @@ export function analyzeHtml(rawHtml, pageUrl) {
     f.push(finding(verification ? 'medium' : 'low', 'BUG-STRAY-TEXT', verification ? 'Google verification code is printed on the page' : 'Stray text outside the page layout', `"${t.slice(0, 160)}" appears directly in <body>, outside any section, so visitors see it at the edge of the page.`, verification ? 'Remove that line from the page. Verify Google Search Console with the uploaded .html file, a <meta name="google-site-verification"> tag in <head>, or a DNS TXT record instead.' : 'Remove the stray text or move it into the right section.'));
   }
   f.push(...visibleErrors(text));
+  f.push(...exposureChecks({ rawHtml, body, text, links, forms, hasPassword, scripts, pageUrl }));
   return {
     facts: { title, description, lang, viewport, canonical, robots, og, favicon, h1, images: imgs.length, images_without_alt: noAlt.length, lazy_images: lazy, links: links.length, scripts: scripts.length, stylesheets: styles.length, forms: forms.length, has_password_field: hasPassword, json_ld_blocks: jsonLd, generator: generator || null },
     links,
@@ -290,6 +291,44 @@ export function analyzeHtml(rawHtml, pageUrl) {
     assets: [...scripts.map((s) => s.src), ...styles.map((s) => s.href), ...imgs.map((t) => decode(attr(t, 'src'))).filter((s) => s && !s.startsWith('data:'))],
     findings: f,
   };
+}
+
+const LOGIN_PATH = /(wp-login\.php|\/wp-admin\b|\/administrator\b|\/admin\b|\/login\b|\/signin\b|\/sign-in\b|\/dashboard\b|\/user\/login|\/cpanel\b|\/phpmyadmin\b)/i;
+const BOT_PROTECTION = /recaptcha|hcaptcha|turnstile|captcha|limit-login|loginizer|wordfence|two-factor|2fa|otp/i;
+
+/** Things a visitor (or an attacker) can learn from the page without attacking it. */
+function exposureChecks({ rawHtml, body, text, links, forms, hasPassword, scripts, pageUrl }) {
+  const out = [];
+  const host = new URL(pageUrl).host;
+  const abs = (u) => { try { return new URL(u, pageUrl); } catch { return null; } };
+
+  if (/<title>\s*Index of \//i.test(rawHtml)) out.push(finding('high', 'BE-DIR-LISTING', 'Folder listing is switched on', `${pageUrl} shows a raw list of files in a folder.`, 'Turn off directory listing (Apache: Options -Indexes in .htaccess; Nginx: autoindex off) and add an index page.'));
+
+  if (hasPassword && !BOT_PROTECTION.test(rawHtml)) out.push(finding('medium', 'SEC-LOGIN-NO-BOTCHECK', 'Login form has no visible bot protection', `A password form on ${pageUrl} has no CAPTCHA or login-limit protection in the page.`, 'Add login attempt limiting (e.g. Limit Login Attempts / Wordfence for WordPress, rate limiting on your API), a CAPTCHA (Cloudflare Turnstile is free) and two-factor login for admins.'));
+  const loginLinks = [...new Set(links.map(abs).filter((u) => u && u.host === host && LOGIN_PATH.test(u.pathname)).map((u) => u.pathname))];
+  if (loginLinks.length) out.push(finding('low', 'SEC-LOGIN-LINKED', 'Login / admin pages are linked publicly', loginLinks.slice(0, 5).join(', '), 'Fine for customer logins; for admin areas add two-factor login, login limits, and if possible restrict by IP or move behind Cloudflare Access.'));
+
+  const emails = [...new Set((text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || []).concat(links.filter((l) => /^mailto:/i.test(l)).map((l) => l.slice(7).split('?')[0])).map((e) => e.toLowerCase()).filter((e) => !/\.(png|jpe?g|webp|gif|svg)$/.test(e) && !/example\.|sentry|wixpress/.test(e)))];
+  if (emails.length) out.push(finding('info', 'CONTENT-EMAILS-EXPOSED', `${emails.length} email address(es) visible on the page`, emails.slice(0, 5).join(', '), 'Bots collect these for spam and phishing. Prefer a contact form, use a role address (info@) with good spam filtering, and enable 2FA on that mailbox.'));
+
+  const hasPrivacy = links.some((l) => /privacy|data-protection/i.test(l)) || /privacy policy|privacy notice/i.test(text);
+  const tracks = /googletagmanager|google-analytics|gtag\(|fbq\(|connect\.facebook\.net|clarity\.ms|hotjar/i.test(rawHtml);
+  if (!hasPrivacy && (forms.length || tracks)) out.push(finding('medium', 'LEGAL-NO-PRIVACY', 'No privacy policy link', `The page ${forms.length ? 'collects data in a form' : ''}${forms.length && tracks ? ' and ' : ''}${tracks ? 'uses tracking/analytics' : ''} but links to no privacy policy.`, "Add a privacy policy page (what data you collect, why, how long you keep it, who to contact) and link it in the footer and next to forms. India's DPDP Act 2023 and GDPR expect this."));
+  if (tracks && !/cookie[\s-]?(consent|notice|banner|law|yes)|cookiebot|onetrust|complianz|cookieyes|iubenda|termly|cc-window|gdpr/i.test(rawHtml)) out.push(finding('low', 'LEGAL-NO-COOKIE-CONSENT', 'Tracking without a cookie consent banner', 'Analytics or ad pixels load without any visible consent tool.', 'Add a consent banner (e.g. CookieYes, Complianz, or Google Consent Mode) and load trackers only after consent where required.'));
+
+  const devRe = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)$|^(staging|stage|dev|test|uat|qa|preprod|beta)[.-]|\.(local|test|internal)$/i;
+  const devLinks = [...new Set([...links, ...scripts.map((x) => x.src)].map(abs).filter((u) => u && u.host !== host && devRe.test(u.hostname)).map((u) => u.origin))];
+  if (devLinks.length) out.push(finding('low', 'INFO-DEV-LINKS', 'Links to development or staging servers', devLinks.slice(0, 5).join(', '), 'Remove these links; staging sites are often less protected and reveal unreleased features or test data.'));
+
+  const comments = (rawHtml.match(/<!--[\s\S]*?-->/g) || []).filter((c) => !/\[if |\[endif/i.test(c) && /\b(password|passwd|pwd|api[_-]?key|secret|token|todo|fixme|debug|hack)\b/i.test(c));
+  if (comments.length) out.push(finding('low', 'INFO-DEV-COMMENTS', `${comments.length} developer comment(s) left in the page code`, comments.slice(0, 3).map((c) => c.replace(/\s+/g, ' ').slice(0, 120).replace(/((password|passwd|pwd|secret|token|key)\s*[:=]\s*)\S+/gi, '$1[hidden]')).join('\n'), 'Remove developer notes from production HTML; never put passwords or keys in comments.'));
+
+  const thirdParty = [...new Set(scripts.map((x) => abs(x.src)).filter((u) => u && u.host !== host).map((u) => u.host))];
+  if (thirdParty.length > 8) out.push(finding('info', 'SEC-MANY-THIRD-PARTY', `Scripts load from ${thirdParty.length} other companies' servers`, thirdParty.join(', '), 'Each one can run code on your site. Remove unused tools and keep only trusted, needed services.'));
+
+  const offsite = [...new Set(forms.map((fm) => abs(fm.action || pageUrl)).filter((u) => u && u.host !== host).map((u) => u.host))];
+  if (offsite.length) out.push(finding('info', 'INFO-FORM-OFFSITE', 'A form sends data to another website', offsite.join(', '), 'Make sure that service is trusted, uses HTTPS and is mentioned in your privacy policy.'));
+  return out;
 }
 
 /** Text that sits directly inside <body>, outside every element (e.g. a pasted verification code). */
@@ -333,11 +372,99 @@ function visibleErrors(text) {
 
 // ── DNS (DNS-over-HTTPS) ─────────────────────────────────────
 
-async function doh(name, type) {
+async function dohRaw(name, type) {
   const { res } = await timedFetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`, { headers: { accept: 'application/dns-json' } }, 8000);
-  if (!res.ok) return [];
-  const data = await res.json();
-  return (data.Answer || []).filter((a) => a.type === { TXT: 16, MX: 15, CAA: 257, NS: 2, A: 1, AAAA: 28 }[type]).map((a) => String(a.data).replace(/^"|"$/g, '').replace(/"\s*"/g, ''));
+  return res.ok ? res.json() : { Status: -1, Answer: [] };
+}
+
+const DNS_TYPES = { TXT: 16, MX: 15, CAA: 257, NS: 2, A: 1, AAAA: 28, CNAME: 5 };
+const answers = (data, type) => (data.Answer || []).filter((a) => a.type === DNS_TYPES[type]).map((a) => String(a.data).replace(/^"|"$/g, '').replace(/"\s*"/g, ''));
+
+async function doh(name, type) {
+  return answers(await dohRaw(name, type), type);
+}
+
+// Services where a forgotten CNAME can be claimed by someone else, with the
+// page text they show when nothing is claimed there.
+const TAKEOVER = [
+  [/\.github\.io\.?$/i, /There isn't a GitHub Pages site here/i, 'GitHub Pages'],
+  [/\.herokuapp\.com\.?$|\.herokudns\.com\.?$/i, /No such app|no-such-app/i, 'Heroku'],
+  [/\.s3[.-][\w.-]*amazonaws\.com\.?$|\.s3-website/i, /NoSuchBucket|The specified bucket does not exist/i, 'Amazon S3'],
+  [/\.azurewebsites\.net\.?$|\.cloudapp\.net\.?$|\.trafficmanager\.net\.?$|\.blob\.core\.windows\.net\.?$/i, /404 Web Site not found|The resource you are looking for has been removed/i, 'Microsoft Azure'],
+  [/\.bitbucket\.io\.?$/i, /Repository not found/i, 'Bitbucket'],
+  [/\.surge\.sh\.?$/i, /project not found/i, 'Surge'],
+  [/\.netlify\.app\.?$|\.netlify\.com\.?$/i, /Not Found - Request ID/i, 'Netlify'],
+  [/\.myshopify\.com\.?$/i, /Sorry, this shop is currently unavailable/i, 'Shopify'],
+  [/\.ghost\.io\.?$/i, /Failed to resolve DNS path for this host|Site unavailable/i, 'Ghost'],
+  [/\.pantheonsite\.io\.?$/i, /The gods are wise, but do not know of the site which you seek/i, 'Pantheon'],
+  [/\.readthedocs\.io\.?$/i, /unknown to Read the Docs/i, 'Read the Docs'],
+  [/\.vercel\.app\.?$|vercel-dns\.com\.?$/i, /DEPLOYMENT_NOT_FOUND|The deployment could not be found/i, 'Vercel'],
+];
+
+/** Checks one hostname for a dangling CNAME or a CNAME to an unclaimed service. */
+async function takeoverCheck(host, budget, pageBody = null) {
+  if (budget.left <= 0) return null;
+  budget.left--;
+  const data = await dohRaw(host, 'A').catch(() => null);
+  if (!data) return null;
+  const cnames = answers(data, 'CNAME');
+  const ips = answers(data, 'A');
+  const result = { host, cname: cnames, ips, dnssec: !!data.AD, findings: [] };
+  if (!cnames.length) return result;
+  const target = cnames[cnames.length - 1];
+  if (!ips.length && (data.Status === 3 || data.Status === 0)) {
+    result.findings.push(finding('high', 'NET-DANGLING-CNAME', `${host} points to a name that no longer exists`, `${host} → CNAME ${target}, which does not resolve.`, `Delete the ${host} CNAME record in your DNS (or point it at a service you still own). If someone registers ${target}, they control ${host}.`));
+    return result;
+  }
+  const svc = TAKEOVER.find(([re]) => re.test(target));
+  if (!svc) return result;
+  let body = pageBody;
+  if (body === null && budget.left > 0) {
+    budget.left--;
+    try { const { res } = await timedFetch(`https://${host}/`, { redirect: 'follow' }, 8000); body = (await readText(res, 64 * 1024)).text; } catch { body = ''; }
+  }
+  if (body && svc[1].test(body)) {
+    result.findings.push(finding('critical', 'NET-TAKEOVER', `Possible subdomain takeover: ${host}`, `${host} points to ${svc[2]} (${target}), and that address shows the "${svc[2]}: nothing here" page.`, `Remove the DNS record for ${host} now, or recreate the ${svc[2]} site/app at ${target}. Anyone who claims it could serve their own pages on your domain.`));
+  }
+  return result;
+}
+
+// Free hosting subdomains where the owner does not control the domain itself.
+const PLATFORM_SUFFIX = /\.(pages\.dev|vercel\.app|netlify\.app|github\.io|web\.app|firebaseapp\.com|herokuapp\.com|onrender\.com|wixsite\.com|blogspot\.com|wordpress\.com|weebly\.com|webflow\.io|framer\.website|framer\.app|lovable\.app|glitch\.me|replit\.app|000webhostapp\.com|godaddysites\.com)$/i;
+
+function registrableDomain(host) {
+  const parts = host.replace(/\.$/, '').split('.');
+  const two = parts.slice(-2).join('.');
+  return /^(co|com|net|org|gov|edu|ac|gen|firm|ind|res)\.[a-z]{2}$/i.test(two) && parts.length > 2 ? parts.slice(-3).join('.') : two;
+}
+
+/** Public registration data (RDAP): expiry date, registrar, transfer lock. */
+async function domainInfo(host, budget) {
+  if (PLATFORM_SUFFIX.test(host)) {
+    return { platform_subdomain: true, findings: [finding('info', 'DOMAIN-PLATFORM-SUBDOMAIN', 'Site uses a free platform address', `${host} belongs to the hosting platform, not to the business.`, 'Use your own domain (e.g. yourbusiness.in) for trust, email and SEO; keep the platform address as a redirect.')] };
+  }
+  const domain = registrableDomain(host);
+  if (budget.left < 2) return { domain, findings: [] };
+  budget.left -= 2; // rdap.org redirects to the registry
+  try {
+    const { res } = await timedFetch(`https://rdap.org/domain/${domain}`, { redirect: 'follow', headers: { accept: 'application/rdap+json' } }, 10000);
+    if (!res.ok) return { domain, error: `RDAP ${res.status}`, findings: [] };
+    const d = await res.json();
+    const event = (name) => (d.events || []).find((e) => e.eventAction === name)?.eventDate || null;
+    const expires = event('expiration');
+    const registered = event('registration');
+    const registrar = (d.entities || []).find((e) => (e.roles || []).includes('registrar'))?.vcardArray?.[1]?.find((v) => v[0] === 'fn')?.[3] || null;
+    const status = d.status || [];
+    const f = [];
+    const days = expires ? Math.floor((Date.parse(expires) - Date.now()) / 86400000) : null;
+    if (days !== null && days < 0) f.push(finding('critical', 'DOMAIN-EXPIRED', `Domain ${domain} has expired`, `Expiry date: ${expires.slice(0, 10)}.`, 'Renew it with the registrar today, before someone else can register it.'));
+    else if (days !== null && days < 30) f.push(finding('high', 'DOMAIN-EXPIRING', `Domain ${domain} expires in ${days} days`, `Expiry date: ${expires.slice(0, 10)}.`, 'Renew now and turn on auto-renew with a valid payment card.'));
+    else if (days !== null && days < 60) f.push(finding('medium', 'DOMAIN-EXPIRING', `Domain ${domain} expires in ${days} days`, `Expiry date: ${expires.slice(0, 10)}.`, 'Turn on auto-renew so the site and email do not stop.'));
+    if (status.length && !status.some((x) => /transfer prohibited/i.test(x))) f.push(finding('low', 'DOMAIN-NO-LOCK', 'Domain transfer lock is off', `Status: ${status.join(', ')}`, 'Turn on "Domain lock" / "Transfer lock" at the registrar and enable 2FA on the registrar account to prevent domain hijacking.'));
+    return { domain, registrar, registered, expires, days_left: days, status, findings: f };
+  } catch (e) {
+    return { domain, error: e.message, findings: [] };
+  }
 }
 
 export function analyzeSpf(records, hasMx) {
@@ -360,11 +487,14 @@ export function analyzeDmarc(records) {
 async function dnsChecks(hostname) {
   // Check the registrable-ish domain (strip "www." only; good enough for most sites).
   const domain = hostname.replace(/^www\./i, '');
-  const [txt, dmarc, mx, caa, ns, a, aaaa] = await Promise.all([doh(domain, 'TXT'), doh(`_dmarc.${domain}`, 'TXT'), doh(domain, 'MX'), doh(domain, 'CAA'), doh(domain, 'NS'), doh(hostname, 'A'), doh(hostname, 'AAAA')]);
+  const [txt, dmarc, mx, caa, ns, aRaw, aaaa] = await Promise.all([doh(domain, 'TXT'), doh(`_dmarc.${domain}`, 'TXT'), doh(domain, 'MX'), doh(domain, 'CAA'), doh(domain, 'NS'), dohRaw(hostname, 'A'), doh(hostname, 'AAAA')]);
+  const a = answers(aRaw, 'A');
+  const cname = answers(aRaw, 'CNAME');
   const f = [...analyzeSpf(txt, mx.length > 0), ...analyzeDmarc(dmarc)];
   if (!caa.length) f.push(finding('info', 'DNS-CAA', 'No CAA record', 'Any certificate authority may issue certificates for this domain.', 'Add a CAA record naming your certificate provider.'));
   if (!aaaa.length && a.length) f.push(finding('info', 'NET-NO-IPV6', 'No IPv6 address', 'Visitors on IPv6-only mobile networks go through slower translation.', 'Enable IPv6 at your host or CDN (Cloudflare does this automatically).'));
-  return { domain, spf: txt.filter((r) => /^v=spf1/i.test(r)), dmarc, mx, caa, ns, a, aaaa, dns_provider: dnsProvider(ns), mail_provider: mailProvider(mx), findings: f };
+  if (aRaw.Status === 0 && !aRaw.AD && !PLATFORM_SUFFIX.test(hostname)) f.push(finding('info', 'DNS-NO-DNSSEC', 'DNSSEC is not enabled', 'DNS answers for this domain are not signed, so they could be spoofed on some networks.', 'Turn on DNSSEC at your DNS provider and registrar (one click on Cloudflare).'));
+  return { domain, spf: txt.filter((r) => /^v=spf1/i.test(r)), dmarc, mx, caa, ns, a, aaaa, cname, dnssec: !!aRaw.AD, dns_provider: dnsProvider(ns), mail_provider: mailProvider(mx), findings: f };
 }
 
 // ── Main audit ───────────────────────────────────────────────
@@ -400,6 +530,9 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
   const { chain, res, ms } = await followRedirects(target.href);
   // Fixed requests: redirect hops, http:// check, robots/security.txt/sitemap, 7 DNS lookups.
   budget.left -= chain.length + 1 + 3 + 7;
+  // Reserve room for the takeover (up to 5 + 1) and domain registration (2) checks.
+  const reserved = 8;
+  budget.left -= reserved;
   const finalUrl = new URL(chain[chain.length - 1].url);
   const headers = Object.fromEntries(res.headers);
   const setCookies = typeof res.headers.getSetCookie === 'function' ? res.headers.getSetCookie() : [];
@@ -457,7 +590,7 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
   const toCheck = [...internal.slice(0, 10), ...external.slice(0, LINK_CHECK_LIMIT - Math.min(10, internal.length))];
   const assets = uniq(page.assets).slice(0, ASSET_CHECK_LIMIT);
 
-  const [linkResults, assetResults, robots, securityTxt, sitemap, dns, samples] = await Promise.all([
+  const linksDone = Promise.all([
     pool(toCheck, 5, (u) => checkUrl(u, budget)),
     pool(assets, 5, (u) => checkUrl(u, budget)),
     timedFetch(`${finalUrl.origin}/robots.txt`, {}, 8000).then(async ({ res: r }) => (r.ok ? (await readText(r, 64 * 1024)).text : null)).catch(() => null),
@@ -466,6 +599,18 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
     dnsChecks(finalUrl.hostname).catch((e) => ({ error: e.message, findings: [] })),
     checkUrl(finalUrl.href, budget).then((r) => (r.ms ? [r.ms] : [])),
   ]);
+  const [linkResults, assetResults, robots, securityTxt, sitemap, dns, samples] = await linksDone;
+  budget.left += reserved;
+  // Subdomains linked from the page (shop., blog., app. ...) plus the site host itself:
+  // a forgotten DNS record pointing at a deleted service can be claimed by anyone.
+  const baseDomain = registrableDomain(finalUrl.hostname);
+  const linkedSubs = [...new Set(allLinks.map((u) => new URL(u).hostname).filter((hn) => hn !== finalUrl.hostname && (hn === baseDomain || hn.endsWith(`.${baseDomain}`))))].slice(0, 4);
+  const [takeovers, domainData] = await Promise.all([
+    Promise.all([takeoverCheck(finalUrl.hostname, budget, html), ...linkedSubs.map((hn) => takeoverCheck(hn, budget))]).catch(() => []),
+    domainInfo(finalUrl.hostname, budget).catch((e) => ({ error: e.message, findings: [] })),
+  ]);
+  for (const t of takeovers.filter(Boolean)) findings.push(...t.findings);
+  findings.push(...(domainData.findings || []));
 
   // Bot-blocking sites return 403/429 (or refuse the connection) to automated
   // checks, so only clear "not found"/server errors count as broken.
@@ -528,9 +673,13 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
       dns_provider: dns.dns_provider || null,
       mail_provider: dns.mail_provider || null,
       name_servers: dns.ns || [],
+      cname: dns.cname || [],
+      dnssec: dns.dnssec ?? null,
       http3: /h3/.test(altSvc),
       cdn_cache: headers['cf-cache-status'] || headers['x-cache'] || headers['x-vercel-cache'] || null,
     },
+    domain: { name: domainData.domain || null, registrar: domainData.registrar || null, registered: domainData.registered || null, expires: domainData.expires || null, days_left: domainData.days_left ?? null, status: domainData.status || [], platform_subdomain: !!domainData.platform_subdomain, error: domainData.error || null },
+    subdomains_checked: takeovers.filter(Boolean).map((t) => ({ host: t.host, cname: t.cname })),
     pages_found: pagesFound,
     sections,
     findings,

@@ -138,9 +138,18 @@ export function compact(results, maxChars) {
   return s.length > maxChars ? s.slice(0, maxChars) : s;
 }
 
-function userPrompt(results, maxChars) {
+const LANGUAGES = {
+  en: 'English',
+  ta: 'Tamil (தமிழ் script)',
+  tanglish: 'Tanglish (Tamil written in English letters, the way people chat on WhatsApp)',
+  hi: 'Hindi (Devanagari script)',
+};
+
+function userPrompt(results, maxChars, language = 'en') {
   const kind = results.kind === 'apk' ? 'Android APK' : 'website / web application';
-  return `Review this ${kind} audit. Automated results (JSON):\n\n${compact(results, maxChars)}`;
+  const lang = LANGUAGES[language] || LANGUAGES.en;
+  const langNote = language && language !== 'en' ? `\n\nWrite every text value in ${lang}. Keep technical names (HTTPS, DNS, WordPress, file names, settings, code) in English. Keep JSON keys and enum values in English.` : '';
+  return `Review this ${kind} audit. Automated results (JSON):\n\n${compact(results, maxChars)}${langNote}`;
 }
 
 /** Fills gaps so the page can always render the review. */
@@ -180,17 +189,17 @@ export function parseJsonLoose(text) {
 
 // ── Cloudflare Workers AI (free tier) ───────────────────────
 
-async function workersAi(results, env) {
+async function workersAi(results, env, language) {
   const model = env.AI_MODEL || WORKERS_MODEL;
-  const messages = [{ role: 'system', content: SYSTEM }, { role: 'user', content: userPrompt(results, 36000) }];
+  const messages = [{ role: 'system', content: SYSTEM }, { role: 'user', content: userPrompt(results, 34000, language) }];
   let out;
   try {
-    out = await env.AI.run(model, { messages, response_format: { type: 'json_schema', json_schema: SCHEMA }, max_tokens: 6000, temperature: 0.2 });
+    out = await env.AI.run(model, { messages, response_format: { type: 'json_schema', json_schema: SCHEMA }, max_tokens: 7000, temperature: 0.2 });
   } catch (e) {
     if (/neuron|quota|limit|429/i.test(e.message)) throw Object.assign(new Error('Free Workers AI limit reached for today. It resets daily (00:00 UTC); try again later.'), { status: 429 });
     // Some models reject JSON mode: ask for JSON in the prompt instead.
     messages.push({ role: 'system', content: `Reply with only one JSON object matching this JSON Schema, no other text:\n${JSON.stringify(SCHEMA)}` });
-    out = await env.AI.run(model, { messages, max_tokens: 6000, temperature: 0.2 });
+    out = await env.AI.run(model, { messages, max_tokens: 7000, temperature: 0.2 });
   }
   const review = parseJsonLoose(out?.response ?? out);
   return { review: normalizeReview(review), model, provider: 'Cloudflare Workers AI (free)' };
@@ -198,7 +207,7 @@ async function workersAi(results, env) {
 
 // ── Claude API (optional, paid) ─────────────────────────────
 
-async function claude(results, env) {
+async function claude(results, env, language) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -214,7 +223,7 @@ async function claude(results, env) {
       fallbacks: 'default',
       system: SYSTEM,
       output_config: { effort: 'medium', format: { type: 'json_schema', schema: SCHEMA } },
-      messages: [{ role: 'user', content: userPrompt(results, 60000) }],
+      messages: [{ role: 'user', content: userPrompt(results, 60000, language) }],
     }),
   });
   const data = await res.json().catch(() => ({}));
@@ -228,18 +237,18 @@ async function claude(results, env) {
   return { review: normalizeReview(parseJsonLoose(text)), model: data.model, provider: 'Claude API' };
 }
 
-export async function explain(results, env) {
+export async function explain(results, env, { language = 'en' } = {}) {
   const hasWorkers = !!(env.AI && typeof env.AI.run === 'function');
   const wantsClaude = env.AI_PROVIDER === 'claude' && env.ANTHROPIC_API_KEY;
   if (wantsClaude || (!hasWorkers && env.ANTHROPIC_API_KEY)) {
     try {
-      return await claude(results, env);
+      return await claude(results, env, language);
     } catch (e) {
       if (!(hasWorkers && e.billing)) throw e;
-      const out = await workersAi(results, env);
+      const out = await workersAi(results, env, language);
       return { ...out, note: `Claude unavailable (${e.message}); used the free model instead.` };
     }
   }
-  if (hasWorkers) return workersAi(results, env);
+  if (hasWorkers) return workersAi(results, env, language);
   throw Object.assign(new Error('No AI is set up. In Cloudflare Pages → Settings → Bindings, add a "Workers AI" binding named AI (free), then redeploy.'), { status: 500 });
 }
