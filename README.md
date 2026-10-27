@@ -27,29 +27,34 @@ Built by **Kaviyarasu K** — Full-Stack & App Developer, Coimbatore · [Portfol
 ## Private Site Audit tool (`/site-audit`)
 
 Owner-only page for reviewing client websites, web apps and Android APKs. Paste a link (or drop an APK) and get:
-- **Automated website checks** (Cloudflare Pages Function `functions/api/audit.js`): status and redirects, HTTPS, security headers and cookies, page markup (title, description, viewport, lang, headings, alt text, form labels, empty links/buttons), mixed content, scripts without integrity checks, broken links and missing files, robots.txt / sitemap / security.txt, SPF / DMARC / CAA, response time.
-- **Google Lighthouse** on a phone via PageSpeed Insights (`functions/api/pagespeed.js`): performance, accessibility, best practices and SEO scores, Core Web Vitals, top fixes and a phone screenshot.
-- **Android APK checks** in the browser (`assets/js/apk-audit.js`; the APK is never uploaded): debuggable / testOnly / backup / cleartext flags, network security config, target SDK, exported components, deep links, restricted permissions, signing (debug certificate, v1/v2), 64-bit and 16 KB page-size native libraries, hardcoded secrets, risky WebView/TLS code.
-- **AI review by Claude** (`functions/api/explain.js`): plain-language summary, fix-first list with effort, quick wins, likely false positives and a ready-to-send message for the owner.
+- **Every page**: the home page plus up to 25 pages found in the menu, links and sitemap, each with HTTP status, response time, issues, and (optionally) a phone screenshot and Lighthouse scores.
+- **How it is built**: languages, CMS / site builder (WordPress, Shopify, Wix, Webflow, Framer, AI builders such as Lovable, Bolt, v0, Hostinger), frameworks and library versions, backend framework, database/backend services, hosting/CDN, web server, DNS and email providers, analytics, chat, payments and forms.
+- **Checks by area**: frontend (layout basics, accessibility, broken images/links, stray text), backend (visible PHP warnings, debug pages, stack traces), database (visible SQL/connection errors, Firebase/Supabase exposure in public code), security (HTTPS, headers, cookies, leaked keys in public JavaScript, outdated libraries with known CVEs, source maps), network & hosting (DNS, IPv6, HTTP/3, SPF/DMARC/CAA), performance and SEO.
+- **Android APK checks** in the browser (`assets/js/apk-audit.js`; the APK is never uploaded).
+- **AI review and a step-by-step fix plan**: plain-language summary, area-by-area status, phases of steps with "how to fix" and "how to check it is fixed". Tick steps off as you go (saved in the browser). Without AI, a plan is built from the automatic checks.
 
-Only checks what a normal visitor's browser sees; nothing is submitted, brute-forced or load-tested. Review only sites and apps you own or have permission to review.
+Only checks what a normal visitor's browser downloads; nothing is submitted, guessed, brute-forced or load-tested. Review only sites and apps you own or have permission to review.
 
-### Setup (Cloudflare Pages → your project → Settings → Variables and secrets, for Production and Preview)
+### Setup (Cloudflare Pages → your project → Settings)
+
+1. **Free AI (recommended)**: Settings → **Bindings** → **Add** → **Workers AI** → Variable name `AI` → Save. Free daily allowance, no key or card needed.
+2. **Variables and secrets** (Production and Preview):
 
 | Name | Required | Value |
 |---|---|---|
-| `ANTHROPIC_API_KEY` (secret) | yes, for the AI review | Your Claude API key from console.anthropic.com |
-| `PAGESPEED_API_KEY` (secret) | recommended | Google Cloud API key with the PageSpeed Insights API enabled (the keyless quota is small) |
-| `ADMIN_UID` | optional | Your Firebase Auth user UID, to lock the tool to that exact account. Without it, the admin email from `admin.html` / the Firestore rules is used. |
+| `PAGESPEED_API_KEY` (secret) | recommended | Google Cloud API key restricted to the PageSpeed Insights API (screenshots + Lighthouse) |
+| `AI_MODEL` | optional | Another Workers AI model ID (default `@cf/meta/llama-3.3-70b-instruct-fp8-fast`) |
+| `AI_PROVIDER` + `ANTHROPIC_API_KEY` (secret) | optional, paid | Set `AI_PROVIDER=claude` to use Claude instead; falls back to Workers AI if Claude has no credit |
+| `ADMIN_UID` | optional | Lock the tool to one Firebase account UID (default: the admin email used by `admin.html` and the Firestore rules) |
 
-Redeploy after changing variables (Deployments → ⋯ → Retry deployment).
+3. Redeploy after changing settings (Deployments → ⋯ → Retry deployment).
 
-Sign in at `/site-audit` with your admin account (the same login as `/admin`). Every `/api/*` call verifies your Firebase sign-in token on the server, so nobody else can use the tool or your API credit. Each AI review costs roughly a few cents of Claude API usage.
+Sign in at `/site-audit` with your admin account (the same login as `/admin`). Every `/api/*` call verifies your Firebase sign-in token on the server.
 
 ### Run locally
 
 ```bash
-printf 'DEV_BYPASS_AUTH=true\nALLOW_LOCAL_TARGETS=true\nANTHROPIC_API_KEY=sk-ant-...\n' > .dev.vars   # never commit this file
+printf 'DEV_BYPASS_AUTH=true\nALLOW_LOCAL_TARGETS=true\n' > .dev.vars   # never commit this file
 npx wrangler pages dev .                      # then open http://127.0.0.1:8788/site-audit?dev
 ```
 `DEV_BYPASS_AUTH` only works on localhost and must never be set in Cloudflare.

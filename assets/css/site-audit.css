@@ -46,7 +46,7 @@ main.sa-wrap { padding-top: 24px; padding-bottom: 64px; display: grid; gap: 16px
 .sa-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
 
 /* Forms */
-.sa label:not(.sa-check):not(.sa-drop) { display: block; font-weight: 600; font-size: .9rem; margin: 12px 0 6px }
+.sa form label:not(.sa-check):not(.sa-drop) { display: block; font-weight: 600; font-size: .9rem; margin: 12px 0 6px }
 .sa input[type=text], .sa input[type=email], .sa input[type=password] { width: 100%; min-width: 0; height: 46px; padding: 0 14px; border-radius: var(--r-sm); border: 1px solid var(--line-strong); background: var(--surface-2); font-size: 1rem }
 .sa input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px }
 .sa-row { display: flex; gap: 10px }
@@ -166,6 +166,62 @@ main.sa-wrap { padding-top: 24px; padding-bottom: 64px; display: grid; gap: 16px
 .sa-history-item:hover { border-color: var(--line-strong); background: var(--surface-2) }
 .sa-history-score { grid-row: span 2; font-weight: 700; font-size: 1.15rem; align-self: center }
 .sa-history-target { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500 }
+
+/* Options row */
+.sa-check-row { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between }
+.sa-inline-select { display: inline-flex !important; align-items: center; gap: 8px; margin: 0 !important; font-weight: 500 !important; font-size: .9rem !important }
+.sa-inline-select select { height: 36px; padding: 0 10px; border-radius: var(--r-xs); border: 1px solid var(--line-strong); background: var(--surface-2) }
+
+/* Area-by-area summary */
+.sa-areas { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px }
+.sa-area { border: 1px solid var(--line); border-left: 4px solid var(--line-strong); border-radius: var(--r-sm); padding: 10px 12px; background: var(--surface-2) }
+.sa-area.is-good { border-left-color: var(--good) }
+.sa-area.is-needs_work { border-left-color: var(--ok) }
+.sa-area.is-poor { border-left-color: var(--bad) }
+.sa-area-head { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px }
+.sa-area-status { font-size: .75rem; font-weight: 600; color: var(--muted) }
+.sa-area p { font-size: .9rem; overflow-wrap: anywhere }
+
+/* Fix plan */
+.sa-plan-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between }
+.sa-plan-head h2 { margin-bottom: 0 }
+.sa-progress { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin: 12px 0 4px }
+.sa-progress-bar { height: 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden }
+.sa-progress-bar span { display: block; height: 100%; background: var(--good); transition: width .3s var(--ease) }
+.sa-phase { margin-top: 22px !important }
+.sa-plan-steps { display: grid; gap: 8px; margin-top: 8px }
+.sa-plan-step { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px 12px; background: var(--surface-2) }
+.sa-plan-row { display: flex; gap: 10px; align-items: flex-start }
+.sa-plan-row input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--good); flex: none }
+.sa-plan-row label { flex: 1; min-width: 0; cursor: pointer; overflow-wrap: anywhere }
+.sa-plan-step dl { margin: 6px 0 0 30px; display: grid; gap: 2px }
+.sa-plan-step dt { font-size: .75rem; font-weight: 700; color: var(--muted); margin-top: 4px }
+.sa-plan-step dd { font-size: .92rem; overflow-wrap: anywhere }
+.sa-plan-step.is-done { opacity: .6 }
+.sa-plan-step.is-done strong { text-decoration: line-through }
+
+/* Technology */
+.sa-chips-static { display: flex; flex-wrap: wrap; gap: 6px }
+.sa-chip-static { padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); font-size: .85rem; font-weight: 600 }
+.sa-chip-static.is-likely { background: var(--surface-2); color: var(--ink-2); border: 1px dashed var(--line-strong) }
+.sa-tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px }
+.sa-tech-group { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 10px 12px; background: var(--surface-2); min-width: 0 }
+.sa-tech-group ul { display: grid; gap: 4px; margin-top: 4px; font-size: .92rem }
+.sa-tech-group li { overflow-wrap: anywhere }
+#techSection .sa-table { width: 100% }
+
+/* Pages */
+.sa-pages { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px }
+.sa-page { border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; background: var(--surface-2); display: flex; flex-direction: column; min-width: 0 }
+.sa-page-shot { width: 100%; aspect-ratio: 9 / 16; max-height: 300px; object-fit: cover; object-position: top; background: var(--surface); border-bottom: 1px solid var(--line) }
+.sa-page-shot.is-empty { display: grid; place-items: center; color: var(--muted); font-size: .85rem; aspect-ratio: auto; height: 80px }
+.sa-page-body { padding: 10px 12px; display: grid; gap: 4px; min-width: 0 }
+.sa-page-path { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .8rem; color: var(--accent-ink); overflow-wrap: anywhere }
+.sa-page-title { font-weight: 600; overflow-wrap: anywhere }
+.sa-page-status.is-bad { color: var(--bad); font-weight: 600 }
+.sa-page-counts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px }
+.sa-page-details summary { cursor: pointer; font-size: .85rem; font-weight: 600; margin-top: 4px }
+.sa-page-details ul { margin-top: 6px; font-size: .85rem }
 
 /* Notice dialog */
 .sa-dialog { margin: auto; border: 1px solid var(--line); border-radius: var(--r); padding: 0; width: min(420px, calc(100vw - 32px)); background: var(--surface); color: var(--ink); box-shadow: 0 24px 60px -12px rgba(13, 17, 23, .35) }

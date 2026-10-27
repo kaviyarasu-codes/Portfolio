@@ -16,6 +16,8 @@ const DEV = ['localhost', '127.0.0.1'].includes(location.hostname) && new URLSea
 
 const SEVERITIES = ['critical', 'high', 'medium', 'low', 'info'];
 const SEV_LABEL = { critical: 'Critical', high: 'High', medium: 'Medium', low: 'Low', info: 'Info' };
+const AREA_LABEL = { frontend: 'Frontend & design', backend: 'Backend & server', database: 'Database & data', security: 'Security', network_hosting: 'Network & hosting', performance: 'Performance', seo_content: 'SEO & content', accessibility: 'Accessibility', mobile_app: 'Mobile app' };
+const STATUS_LABEL = { good: 'Good', needs_work: 'Needs work', poor: 'Poor', not_checked: 'Not checked' };
 const HISTORY_KEY = 'sa-history';
 const HISTORY_MAX = 12;
 
@@ -164,6 +166,13 @@ function setBusy(on) {
 
 /* ── Website audit ──────────────────────────────────────── */
 
+async function pool(items, size, fn) {
+  let i = 0;
+  await Promise.all(Array.from({ length: Math.min(size, items.length) }, async () => {
+    while (i < items.length) { const idx = i++; await fn(items[idx], idx); }
+  }));
+}
+
 $('panelWeb').addEventListener('submit', async (e) => {
   e.preventDefault();
   if (busy) return;
@@ -171,15 +180,26 @@ $('panelWeb').addEventListener('submit', async (e) => {
   if (!url) { notice('Add a website address', 'Paste a link such as example.com or https://app.example.com/login.', { focusAfter: $('urlInput') }); return; }
   if (!$('permWeb').checked) { notice('Permission needed', 'Tick the box to confirm you own this site or have the owner\'s permission to review it.', { focusAfter: $('permWeb') }); return; }
   const useLh = $('optLighthouse').checked;
+  const usePages = $('optPages').checked;
+  const maxPages = Number($('optMaxPages').value) || 10;
+  const pageShots = usePages && useLh && $('optPageShots').checked;
   const useAi = $('optAiWeb').checked;
   setBusy(true);
   $('results').hidden = true;
-  startSteps(['Checking the website (page, links, headers, DNS)', useLh ? 'Google Lighthouse on a phone (~20–40 s)' : 'Google Lighthouse (off)', useAi ? 'AI review by Claude' : 'AI review (off)']);
+  startSteps([
+    'Checking the home page (security, links, technology, DNS, code)',
+    useLh ? 'Google Lighthouse + phone screenshot of the home page' : 'Google Lighthouse (off)',
+    usePages ? `Checking the other pages (up to ${maxPages - 1})` : 'Other pages (off)',
+    pageShots ? 'Screenshots + Lighthouse for each page (slow)' : 'Page screenshots (off)',
+    useAi ? 'AI review and fix plan' : 'AI review (off)',
+  ]);
   step(0, 'running');
   step(1, useLh ? 'running' : 'skipped');
-  step(2, useAi ? 'pending' : 'skipped');
+  step(2, usePages ? 'pending' : 'skipped');
+  step(3, pageShots ? 'pending' : 'skipped');
+  step(4, useAi ? 'pending' : 'skipped');
 
-  const auditP = api('/api/audit', { url }).then((r) => { step(0, 'done', `${r.findings.length} findings`); return r; }, (err) => { step(0, 'error', err.message); throw err; });
+  const auditP = api('/api/audit', { url }).then((r) => { step(0, 'done', `${r.findings.length} findings · ${r.technologies?.length || 0} technologies · ${r.pages_found?.length || 0} pages found`); return r; }, (err) => { step(0, 'error', err.message); throw err; });
   const lhP = useLh ? api('/api/pagespeed', { url, strategy: 'mobile' }).then((r) => { step(1, 'done'); return r; }, (err) => { step(1, 'error', err.message); return null; }) : Promise.resolve(null);
 
   let results;
@@ -195,9 +215,55 @@ $('panelWeb').addEventListener('submit', async (e) => {
     delete lh.screenshot;
     results.lighthouse = lh;
   }
+  results.pages = [{
+    url: results.final_url, final_url: results.final_url, status: results.status, ms: results.response_ms?.first, title: results.page?.title || null,
+    score: results.score, home: true, findings: results.findings, screenshot: results.screenshot || null, lighthouse: lh ? { scores: lh.scores } : null,
+  }];
   renderResults(results);
+
+  if (usePages) {
+    const others = (results.pages_found || []).filter((u) => u !== results.final_url).slice(0, maxPages - 1);
+    let done = 0;
+    step(2, 'running', others.length ? `0 of ${others.length}` : 'no other pages linked');
+    await pool(others, 3, async (u) => {
+      try {
+        results.pages.push(await api('/api/page', { url: u }));
+      } catch (err) {
+        results.pages.push({ url: u, final_url: u, status: 0, error: err.message, findings: [{ severity: 'medium', id: 'BUG-PAGE-UNREACHABLE', title: 'Page could not be checked', detail: err.message, fix: 'Open the page in a browser to see if it loads.' }] });
+      }
+      step(2, 'running', `${++done} of ${others.length}`);
+    });
+    step(2, 'done', `${others.length} page(s) checked`);
+    // Some tools only appear on inner pages (e.g. a contact form's backend).
+    const techNames = new Set((results.technologies || []).map((t) => t.name));
+    const langNames = new Set((results.languages || []).map((l) => l.name));
+    for (const p of results.pages) {
+      for (const t of p.technologies || []) if (!techNames.has(t.name)) { techNames.add(t.name); (results.technologies ||= []).push({ ...t, evidence: [...t.evidence, `page ${pathOf(p.final_url)}`] }); }
+      for (const l of p.languages || []) if (!langNames.has(l.name)) { langNames.add(l.name); (results.languages ||= []).push(l); }
+      results.databases = [...new Set([...(results.databases || []), ...(p.databases || [])])];
+    }
+    renderResults(results, { keepScroll: true });
+    if (pageShots && others.length) {
+      let shots = 0;
+      const todo = results.pages.filter((p) => !p.home && p.status && p.status < 400);
+      step(3, 'running', `0 of ${todo.length}`);
+      await pool(todo, 2, async (p) => {
+        try {
+          const r = await api('/api/pagespeed', { url: p.final_url, strategy: 'mobile' });
+          p.screenshot = r.screenshot;
+          p.lighthouse = { scores: r.scores, metrics: r.metrics, failed_checks: r.failed_checks };
+        } catch (err) {
+          p.lighthouse_error = err.message;
+        }
+        step(3, 'running', `${++shots} of ${todo.length}`);
+        const sec = document.querySelector('#pagesSection');
+        if (sec) sec.replaceWith(pagesSection(results));
+      });
+      step(3, 'done');
+    } else if (pageShots) step(3, 'skipped', 'no other pages');
+  }
   saveHistory(results);
-  if (useAi) await runAi(results, 2);
+  if (useAi) await runAi(results, 4);
   setBusy(false);
 });
 
@@ -226,7 +292,7 @@ $('panelApk').addEventListener('submit', async (e) => {
   const useAi = $('optAiApk').checked;
   setBusy(true);
   $('results').hidden = true;
-  startSteps(['Analysing the APK in your browser', useAi ? 'AI review by Claude' : 'AI review (off)']);
+  startSteps(['Analysing the APK in your browser', useAi ? 'AI review and fix plan' : 'AI review (off)']);
   step(0, 'running');
   step(1, useAi ? 'pending' : 'skipped');
   let results;
@@ -252,9 +318,13 @@ async function runAi(results, stepIndex) {
   if (panel) panel.replaceChildren(aiLoading());
   try {
     const { screenshot, ai, ...payload } = results;
+    if (payload.pages) payload.pages = payload.pages.map(({ screenshot: _s, ...p }) => p);
     const out = await api('/api/explain', { results: payload });
     results.ai = out.review;
     results.ai_model = out.model;
+    results.ai_provider = out.provider;
+    results.ai_note = out.note || null;
+    delete results.ai_error;
     step(stepIndex, 'done');
     saveHistory(results);
   } catch (err) {
@@ -263,11 +333,15 @@ async function runAi(results, stepIndex) {
   }
   const fresh = document.querySelector('#aiPanel');
   if (fresh) fresh.replaceWith(aiPanel(results, stepIndex));
+  const plan = document.querySelector('#planSection');
+  if (plan) plan.replaceWith(planSection(results));
+  const tech = document.querySelector('#techSection');
+  if (tech) tech.replaceWith(techSection(results));
   updateGrade(results);
 }
 
 function aiLoading() {
-  return h('div', { class: 'sa-ai-loading' }, h('span', { class: 'sa-spinner', 'aria-hidden': 'true' }), 'Claude is reviewing the results…');
+  return h('div', { class: 'sa-ai-loading' }, h('span', { class: 'sa-spinner', 'aria-hidden': 'true' }), 'The AI is reviewing the results and writing a fix plan… (usually 20–60 s)');
 }
 
 function aiPanel(r, stepIndex) {
@@ -276,14 +350,20 @@ function aiPanel(r, stepIndex) {
     if (r.ai_error) {
       box.append(h('p', { class: 'sa-error', text: r.ai_error }), h('button', { class: 'sa-btn sa-btn-ghost no-print', type: 'button', onclick: () => runAi(r, stepIndex ?? 0), text: 'Try again' }));
     } else {
-      box.append(h('p', { class: 'sa-muted', text: 'Not run for this audit.' }), h('button', { class: 'sa-btn sa-btn-ghost no-print', type: 'button', onclick: () => { startSteps(['AI review by Claude']); runAi(r, 0); }, text: 'Run AI review' }));
+      box.append(h('p', { class: 'sa-muted', text: 'Not run for this audit.' }), h('button', { class: 'sa-btn sa-btn-ghost no-print', type: 'button', onclick: () => { startSteps(['AI review and fix plan']); runAi(r, 0); }, text: 'Run AI review' }));
     }
     return box;
   }
   const ai = r.ai;
   box.append(h('p', { class: 'sa-ai-summary', text: ai.summary }));
+  if (r.ai_note) box.append(h('p', { class: 'sa-muted sa-small', text: r.ai_note }));
+  if (ai.area_summaries?.length) {
+    box.append(h('h3', { text: 'Area by area' }), h('div', { class: 'sa-areas' }, ai.area_summaries.map((a) => h('div', { class: `sa-area is-${a.status}` },
+      h('div', { class: 'sa-area-head' }, h('strong', { text: AREA_LABEL[a.area] || a.area }), h('span', { class: 'sa-area-status', text: STATUS_LABEL[a.status] || a.status })),
+      h('p', { text: a.summary })))));
+  }
   if (ai.priorities?.length) {
-    box.append(h('h3', { text: 'Fix in this order' }));
+    box.append(h('h3', { text: 'Most important problems' }));
     box.append(h('ol', { class: 'sa-priorities' }, ai.priorities.map((p) => h('li', { class: 'sa-priority' },
       h('div', { class: 'sa-priority-head' }, badge(p.severity), h('span', { class: 'sa-tag', text: p.area }), h('strong', { text: p.title }), h('span', { class: 'sa-effort', text: p.effort })),
       h('p', { text: p.why_it_matters }),
@@ -293,12 +373,154 @@ function aiPanel(r, stepIndex) {
   box.append(h('div', { class: 'sa-ai-grid' },
     h('div', {}, ...list('Quick wins', ai.quick_wins), ...list('What is good', ai.strengths, 'is-good')),
     h('div', {}, ...list('Probably not a problem', ai.false_positives), ...list('Check by hand', ai.not_checked))));
+  if (ai.page_notes?.length) box.append(h('h3', { text: 'Page notes' }), h('ul', { class: 'sa-bullets' }, ai.page_notes.map((n) => h('li', {}, h('b', { text: `${n.page}: ` }), n.notes))));
   if (ai.client_message) {
     box.append(h('h3', { text: 'Message for the owner' }), h('blockquote', { class: 'sa-quote', text: ai.client_message }),
       h('button', { class: 'sa-btn sa-btn-ghost no-print', type: 'button', onclick: async (e) => { try { await navigator.clipboard.writeText(ai.client_message); e.target.textContent = 'Copied'; } catch { e.target.textContent = 'Copy failed'; } }, text: 'Copy message' }));
   }
-  if (r.ai_model) box.append(h('p', { class: 'sa-muted sa-small', text: `Reviewed by ${r.ai_model}. Verify important findings before sending them to a client.` }));
+  if (r.ai_model) box.append(h('p', { class: 'sa-muted sa-small', text: `Reviewed by ${r.ai_provider ? `${r.ai_provider} · ` : ''}${r.ai_model}. AI can be wrong: verify important findings before sending them to a client.` }));
   return box;
+}
+
+/* ── Merging findings across pages ──────────────────────── */
+
+function pathOf(u) { try { const x = new URL(u); return `${x.pathname}${x.search}` || '/'; } catch { return u; } }
+
+/** All findings of the audit: home/site-wide plus each page, merged by issue, with the pages affected. */
+function allFindings(r) {
+  const map = new Map();
+  const add = (f, page) => {
+    const key = `${f.id}|${f.title}`;
+    if (!map.has(key)) map.set(key, { ...f, pages: [] });
+    if (page && !map.get(key).pages.includes(page)) map.get(key).pages.push(page);
+  };
+  for (const f of r.findings) add(f, r.kind === 'website' ? pathOf(r.final_url) : null);
+  for (const p of (r.pages || []).filter((x) => !x.home)) for (const f of p.findings || []) add(f, pathOf(p.final_url || p.url));
+  const order = Object.fromEntries(SEVERITIES.map((s, i) => [s, i]));
+  return [...map.values()].sort((a, b) => order[a.severity] - order[b.severity] || b.pages.length - a.pages.length);
+}
+
+/* ── Fix plan (AI plan when available, otherwise built from findings) ── */
+
+function effortFor(id) {
+  if (/^(SEO|A11Y|CONTENT|SEC-(HSTS|CSP|CLICKJACK|NOSNIFF|REFERRER|PERMISSIONS|VERSION)|DNS|COOKIE|UX)/.test(id)) return '5–20 min';
+  if (/^(DB|BE)-/.test(id)) return '1–3 h';
+  return '30–60 min';
+}
+
+function verifyFor(f) {
+  if (/^SEC-|^CSP-|^COOKIE-/.test(f.id)) return 'Run the audit again: this item should disappear and the security headers grade should go up. Also check the browser console for blocked resources.';
+  if (/BROKEN|MISSING|UNREACHABLE/.test(f.id)) return 'Open each listed link or file in a browser; it should load without an error. Then run the audit again.';
+  if (/^DNS-/.test(f.id)) return 'DNS changes can take up to a few hours; then run the audit again (or check with an online SPF/DMARC checker).';
+  if (/^PERF-/.test(f.id)) return 'Run the audit with Lighthouse on: the performance score and response time should improve.';
+  if (/^APK-/.test(f.id)) return 'Build a new release APK and analyse it again: this item should be gone.';
+  return 'Make the change, then run the audit again: this item should no longer appear.';
+}
+
+function autoPlan(r) {
+  const items = allFindings(r);
+  const where = (f) => (f.pages?.length > 1 ? ` (${f.pages.length} pages)` : f.pages?.length === 1 && f.pages[0] !== '/' ? ` (${f.pages[0]})` : '');
+  const toStep = (f) => ({ title: `${f.title}${where(f)}`, how: f.fix, verify: verifyFor(f), effort: effortFor(f.id) });
+  const phases = [
+    { phase: 'Phase 1 – Fix first', goal: 'Stop anything that breaks the site, loses visitors or exposes data.', sev: ['critical', 'high'] },
+    { phase: 'Phase 2 – Important', goal: 'Close security gaps and fix problems visitors notice.', sev: ['medium'] },
+    { phase: 'Phase 3 – Polish', goal: 'Best practice, search ranking and small details.', sev: ['low'] },
+    { phase: 'Phase 4 – Nice to have', goal: 'Optional improvements.', sev: ['info'] },
+  ];
+  return phases.map((ph) => ({ phase: ph.phase, goal: ph.goal, steps: items.filter((f) => ph.sev.includes(f.severity)).slice(0, 15).map(toStep) })).filter((ph) => ph.steps.length);
+}
+
+function planSection(r) {
+  const fromAi = !!r.ai?.fix_plan?.length;
+  const plan = fromAi ? r.ai.fix_plan : autoPlan(r);
+  const key = `sa-plan-${r.id || 'tmp'}`;
+  let doneSet;
+  try { doneSet = new Set(JSON.parse(store.get(key) || '[]')); } catch { doneSet = new Set(); }
+  const all = plan.flatMap((ph, i) => ph.steps.map((st, j) => `${fromAi ? 'ai' : 'auto'}:${i}:${j}:${st.title.slice(0, 40)}`));
+  const bar = h('span', {});
+  const label = h('span', { class: 'sa-muted sa-small' });
+  const update = () => {
+    const n = all.filter((k) => doneSet.has(k)).length;
+    bar.style.width = `${all.length ? Math.round((n / all.length) * 100) : 0}%`;
+    label.textContent = `${n} of ${all.length} steps done`;
+  };
+  const section = h('section', { class: 'sa-card sa-plan', id: 'planSection', 'aria-labelledby': 'planTitle' },
+    h('div', { class: 'sa-plan-head' }, h('h2', { id: 'planTitle', text: 'Fix plan – step by step' }), h('span', { class: 'sa-tag', text: fromAi ? 'Written by AI' : 'Built from the automatic checks' })),
+    h('p', { class: 'sa-muted', text: 'Work through the phases in order. Tick each step when it is done; progress is saved in this browser. Run the audit again at the end to confirm.' }),
+    h('div', { class: 'sa-progress' }, h('div', { class: 'sa-progress-bar' }, bar), label));
+  if (!plan.length) section.append(h('p', { class: 'sa-muted', text: 'Nothing to fix: no issues were found.' }));
+  plan.forEach((ph, i) => {
+    section.append(h('h3', { class: 'sa-phase', text: ph.phase }), ph.goal ? h('p', { class: 'sa-muted sa-small', text: ph.goal }) : null,
+      h('ol', { class: 'sa-plan-steps' }, ph.steps.map((st, j) => {
+        const k = `${fromAi ? 'ai' : 'auto'}:${i}:${j}:${st.title.slice(0, 40)}`;
+        const id = `ps-${i}-${j}`;
+        const box = h('input', { type: 'checkbox', id, onchange: (e) => {
+          if (e.target.checked) doneSet.add(k); else doneSet.delete(k);
+          store.set(key, JSON.stringify([...doneSet]));
+          li.classList.toggle('is-done', e.target.checked);
+          update();
+        } });
+        box.checked = doneSet.has(k);
+        const li = h('li', { class: `sa-plan-step ${box.checked ? 'is-done' : ''}` },
+          h('div', { class: 'sa-plan-row' }, box, h('label', { for: id }, h('strong', { text: st.title })), st.effort ? h('span', { class: 'sa-effort', text: st.effort }) : null),
+          h('dl', {}, h('dt', { text: 'How to fix' }), h('dd', { class: 'sa-fix', text: st.how }), h('dt', { text: 'How to check it is fixed' }), h('dd', { text: st.verify })));
+        return li;
+      })));
+  });
+  update();
+  return section;
+}
+
+/* ── Technology, network and pages ──────────────────────── */
+
+function techSection(r) {
+  const sec = h('section', { class: 'sa-card', id: 'techSection', 'aria-labelledby': 'techTitle' }, h('h2', { id: 'techTitle', text: 'How it is built' }));
+  if (r.ai?.technology_summary) sec.append(h('p', { class: 'sa-ai-summary', text: r.ai.technology_summary }));
+  if (r.kind === 'apk') {
+    const a = r.app;
+    sec.append(table([['Frameworks', a.frameworks.length ? a.frameworks : ['Native Android (Java/Kotlin) or not detected']], ['Native code (ABIs)', a.abis.length ? a.abis : ['none']], ['Min / target SDK', `${a.min_sdk} / ${a.target_sdk}`]]));
+    return sec;
+  }
+  if (r.languages?.length) sec.append(h('h3', { text: 'Languages' }), h('div', { class: 'sa-chips-static' }, r.languages.map((l) => h('span', { class: `sa-chip-static ${l.confidence === 'likely' ? 'is-likely' : ''}`, text: l.confidence === 'likely' ? `${l.name} (likely)` : l.name }))));
+  const groups = {};
+  for (const t of r.technologies || []) (groups[t.category] ||= []).push(t);
+  const cats = Object.keys(groups);
+  if (cats.length) {
+    sec.append(h('h3', { text: 'Platform, frameworks and tools' }), h('div', { class: 'sa-tech-grid' }, cats.map((c) => h('div', { class: 'sa-tech-group' },
+      h('span', { class: 'sa-tile-label', text: c }),
+      h('ul', {}, groups[c].map((t) => h('li', {}, h('b', { text: t.name }), t.version ? ` ${t.version}` : '', h('small', { class: 'sa-muted', text: ` · found in ${t.evidence.join(', ')}` }))))))));
+  } else sec.append(h('p', { class: 'sa-muted', text: 'No known platform or framework detected (often a hand-coded site or a heavily customised build).' }));
+  if (r.databases?.length) sec.append(h('h3', { text: 'Database / backend (from the site\'s public code)' }), h('ul', { class: 'sa-bullets' }, r.databases.map((d) => h('li', { text: d }))));
+  const n = r.network || {};
+  sec.append(h('h3', { text: 'Network and hosting' }), table([
+    ['DNS provider', n.dns_provider], ['Email provider', n.mail_provider], ['Name servers', n.name_servers],
+    ['IPv4 addresses', n.ipv4], ['IPv6', n.ipv6?.length ? n.ipv6 : 'not enabled'], ['HTTP/3', n.http3 ? 'yes' : 'no'], ['CDN cache status', n.cdn_cache],
+    ['Server header', r.security_headers?.headers?.server], ['Backend/API addresses in public code', r.backend_endpoints?.length ? r.backend_endpoints : null],
+    ['JavaScript files scanned', r.js_files_scanned?.length ? r.js_files_scanned.map(pathOf) : null],
+  ]));
+  return sec;
+}
+
+function pagesSection(r) {
+  const pages = r.pages || [];
+  const sec = h('section', { class: 'sa-card', id: 'pagesSection', 'aria-labelledby': 'pagesTitle' }, h('h2', { id: 'pagesTitle', text: `Pages (${pages.length})` }));
+  if (r.sections?.length) sec.append(h('p', { class: 'sa-muted sa-small', text: `One-page sections linked in the menu: ${r.sections.join(', ')}` }));
+  if (pages.length <= 1 && !(r.pages_found || []).length) { sec.append(h('p', { class: 'sa-muted', text: 'No other pages are linked from the home page.' })); return sec; }
+  sec.append(h('div', { class: 'sa-pages' }, pages.map((p) => {
+    const counts = SEVERITIES.slice(0, 4).map((s) => [s, (p.findings || []).filter((f) => f.severity === s).length]).filter(([, n]) => n);
+    return h('article', { class: 'sa-page' },
+      p.screenshot ? h('img', { class: 'sa-page-shot', src: p.screenshot, alt: `Phone screenshot of ${pathOf(p.final_url || p.url)}`, loading: 'lazy' }) : h('div', { class: 'sa-page-shot is-empty', text: p.lighthouse_error ? 'Screenshot failed' : 'No screenshot' }),
+      h('div', { class: 'sa-page-body' },
+        h('p', { class: 'sa-page-path', text: p.home ? `${pathOf(p.final_url)} (home)` : pathOf(p.final_url || p.url) }),
+        h('p', { class: 'sa-page-title', text: p.title || p.error || '(no title)' }),
+        h('p', { class: 'sa-small' }, h('span', { class: `sa-page-status ${p.status >= 400 || !p.status ? 'is-bad' : ''}`, text: p.status ? `HTTP ${p.status}` : 'not reached' }), p.ms ? ` · ${p.ms} ms` : '', p.score != null ? ` · score ${p.score}` : ''),
+        p.lighthouse?.scores ? h('p', { class: 'sa-small sa-muted', text: `Lighthouse: speed ${p.lighthouse.scores.performance ?? '–'} · access ${p.lighthouse.scores.accessibility ?? '–'} · SEO ${p.lighthouse.scores.seo ?? '–'}` }) : null,
+        h('div', { class: 'sa-page-counts' }, counts.length ? counts.map(([s, n]) => h('span', { class: `sa-badge sev-${s}`, text: `${n} ${SEV_LABEL[s]}` })) : h('span', { class: 'sa-muted sa-small', text: 'No issues' })),
+        (p.findings || []).length ? h('details', { class: 'sa-page-details' }, h('summary', { text: 'Issues on this page' }), h('ul', { class: 'sa-bullets' }, p.findings.map((f) => h('li', {}, badge(f.severity), ' ', f.title)))) : null));
+  })));
+  const unchecked = (r.pages_found || []).length - pages.length;
+  if (unchecked > 0) sec.append(h('p', { class: 'sa-muted sa-small', text: `${unchecked} more page(s) were found but not checked. Raise "Pages to check" to include them.` }));
+  return sec;
 }
 
 /* ── Results rendering ──────────────────────────────────── */
@@ -316,8 +538,10 @@ function updateGrade(r) {
   if (el) el.textContent = r.ai?.grade || '–';
 }
 
-function renderResults(r) {
-  const counts = Object.fromEntries(SEVERITIES.map((s) => [s, r.findings.filter((f) => f.severity === s).length]));
+function renderResults(r, { keepScroll = false } = {}) {
+  r.id ||= `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  const merged = allFindings(r);
+  const counts = Object.fromEntries(SEVERITIES.map((s) => [s, merged.filter((f) => f.severity === s).length]));
   const tiles = [
     tile('Score', `${r.score}/100`, { cls: scoreClass(r.score), sub: 'automated checks' }),
     h('div', { class: 'sa-tile', id: 'gradeTile' }, h('span', { class: 'sa-tile-label', text: 'AI grade' }), h('b', { text: r.ai?.grade || '–' })),
@@ -325,7 +549,8 @@ function renderResults(r) {
   ];
   const facts = [];
   if (r.kind === 'website') {
-    facts.push(tile('Security headers', r.security_headers?.grade), tile('Server response', r.response_ms ? `${r.response_ms.first} ms` : null), tile('HTML size', `${r.html_kb} KB`), tile('Links checked', String(r.links?.checked?.length ?? 0), { sub: `of ${r.links?.total ?? 0}` }));
+    const main = (r.technologies || []).find((t) => /CMS|builder|framework/i.test(t.category));
+    facts.push(tile('Built with', main ? main.name : 'Custom / unknown'), tile('Pages checked', String((r.pages || []).length || 1), { sub: `${(r.pages_found || []).length} found` }), tile('Security headers', r.security_headers?.grade), tile('Server response', r.response_ms ? `${r.response_ms.first} ms` : null), tile('Hosting / DNS', (r.technologies || []).find((t) => t.category === 'Hosting / CDN')?.name || r.network?.dns_provider || '–'));
     if (r.lighthouse) for (const [k, v] of Object.entries(r.lighthouse.scores)) facts.push(tile(`Lighthouse ${k.replace('-', ' ')}`, v == null ? '–' : String(v), { cls: scoreClass(v) }));
   } else {
     const a = r.app;
@@ -345,24 +570,29 @@ function renderResults(r) {
     : null;
 
   const container = $('results');
-  container.replaceChildren(
+  container.replaceChildren(...[
     h('section', { class: 'sa-card' }, header, h('div', { class: 'sa-tiles' }, tiles), h('div', { class: 'sa-tiles sa-tiles-facts' }, facts)),
     h('div', { class: `sa-two ${side ? '' : 'is-single'}` }, aiPanel(r), side),
-    findingsSection(r),
+    planSection(r),
+    techSection(r),
+    r.kind === 'website' ? pagesSection(r) : null,
+    findingsSection(r, merged),
     detailsSection(r),
-  );
+  ].filter(Boolean));
   container.hidden = false;
-  container.querySelector('.sa-target').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!keepScroll) container.querySelector('.sa-target').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function findingsSection(r) {
+function findingsSection(r, merged = allFindings(r)) {
   const list = h('div', { class: 'sa-findings' });
-  const draw = (filter) => list.replaceChildren(...r.findings.filter((f) => filter === 'all' || f.severity === filter).map((f) =>
+  const draw = (filter) => list.replaceChildren(...merged.filter((f) => filter === 'all' || f.severity === filter).map((f) =>
     h('details', { class: `sa-finding sev-${f.severity}` },
-      h('summary', {}, badge(f.severity), h('span', { text: f.title })),
-      h('dl', {}, h('dt', { text: 'Details' }), h('dd', { class: 'sa-pre', text: f.detail }), h('dt', { text: 'How to fix' }), h('dd', { text: f.fix }), h('dt', { text: 'Check ID' }), h('dd', { class: 'sa-muted', text: f.id })))));
+      h('summary', {}, badge(f.severity), h('span', { text: f.title }), f.pages?.length > 1 ? h('span', { class: 'sa-muted sa-small', text: ` · ${f.pages.length} pages` }) : null),
+      h('dl', {}, h('dt', { text: 'Details' }), h('dd', { class: 'sa-pre', text: f.detail }), h('dt', { text: 'How to fix' }), h('dd', { text: f.fix }),
+        f.pages?.length ? [h('dt', { text: 'Where' }), h('dd', { class: 'sa-pre', text: f.pages.join('\n') })] : null,
+        h('dt', { text: 'Check ID' }), h('dd', { class: 'sa-muted', text: f.id })))));
   const chips = h('div', { class: 'sa-chips no-print', role: 'group', 'aria-label': 'Filter findings' }, ['all', ...SEVERITIES].map((s) => {
-    const n = s === 'all' ? r.findings.length : r.findings.filter((f) => f.severity === s).length;
+    const n = s === 'all' ? merged.length : merged.filter((f) => f.severity === s).length;
     return h('button', { type: 'button', class: 'sa-chip', 'aria-pressed': s === 'all' ? 'true' : 'false', disabled: n === 0 && s !== 'all', onclick: (e) => {
       for (const c of chips.children) c.setAttribute('aria-pressed', 'false');
       e.currentTarget.setAttribute('aria-pressed', 'true');
@@ -370,7 +600,7 @@ function findingsSection(r) {
     } }, `${s === 'all' ? 'All' : SEV_LABEL[s]} (${n})`);
   }));
   draw('all');
-  return h('section', { class: 'sa-card', 'aria-labelledby': 'findTitle' }, h('h2', { id: 'findTitle', text: 'Automated findings' }), chips, r.findings.length ? list : h('p', { class: 'sa-muted', text: 'No issues found by the automated checks.' }));
+  return h('section', { class: 'sa-card', 'aria-labelledby': 'findTitle' }, h('h2', { id: 'findTitle', text: 'All issues found' }), chips, merged.length ? list : h('p', { class: 'sa-muted', text: 'No issues found by the automated checks.' }));
 }
 
 function table(rows) {
@@ -382,7 +612,7 @@ function detailsSection(r) {
   const block = (title, ...content) => blocks.push(h('details', { class: 'sa-detail' }, h('summary', { text: title }), ...content));
   if (r.kind === 'website') {
     const p = r.page || {};
-    block('Page', table([['Title', p.title], ['Description', p.description], ['Language', p.lang], ['Viewport', p.viewport], ['Canonical', p.canonical], ['Robots meta', p.robots], ['Technology', p.tech], ['Images', `${p.images ?? 0} (${p.images_without_alt ?? 0} without alt, ${p.lazy_images ?? 0} lazy)`], ['Links', `${r.links?.internal ?? 0} internal, ${r.links?.external ?? 0} external`], ['Scripts / stylesheets', `${p.scripts ?? 0} / ${p.stylesheets ?? 0}`], ['Forms', p.forms], ['Structured data blocks', p.json_ld_blocks]]));
+    block('Page', table([['Title', p.title], ['Description', p.description], ['Language', p.lang], ['Viewport', p.viewport], ['Canonical', p.canonical], ['Robots meta', p.robots], ['Generator tag', p.generator], ['Images', `${p.images ?? 0} (${p.images_without_alt ?? 0} without alt, ${p.lazy_images ?? 0} lazy)`], ['Links', `${r.links?.internal ?? 0} internal, ${r.links?.external ?? 0} external`], ['Scripts / stylesheets', `${p.scripts ?? 0} / ${p.stylesheets ?? 0}`], ['Forms', p.forms], ['Structured data blocks', p.json_ld_blocks]]));
     block('Redirects and response', table([...r.redirect_chain.map((c, i) => [`Hop ${i + 1}`, `${c.status} ${c.url} (${c.ms} ms)`]), ['http:// check', r.http_redirect ? (r.http_redirect.error || `${r.http_redirect.status} → ${r.http_redirect.location || '(no redirect)'}`) : 'n/a'], ['Repeat response times', (r.response_ms?.repeat || []).map((m) => `${m} ms`)]]));
     block('Security headers', table([...Object.entries(r.security_headers?.headers || {}), ['Cookies', (r.security_headers?.cookies || []).map((c) => `${c.name} (${[c.secure && 'Secure', c.httpOnly && 'HttpOnly', c.sameSite && `SameSite=${c.sameSite}`].filter(Boolean).join(', ') || 'no flags'})`)]]));
     const bad = [...(r.links?.checked || []), ...(r.links?.assets_checked || [])].filter((l) => l.status !== 200);
@@ -429,6 +659,7 @@ function readHistory() {
 function saveHistory(r) {
   r.id ||= `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   const { screenshot, ...lean } = r;
+  if (lean.pages) lean.pages = lean.pages.map(({ screenshot: _s, ...p }) => p);
   let list = readHistory().filter((x) => x.id !== r.id);
   list.unshift({ id: r.id, kind: r.kind, target: r.final_url || r.target, score: r.score, grade: r.ai?.grade || null, date: r.checked_at });
   for (const old of list.slice(HISTORY_MAX)) store.del(`sa-r-${old.id}`);

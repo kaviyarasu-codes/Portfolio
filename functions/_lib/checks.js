@@ -3,6 +3,8 @@
 // the page itself, its links and assets, robots/security.txt/sitemap and
 // public DNS. No path guessing, form submission or load testing.
 
+import { detectTechnologies, scanJavaScript, dnsProvider, mailProvider } from './tech.js';
+
 const UA = 'Mozilla/5.0 (compatible; KaviyarasuSiteAudit/1.0; +https://kaviyarasu-portfolio.pages.dev)';
 const MAX_HTML = 2 * 1024 * 1024;
 const LINK_CHECK_LIMIT = 15;
@@ -275,28 +277,58 @@ export function analyzeHtml(rawHtml, pageUrl) {
   if (brokenRender) f.push(finding('medium', 'BUG-RENDER-ARTIFACT', 'Broken text on the page', `Found "${brokenRender[0]}" in visible text (template/encoding error).`, 'Fix the template variable or character encoding (use UTF-8).'));
   if (copyright && Number(copyright[1]) < year - 1) f.push(finding('low', 'CONTENT-OLD-YEAR', `Footer shows © ${copyright[1]}`, 'Makes the site look unmaintained.', 'Update the year (or print it with JavaScript).'));
 
-  const tech = [];
-  if (generator) tech.push(generator);
-  if (/wp-content|wp-includes/i.test(rawHtml)) tech.push('WordPress');
-  if (/cdn\.shopify\.com|Shopify\.theme/i.test(rawHtml)) tech.push('Shopify');
-  if (/static\.wixstatic\.com|wix\.com/i.test(rawHtml)) tech.push('Wix');
-  if (/squarespace/i.test(rawHtml)) tech.push('Squarespace');
-  if (/__NEXT_DATA__|\/_next\//.test(rawHtml)) tech.push('Next.js');
-  if (/data-reactroot|react-dom/i.test(rawHtml)) tech.push('React');
-  if (/ng-version=/i.test(rawHtml)) tech.push('Angular');
-  if (/data-v-[0-9a-f]{6,}|__NUXT__/i.test(rawHtml)) tech.push('Vue/Nuxt');
-  if (/gstatic\.com\/firebasejs|firebaseapp\.com/i.test(rawHtml)) tech.push('Firebase');
-  if (/googletagmanager\.com|google-analytics\.com|gtag\(/i.test(rawHtml)) tech.push('Google Analytics/Tag Manager');
-  if (/jquery[.-]?(\d[\d.]*)?(\.min)?\.js/i.test(rawHtml)) tech.push(`jQuery${(/jquery[.-](\d[\d.]+)/i.exec(rawHtml) || [])[1] ? ' ' + /jquery[.-](\d[\d.]+)/i.exec(rawHtml)[1] : ''}`);
-  const wpVer = /ver=(\d+\.\d+(?:\.\d+)?)/.exec(rawHtml);
-  if (generator && /WordPress\s+(\d+\.\d+)/i.test(generator)) f.push(finding('low', 'SEC-VERSION-LEAK', 'WordPress version is public', generator, 'Remove the generator tag and keep WordPress, themes and plugins updated.'));
-
+  for (const t of strayBodyText(rawHtml)) {
+    const verification = /google-site-verification|google[0-9a-f]{16}\.html/i.test(t);
+    f.push(finding(verification ? 'medium' : 'low', 'BUG-STRAY-TEXT', verification ? 'Google verification code is printed on the page' : 'Stray text outside the page layout', `"${t.slice(0, 160)}" appears directly in <body>, outside any section, so visitors see it at the edge of the page.`, verification ? 'Remove that line from the page. Verify Google Search Console with the uploaded .html file, a <meta name="google-site-verification"> tag in <head>, or a DNS TXT record instead.' : 'Remove the stray text or move it into the right section.'));
+  }
+  f.push(...visibleErrors(text));
   return {
-    facts: { title, description, lang, viewport, canonical, robots, og, favicon, h1, images: imgs.length, images_without_alt: noAlt.length, lazy_images: lazy, links: links.length, scripts: scripts.length, stylesheets: styles.length, forms: forms.length, has_password_field: hasPassword, json_ld_blocks: jsonLd, tech: [...new Set(tech)], wp_asset_version_hint: wpVer ? wpVer[1] : null },
+    facts: { title, description, lang, viewport, canonical, robots, og, favicon, h1, images: imgs.length, images_without_alt: noAlt.length, lazy_images: lazy, links: links.length, scripts: scripts.length, stylesheets: styles.length, forms: forms.length, has_password_field: hasPassword, json_ld_blocks: jsonLd, generator: generator || null },
     links,
+    scriptSrcs: scripts.map((x) => x.src),
+    styleHrefs: styles.map((x) => x.href),
     assets: [...scripts.map((s) => s.src), ...styles.map((s) => s.href), ...imgs.map((t) => decode(attr(t, 'src'))).filter((s) => s && !s.startsWith('data:'))],
     findings: f,
   };
+}
+
+/** Text that sits directly inside <body>, outside every element (e.g. a pasted verification code). */
+export function strayBodyText(html) {
+  const m = /<body\b[^>]*>([\s\S]*?)(?:<\/body>|$)/i.exec(html);
+  if (!m) return [];
+  const body = m[1].replace(/<!--[\s\S]*?-->/g, '').replace(/<(script|style|noscript|template|svg)\b[\s\S]*?<\/\1>/gi, '');
+  const VOID = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr', 'param']);
+  const out = [];
+  const re = /<(\/?)([a-zA-Z][\w-]*)\b[^>]*?(\/?)>/g;
+  let depth = 0, last = 0, t;
+  const take = (chunk) => { const v = decode(chunk).replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim(); if (v.length > 1) out.push(v); };
+  while ((t = re.exec(body))) {
+    if (depth === 0) take(body.slice(last, t.index));
+    const tag = t[2].toLowerCase();
+    if (t[1]) depth = Math.max(0, depth - 1);
+    else if (!VOID.has(tag) && !t[3]) depth++;
+    last = re.lastIndex;
+  }
+  if (depth === 0) take(body.slice(last));
+  return out.slice(0, 5);
+}
+
+const ERROR_SIGNS = [
+  ['critical', 'DB-CONNECTION-ERROR', 'Database connection error is shown', /Error establishing a database connection|could not connect to (the )?database|Connection refused.*(mysql|postgres)/i, 'The site cannot reach its database. Check the database server, credentials and hosting limits.'],
+  ['high', 'DB-SQL-ERROR', 'Database (SQL) error message is visible', /You have an error in your SQL syntax|SQLSTATE\[|PDOException|mysqli?_[a-z_]+\(|Unclosed quotation mark after the character string|ORA-\d{5}|pg_query\(|SQLite3?::/i, 'Hide database errors from visitors (log them instead) and check that queries use parameters, not string concatenation.'],
+  ['high', 'BE-DEBUG-PAGE', 'Debug / developer error page is public', /You're seeing this error because you have\s*(<code>)?DEBUG = True|Whoops! There was an error|Illuminate\\|Server Error in '\/' Application|Traceback \(most recent call last\)|Werkzeug Debugger/i, 'Turn off debug mode in production (Django DEBUG=False, Laravel APP_DEBUG=false, ASP.NET customErrors On).'],
+  ['high', 'BUG-WP-CRITICAL', 'WordPress "critical error" message', /There has been a critical error on (this|your) website/i, 'Check wp-content/debug.log or the hosting error log; usually a broken plugin or theme update.'],
+  ['medium', 'BE-PHP-WARNING', 'PHP warnings/errors printed on the page', /\b(Warning|Notice|Deprecated|Fatal error|Parse error)\s*:\s[^\n]{0,200}?\bin\s+\/[^\s]+\.php\s+on line\s+\d+/i, 'Set display_errors=Off in production and fix the warning; it also reveals server file paths.'],
+  ['medium', 'BE-STACK-TRACE', 'Program stack trace is visible', /\bat [\w.$<>]+ \((?:\/|[A-Z]:\\)[^)]+:\d+:\d+\)|Exception in thread "main"|java\.lang\.[A-Za-z]+Exception/, 'Catch errors on the server and show a friendly error page instead.'],
+];
+
+function visibleErrors(text) {
+  const out = [];
+  for (const [sev, id, title, re, fix] of ERROR_SIGNS) {
+    const m = re.exec(text);
+    if (m) out.push(finding(sev, id, title, `Visible text: "${text.slice(Math.max(0, m.index - 20), m.index + 140).replace(/\s+/g, ' ').trim()}"`, fix));
+  }
+  return out;
 }
 
 // ── DNS (DNS-over-HTTPS) ─────────────────────────────────────
@@ -305,7 +337,7 @@ async function doh(name, type) {
   const { res } = await timedFetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(name)}&type=${type}`, { headers: { accept: 'application/dns-json' } }, 8000);
   if (!res.ok) return [];
   const data = await res.json();
-  return (data.Answer || []).filter((a) => a.type === { TXT: 16, MX: 15, CAA: 257 }[type]).map((a) => String(a.data).replace(/^"|"$/g, '').replace(/"\s*"/g, ''));
+  return (data.Answer || []).filter((a) => a.type === { TXT: 16, MX: 15, CAA: 257, NS: 2, A: 1, AAAA: 28 }[type]).map((a) => String(a.data).replace(/^"|"$/g, '').replace(/"\s*"/g, ''));
 }
 
 export function analyzeSpf(records, hasMx) {
@@ -328,10 +360,11 @@ export function analyzeDmarc(records) {
 async function dnsChecks(hostname) {
   // Check the registrable-ish domain (strip "www." only; good enough for most sites).
   const domain = hostname.replace(/^www\./i, '');
-  const [txt, dmarc, mx, caa] = await Promise.all([doh(domain, 'TXT'), doh(`_dmarc.${domain}`, 'TXT'), doh(domain, 'MX'), doh(domain, 'CAA')]);
+  const [txt, dmarc, mx, caa, ns, a, aaaa] = await Promise.all([doh(domain, 'TXT'), doh(`_dmarc.${domain}`, 'TXT'), doh(domain, 'MX'), doh(domain, 'CAA'), doh(domain, 'NS'), doh(hostname, 'A'), doh(hostname, 'AAAA')]);
   const f = [...analyzeSpf(txt, mx.length > 0), ...analyzeDmarc(dmarc)];
   if (!caa.length) f.push(finding('info', 'DNS-CAA', 'No CAA record', 'Any certificate authority may issue certificates for this domain.', 'Add a CAA record naming your certificate provider.'));
-  return { domain, spf: txt.filter((r) => /^v=spf1/i.test(r)), dmarc, mx, caa, findings: f };
+  if (!aaaa.length && a.length) f.push(finding('info', 'NET-NO-IPV6', 'No IPv6 address', 'Visitors on IPv6-only mobile networks go through slower translation.', 'Enable IPv6 at your host or CDN (Cloudflare does this automatically).'));
+  return { domain, spf: txt.filter((r) => /^v=spf1/i.test(r)), dmarc, mx, caa, ns, a, aaaa, dns_provider: dnsProvider(ns), mail_provider: mailProvider(mx), findings: f };
 }
 
 // ── Main audit ───────────────────────────────────────────────
@@ -365,8 +398,8 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
   const findings = [];
 
   const { chain, res, ms } = await followRedirects(target.href);
-  // Fixed requests: redirect hops, http:// check, robots/security.txt/sitemap, 4 DNS lookups.
-  budget.left -= chain.length + 1 + 3 + 4;
+  // Fixed requests: redirect hops, http:// check, robots/security.txt/sitemap, 7 DNS lookups.
+  budget.left -= chain.length + 1 + 3 + 7;
   const finalUrl = new URL(chain[chain.length - 1].url);
   const headers = Object.fromEntries(res.headers);
   const setCookies = typeof res.headers.getSetCookie === 'function' ? res.headers.getSetCookie() : [];
@@ -403,6 +436,20 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
 
   // Links and assets: same-site links first, then external, deduped.
   const resolve = (h) => { try { const u = new URL(h, finalUrl); u.hash = ''; return ['http:', 'https:'].includes(u.protocol) ? u.href : null; } catch { return null; } };
+
+  // Public JavaScript the browser downloads anyway: same-site bundles first (max 3).
+  const scriptUrls = (page.scriptSrcs || []).map(resolve).filter(Boolean);
+  const ownScripts = scriptUrls.filter((u) => new URL(u).host === finalUrl.host).slice(0, 3);
+  const jsFiles = (await Promise.all(ownScripts.map(async (u) => {
+    if (budget.left <= 0) return null;
+    budget.left--;
+    try { const { res: r } = await timedFetch(u, {}, 12000); return r.ok ? { url: u, text: (await readText(r, 3 * 1024 * 1024)).text } : null; } catch { return null; }
+  }))).filter(Boolean);
+  const inlineJs = (html.match(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi) || []).join('\n');
+  const jsScan = scanJavaScript([...jsFiles, { url: `${finalUrl.href} (inline scripts)`, text: inlineJs }]);
+  findings.push(...jsScan.findings);
+  const tech = detectTechnologies({ html, headers, cookies: setCookies, srcs: [...scriptUrls, ...(page.styleHrefs || [])], js: jsFiles.map((x) => x.text).join('\n') });
+  findings.push(...tech.findings);
   const uniq = (arr) => [...new Set(arr.map(resolve).filter(Boolean))];
   const allLinks = uniq(page.links).filter((u) => u !== finalUrl.href);
   const internal = allLinks.filter((u) => new URL(u).host === finalUrl.host);
@@ -438,6 +485,14 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
   if (!securityTxt || !/^contact:/im.test(securityTxt)) findings.push(finding('info', 'SEC-NO-SECURITY-TXT', 'No security.txt', 'People who find a security problem have no published way to report it.', 'Add /.well-known/security.txt with Contact and Expires (RFC 9116).'));
   findings.push(...(dns.findings || []));
 
+  // Pages to check one by one: menu/links first, then sitemap, same site only.
+  const isPage = (u) => { try { const x = new URL(u); return x.host === finalUrl.host && !/\.(pdf|zip|rar|jpe?g|png|gif|webp|svg|mp4|mp3|docx?|xlsx?|pptx?|apk|exe|xml|txt|json|css|js)$/i.test(x.pathname); } catch { return false; } };
+  const norm = (u) => { const x = new URL(u); x.hash = ''; for (const k of [...x.searchParams.keys()]) if (/^utm_|^fbclid$|^gclid$/.test(k)) x.searchParams.delete(k); return x.href; };
+  const sitemapUrls = sitemap && sitemap.body ? [...sitemap.body.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/gi)].map((m) => m[1]).filter((u) => !/\.xml$/i.test(u)) : [];
+  const pagesFound = [...new Set([finalUrl.href, ...internal, ...sitemapUrls].filter(isPage).map(norm))].slice(0, 40);
+  const sections = [...new Set(page.links.filter((h) => /^#[\w-]+$/.test(h)))].slice(0, 20);
+  const altSvc = headers['alt-svc'] || '';
+
   const order = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
   findings.sort((a, b) => order[a.severity] - order[b.severity]);
   const penalty = findings.reduce((s, x) => s + ({ critical: 25, high: 12, medium: 5, low: 2, info: 0 }[x.severity] || 0), 0);
@@ -462,6 +517,22 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
     security_txt: !!securityTxt,
     sitemap: sitemap ? { status: sitemap.status, urls: (sitemap.body.match(/<loc>/g) || []).length } : null,
     dns: { domain: dns.domain, spf: dns.spf, dmarc: dns.dmarc, mx: dns.mx, caa: dns.caa, error: dns.error },
+    technologies: tech.technologies,
+    languages: tech.languages,
+    databases: tech.databases,
+    backend_endpoints: jsScan.endpoints,
+    js_files_scanned: jsFiles.map((x) => x.url),
+    network: {
+      ipv4: dns.a || [],
+      ipv6: dns.aaaa || [],
+      dns_provider: dns.dns_provider || null,
+      mail_provider: dns.mail_provider || null,
+      name_servers: dns.ns || [],
+      http3: /h3/.test(altSvc),
+      cdn_cache: headers['cf-cache-status'] || headers['x-cache'] || headers['x-vercel-cache'] || null,
+    },
+    pages_found: pagesFound,
+    sections,
     findings,
   };
 }
@@ -470,4 +541,58 @@ function pick(obj, keys) {
   const out = {};
   for (const k of keys) if (obj[k] !== undefined) out[k] = obj[k];
   return out;
+}
+
+/** Lighter check of one more page of the same site (for /api/page). */
+export async function runPageAudit(input, { allowLocal = false } = {}) {
+  const target = normalizeTarget(input, { allowLocal });
+  const budget = { left: SUBREQUEST_BUDGET };
+  const { chain, res, ms } = await followRedirects(target.href, 4);
+  budget.left -= chain.length;
+  const finalUrl = new URL(chain[chain.length - 1].url);
+  const contentType = res.headers.get('content-type') || '';
+  const { text: html, bytes } = /html/i.test(contentType) || !contentType ? await readText(res) : { text: '', bytes: 0 };
+  const findings = [];
+  if (res.status >= 500) findings.push(finding('critical', 'BUG-SERVER-ERROR', `Page returns a server error (${res.status})`, finalUrl.href, 'Check the server logs for this page.'));
+  else if (res.status >= 400) findings.push(finding('high', 'BUG-PAGE-ERROR', `Page returns ${res.status}`, finalUrl.href, 'Fix the page or remove links to it.'));
+  if (ms > 1500) findings.push(finding('medium', 'PERF-SLOW-SERVER', `Page took ${ms} ms to respond`, finalUrl.href, 'Add caching; check slow queries or plugins on this page.'));
+  const page = html ? analyzeHtml(html, finalUrl.href) : { facts: {}, links: [], assets: [], findings: [] };
+  // An error page's own markup is noise; only report the error itself.
+  if (res.status < 400) findings.push(...page.findings);
+
+  const resolve = (h) => { try { const u = new URL(h, finalUrl); u.hash = ''; return ['http:', 'https:'].includes(u.protocol) ? u.href : null; } catch { return null; } };
+  const uniq = (arr) => [...new Set(arr.map(resolve).filter(Boolean))];
+  const links = res.status < 400 ? uniq(page.links).filter((u) => u !== finalUrl.href) : [];
+  const internal = links.filter((u) => new URL(u).host === finalUrl.host);
+  const external = links.filter((u) => new URL(u).host !== finalUrl.host);
+  const [linkResults, assetResults] = await Promise.all([
+    pool([...internal.slice(0, 10), ...external.slice(0, 8)], 5, (u) => checkUrl(u, budget)),
+    pool(res.status < 400 ? uniq(page.assets).slice(0, 10) : [], 5, (u) => checkUrl(u, budget)),
+  ]);
+  const bad = (r) => r.status === 404 || r.status === 410 || r.status >= 500;
+  const brokenLinks = linkResults.filter(bad);
+  if (brokenLinks.length) findings.push(finding('high', 'BUG-BROKEN-LINK', `${brokenLinks.length} broken link(s) on this page`, brokenLinks.map((r) => `${r.status} ${r.url}`).join('\n'), 'Fix or remove these links.'));
+  const brokenAssets = assetResults.filter(bad);
+  if (brokenAssets.length) findings.push(finding('high', 'BUG-MISSING-ASSET', `${brokenAssets.length} missing file(s) on this page`, brokenAssets.map((r) => `${r.status} ${r.url}`).join('\n'), 'Upload the missing images/scripts/styles or fix their paths.'));
+
+  const order = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
+  findings.sort((a, b) => order[a.severity] - order[b.severity]);
+  const penalty = findings.reduce((sum, x) => sum + ({ critical: 25, high: 12, medium: 5, low: 2, info: 0 }[x.severity] || 0), 0);
+  const setCookies = typeof res.headers.getSetCookie === 'function' ? res.headers.getSetCookie() : [];
+  const tech = res.status < 400 && html ? detectTechnologies({ html, headers: Object.fromEntries(res.headers), cookies: setCookies, srcs: [...(page.scriptSrcs || []), ...(page.styleHrefs || [])].map(resolve).filter(Boolean) }) : { technologies: [], languages: [], databases: [], findings: [] };
+  return {
+    url: target.href,
+    final_url: finalUrl.href,
+    status: res.status,
+    ms,
+    technologies: tech.technologies,
+    languages: tech.languages,
+    databases: tech.databases,
+    html_kb: Math.round(bytes / 1024),
+    title: page.facts.title || null,
+    score: Math.max(0, Math.round(100 - penalty * 100 / (penalty + 100))),
+    facts: page.facts,
+    links_found: internal,
+    findings,
+  };
 }
