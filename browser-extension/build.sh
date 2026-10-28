@@ -4,6 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 { echo '// Copy of functions/_lib/tech.js (run browser-extension/build.sh to refresh).'; cat ../functions/_lib/tech.js; } > tech.js
+{ echo '// Copy of functions/_lib/design-check.js (run browser-extension/build.sh to refresh).'; cat ../functions/_lib/design-check.js; } > design-check.js
 mkdir -p ../assets/downloads
 rm -f ../assets/downloads/site-inspector.zip
 zip -qr ../assets/downloads/site-inspector.zip manifest.json background.js popup.html popup.css popup.js design-check.js tech.js icons

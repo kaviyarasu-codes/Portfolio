@@ -28,6 +28,8 @@ Built by **Kaviyarasu K** — Full-Stack & App Developer, Coimbatore · [Portfol
 
 Owner-only page for reviewing client websites, web apps and Android APKs. Paste a link (or drop an APK) and get:
 - **Exact elements from Lighthouse**: failing contrast, tap-size, button/link name, image and console checks list the elements and colours involved, as plain-language findings in the fix plan.
+- **Design check in a real browser** (`functions/_lib/visual.js`, optional): opens the page in Chrome at phone (390 px) and desktop (1366 px) size through Cloudflare Browser Rendering, boxes and numbers every problem on full-page screenshots and lists the exact element: low-contrast text with the colour to use instead, buttons that blend in, are covered by another element or are too small to tap, links that look like text, content wider than the screen, cut-off text, broken/blurry/stretched images, placeholder-only fields, missing focus outlines, tiny text and cramped lines. Pages with a strict Content-Security-Policy may block the check script; the screenshot still shows.
+- **CSS design review** (`functions/_lib/css-review.js`, always on): reads the site's own stylesheets for low-contrast colour pairs (with a suggested colour), removed focus outlines, ghost buttons, tiny fonts, tight line height, fixed widths, no responsive rules, too many colours/fonts/`!important`.
 - **Every page**: the home page plus up to 25 pages found in the menu, links and sitemap, each with HTTP status, response time, issues, and (optionally) a phone screenshot and Lighthouse scores.
 - **How it is built**: languages, CMS / site builder (WordPress, Shopify, Wix, Webflow, Framer, AI builders such as Lovable, Bolt, v0, Hostinger), frameworks and library versions, backend framework, database/backend services, hosting/CDN, web server, DNS and email providers, analytics, chat, payments and forms.
 - **Checks by area**: frontend (layout basics, accessibility, broken images/links, stray text), backend (visible PHP warnings, debug pages, stack traces), database (visible SQL/connection errors, Firebase/Supabase exposure in public code), security (HTTPS, headers, cookies, leaked keys in public JavaScript, outdated libraries with known CVEs, source maps), network & hosting (DNS, IPv6, HTTP/3, SPF/DMARC/CAA), performance and SEO.
@@ -44,6 +46,7 @@ Only checks what a normal visitor's browser downloads; nothing is submitted, gue
 | Name | Required | Value |
 |---|---|---|
 | `PAGESPEED_API_KEY` (secret) | recommended | Google Cloud API key restricted to the PageSpeed Insights API (screenshots + Lighthouse) |
+| `CF_ACCOUNT_ID` + `CF_API_TOKEN` (secret) | optional | Real-browser design check. Account ID: Workers & Pages overview (right side). Token: My Profile → API Tokens → Create Token → Custom → permission **Account → Browser Rendering → Edit** (free plan has a small daily allowance) |
 | `AI_MODEL` | optional | Another Workers AI model ID (default `@cf/meta/llama-3.3-70b-instruct-fp8-fast`) |
 | `AI_PROVIDER` + `ANTHROPIC_API_KEY` (secret) | optional, paid | Set `AI_PROVIDER=claude` to use Claude instead; falls back to Workers AI if Claude has no credit |
 | `ADMIN_UID` | optional | Lock the tool to one Firebase account UID (default: the admin email used by `admin.html` and the Firestore rules) |

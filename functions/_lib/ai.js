@@ -126,6 +126,12 @@ export function compact(results, maxChars) {
     }));
   }
   if (r.lighthouse) delete r.lighthouse.screenshot;
+  if (r.visual) {
+    r.visual = (r.visual.views || []).map((v) => ({
+      view: v.name, error: v.error,
+      issues: (v.issues || []).slice(0, 15).map((i) => ({ severity: i.severity, id: i.id, title: i.title, count: i.count, example: i.items?.[0] ? `${i.items[0].where} ${i.items[0].extra || ''}`.trim() : undefined })),
+    }));
+  }
   delete r.pages_found;
   delete r.robots_txt;
   let s = JSON.stringify(r);

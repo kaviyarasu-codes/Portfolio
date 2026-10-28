@@ -4,6 +4,7 @@
 // public DNS. No path guessing, form submission or load testing.
 
 import { detectTechnologies, scanJavaScript, dnsProvider, mailProvider } from './tech.js';
+import { reviewCss } from './css-review.js';
 
 const UA = 'Mozilla/5.0 (compatible; KaviyarasuSiteAudit/1.0; +https://kaviyarasu-portfolio.pages.dev)';
 const MAX_HTML = 2 * 1024 * 1024;
@@ -585,6 +586,16 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
   const inlineJs = (html.match(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi) || []).join('\n');
   const jsScan = scanJavaScript([...jsFiles, { url: `${finalUrl.href} (inline scripts)`, text: inlineJs }]);
   findings.push(...jsScan.findings);
+  // The site's own stylesheets (max 3) plus <style> blocks, for the CSS design review.
+  const ownCss = (page.styleHrefs || []).map(resolve).filter((u) => u && new URL(u).host === finalUrl.host).slice(0, 3);
+  const cssFiles = (await Promise.all(ownCss.map(async (u) => {
+    if (budget.left <= 0) return null;
+    budget.left--;
+    try { const { res: r } = await timedFetch(u, {}, 12000); return r.ok ? { url: u, text: (await readText(r, 1.5 * 1024 * 1024)).text } : null; } catch { return null; }
+  }))).filter(Boolean);
+  const inlineCss = (html.match(/<style\b[^>]*>([\s\S]*?)<\/style>/gi) || []).map((x) => x.replace(/<\/?style[^>]*>/gi, '')).join('\n');
+  const cssReview = reviewCss([...cssFiles, { url: `${finalUrl.href} (inline styles)`, text: inlineCss }]);
+  findings.push(...cssReview.findings);
   const tech = detectTechnologies({ html, headers, cookies: setCookies, srcs: [...scriptUrls, ...(page.styleHrefs || [])], js: jsFiles.map((x) => x.text).join('\n') });
   findings.push(...tech.findings);
   const uniq = (arr) => [...new Set(arr.map(resolve).filter(Boolean))];
@@ -672,6 +683,8 @@ export async function runWebsiteAudit(input, { allowLocal = false } = {}) {
     databases: tech.databases,
     backend_endpoints: jsScan.endpoints,
     js_files_scanned: jsFiles.map((x) => x.url),
+    css_files_reviewed: cssFiles.map((x) => x.url),
+    css_stats: cssReview.stats,
     network: {
       ipv4: dns.a || [],
       ipv6: dns.aaaa || [],

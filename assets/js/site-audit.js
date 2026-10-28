@@ -196,23 +196,33 @@ $('panelWeb').addEventListener('submit', async (e) => {
   const maxPages = Number($('optMaxPages').value) || 10;
   const pageShots = usePages && useLh && $('optPageShots').checked;
   const useAi = $('optAiWeb').checked;
+  const useVisual = $('optVisual').checked;
   setBusy(true);
   $('results').hidden = true;
   startSteps([
     'Checking the home page (security, links, technology, DNS, code)',
     useLh ? 'Google Lighthouse + phone screenshot of the home page' : 'Google Lighthouse (off)',
+    useVisual ? 'Real-browser design check (phone + desktop)' : 'Real-browser design check (off)',
     usePages ? `Checking the other pages (up to ${maxPages - 1})` : 'Other pages (off)',
     pageShots ? 'Screenshots + Lighthouse for each page (slow)' : 'Page screenshots (off)',
     useAi ? 'AI review and fix plan' : 'AI review (off)',
   ]);
   step(0, 'running');
   step(1, useLh ? 'running' : 'skipped');
-  step(2, usePages ? 'pending' : 'skipped');
-  step(3, pageShots ? 'pending' : 'skipped');
-  step(4, useAi ? 'pending' : 'skipped');
+  step(2, useVisual ? 'running' : 'skipped');
+  step(3, usePages ? 'pending' : 'skipped');
+  step(4, pageShots ? 'pending' : 'skipped');
+  step(5, useAi ? 'pending' : 'skipped');
 
   const auditP = api('/api/audit', { url }).then((r) => { step(0, 'done', `${r.findings.length} findings · ${r.technologies?.length || 0} technologies · ${r.pages_found?.length || 0} pages found`); return r; }, (err) => { step(0, 'error', err.message); throw err; });
   const lhP = useLh ? api('/api/pagespeed', { url, strategy: 'mobile' }).then((r) => { step(1, 'done'); return r; }, (err) => { step(1, 'error', err.message); return null; }) : Promise.resolve(null);
+
+  const visualP = useVisual ? api('/api/visual', { url }).then((v) => {
+    const ok = v.views.filter((x) => !x.error);
+    const n = ok.reduce((a, x) => a + x.issues.filter((i) => i.severity !== 'info').length, 0);
+    step(2, ok.length ? 'done' : 'error', ok.length ? `${n} design problem type(s) marked` : v.views[0]?.error);
+    return { visual: v };
+  }, (err) => { step(2, 'error', err.message); return { visual_error: err.message }; }) : Promise.resolve(null);
 
   let results;
   try {
@@ -232,20 +242,25 @@ $('panelWeb').addEventListener('submit', async (e) => {
     score: results.score, home: true, findings: results.findings, screenshot: results.screenshot || null, lighthouse: lh ? { scores: lh.scores } : null,
   }];
   renderResults(results);
+  const visualDone = visualP.then((v) => {
+    if (!v) return;
+    Object.assign(results, v);
+    renderResults(results, { keepScroll: true });
+  });
 
   if (usePages) {
     const others = (results.pages_found || []).filter((u) => u !== results.final_url).slice(0, maxPages - 1);
     let done = 0;
-    step(2, 'running', others.length ? `0 of ${others.length}` : 'no other pages linked');
+    step(3, 'running', others.length ? `0 of ${others.length}` : 'no other pages linked');
     await pool(others, 3, async (u) => {
       try {
         results.pages.push(await api('/api/page', { url: u }));
       } catch (err) {
         results.pages.push({ url: u, final_url: u, status: 0, error: err.message, findings: [{ severity: 'medium', id: 'BUG-PAGE-UNREACHABLE', title: 'Page could not be checked', detail: err.message, fix: 'Open the page in a browser to see if it loads.' }] });
       }
-      step(2, 'running', `${++done} of ${others.length}`);
+      step(3, 'running', `${++done} of ${others.length}`);
     });
-    step(2, 'done', `${others.length} page(s) checked`);
+    step(3, 'done', `${others.length} page(s) checked`);
     // Some tools only appear on inner pages (e.g. a contact form's backend).
     const techNames = new Set((results.technologies || []).map((t) => t.name));
     const langNames = new Set((results.languages || []).map((l) => l.name));
@@ -258,7 +273,7 @@ $('panelWeb').addEventListener('submit', async (e) => {
     if (pageShots && others.length) {
       let shots = 0;
       const todo = results.pages.filter((p) => !p.home && p.status && p.status < 400);
-      step(3, 'running', `0 of ${todo.length}`);
+      step(4, 'running', `0 of ${todo.length}`);
       await pool(todo, 2, async (p) => {
         try {
           const r = await api('/api/pagespeed', { url: p.final_url, strategy: 'mobile' });
@@ -267,15 +282,16 @@ $('panelWeb').addEventListener('submit', async (e) => {
         } catch (err) {
           p.lighthouse_error = err.message;
         }
-        step(3, 'running', `${++shots} of ${todo.length}`);
+        step(4, 'running', `${++shots} of ${todo.length}`);
         const sec = document.querySelector('#pagesSection');
         if (sec) sec.replaceWith(pagesSection(results));
       });
-      step(3, 'done');
-    } else if (pageShots) step(3, 'skipped', 'no other pages');
+      step(4, 'done');
+    } else if (pageShots) step(4, 'skipped', 'no other pages');
   }
+  await visualDone;
   saveHistory(results);
-  if (useAi) await runAi(results, 4);
+  if (useAi) await runAi(results, 5);
   setBusy(false);
 });
 
@@ -331,6 +347,7 @@ async function runAi(results, stepIndex) {
   try {
     const { screenshot, ai, ...payload } = results;
     if (payload.pages) payload.pages = payload.pages.map(({ screenshot: _s, ...p }) => p);
+    if (payload.visual) payload.visual = withoutShots(payload.visual);
     const language = $(results.kind === 'apk' ? 'optLangApk' : 'optLangWeb').value;
     const out = await api('/api/explain', { results: payload, language });
     results.ai_language = language;
@@ -433,6 +450,73 @@ function lighthouseFindings(checks) {
   });
 }
 
+/* ── Real-browser design check ──────────────────────────── */
+
+const VIEW_LABEL = { phone: 'Phone (390 px)', desktop: 'Desktop (1366 px)' };
+
+function withoutShots(v) {
+  return { ...v, views: (v.views || []).map(({ screenshot: _s, ...x }) => x) };
+}
+
+const itemLine = (it) => `${it.where}${it.text ? ` "${it.text}"` : ''}${it.extra ? ` – ${it.extra}` : ''}`;
+
+/** Design problems seen in the real browser, phone and desktop merged into one finding per check. */
+function visualFindings(v) {
+  const map = new Map();
+  for (const view of v?.views || []) {
+    for (const iss of view.issues || []) {
+      const id = `VIS-${iss.id.toUpperCase()}`;
+      if (!map.has(id)) map.set(id, { severity: iss.severity, id, title: iss.title, detail: iss.detail, fix: iss.fix, views: [], lines: [] });
+      const f = map.get(id);
+      f.views.push(view.name);
+      if (SEVERITIES.indexOf(iss.severity) < SEVERITIES.indexOf(f.severity)) f.severity = iss.severity;
+      f.lines.push(`${VIEW_LABEL[view.name] || view.name}, marked #${iss.n}${iss.count > iss.items.length ? ` (${iss.count} in total, first ${iss.items.length} shown)` : ''}:`, ...iss.items.map((it) => `  • ${itemLine(it)}`));
+    }
+  }
+  return [...map.values()].map(({ lines, ...f }) => ({ ...f, detail: `${f.detail}\n\n${lines.join('\n')}` }));
+}
+
+function visualSection(r) {
+  const sec = h('section', { class: 'sa-card', id: 'visualSection', 'aria-labelledby': 'visualTitle' },
+    h('h2', { id: 'visualTitle', text: 'Design check in a real browser' }),
+    h('p', { class: 'sa-muted sa-small', text: 'The page was opened in Chrome at phone and desktop size. Every problem is boxed and numbered on the screenshot; the list below says exactly which element it is and what to change (for colour problems, the colour to use instead). Click a screenshot to open it full size.' }));
+  if (r.visual_error) {
+    const setup = /not set up/i.test(r.visual_error);
+    sec.append(h('p', { class: 'sa-error', text: r.visual_error }));
+    if (setup) sec.append(h('ol', { class: 'sa-bullets' },
+      h('li', { text: 'Cloudflare dashboard → Workers & Pages: copy your Account ID (right side).' }),
+      h('li', { text: 'My Profile → API Tokens → Create token → Custom: permission "Account → Browser Rendering → Edit".' }),
+      h('li', { text: 'Pages project → Settings → Variables and secrets: add CF_ACCOUNT_ID (text) and CF_API_TOKEN (secret), then redeploy.' })));
+    return sec;
+  }
+  const grid = h('div', { class: 'sa-visual' });
+  for (const view of r.visual.views) {
+    const issues = (view.issues || []);
+    const shot = view.screenshot
+      ? h('a', { class: 'sa-visual-shot', href: view.screenshot, target: '_blank', rel: 'noopener', title: 'Open full size' }, h('img', { src: view.screenshot, alt: `${VIEW_LABEL[view.name] || view.name} screenshot with problems marked`, loading: 'lazy' }))
+      : h('div', { class: 'sa-visual-shot is-empty', text: 'No screenshot' });
+    const list = view.error
+      ? h('p', { class: 'sa-error', text: view.error })
+      : issues.length
+        ? h('ol', { class: 'sa-visual-list' }, issues.map((iss) => h('li', {},
+          h('details', {},
+            h('summary', {}, h('span', { class: `sa-num sev-${iss.severity}`, text: String(iss.n) }), badge(iss.severity), ' ', h('span', { text: iss.title })),
+            h('p', { class: 'sa-small', text: iss.detail }),
+            h('ul', { class: 'sa-bullets sa-small' }, iss.items.map((it) => h('li', {}, h('code', { text: it.where }), it.text ? ` "${it.text}"` : '', it.extra ? h('b', { text: ` – ${it.extra}` }) : ''))),
+            iss.count > iss.items.length ? h('p', { class: 'sa-muted sa-small', text: `${iss.count - iss.items.length} more like this.` }) : null,
+            h('p', { class: 'sa-small' }, h('b', { text: 'Fix: ' }), iss.fix)))))
+        : h('p', { class: 'sa-muted', text: 'No design problems found at this size.' });
+    const sum = view.summary;
+    grid.append(h('article', { class: 'sa-visual-view' },
+      h('h3', { text: `${VIEW_LABEL[view.name] || view.name}${view.viewport ? ` · ${view.viewport}` : ''}` }),
+      shot,
+      sum ? h('p', { class: 'sa-muted sa-small', text: `Fonts: ${sum.fonts.join(', ') || '–'} · text sizes: ${sum.fontSizes.join(', ')} px · ${sum.textColors} text colours` }) : null,
+      list));
+  }
+  sec.append(grid);
+  return sec;
+}
+
 /* ── Merging findings across pages ──────────────────────── */
 
 function pathOf(u) { try { const x = new URL(u); return `${x.pathname}${x.search}` || '/'; } catch { return u; } }
@@ -441,12 +525,13 @@ function pathOf(u) { try { const x = new URL(u); return `${x.pathname}${x.search
 function allFindings(r) {
   const map = new Map();
   const add = (f, page) => {
-    const key = f.id.startsWith('LH-') ? f.id : `${f.id}|${f.title}`;
+    const key = /^(LH|VIS)-/.test(f.id) ? f.id : `${f.id}|${f.title}`;
     if (!map.has(key)) map.set(key, { ...f, pages: [] });
     if (page && !map.get(key).pages.includes(page)) map.get(key).pages.push(page);
   };
   for (const f of r.findings) add(f, r.kind === 'website' ? pathOf(r.final_url) : null);
   for (const f of lighthouseFindings(r.lighthouse?.failed_checks)) add(f, pathOf(r.final_url));
+  for (const f of visualFindings(r.visual)) add(f, `${pathOf(r.final_url)} (${f.views.join(' + ')})`);
   for (const p of (r.pages || []).filter((x) => !x.home)) {
     for (const f of p.findings || []) add(f, pathOf(p.final_url || p.url));
     for (const f of lighthouseFindings(p.lighthouse?.failed_checks)) add(f, pathOf(p.final_url || p.url));
@@ -458,6 +543,7 @@ function allFindings(r) {
 /* ── Fix plan (AI plan when available, otherwise built from findings) ── */
 
 function effortFor(id) {
+  if (/^(VIS|DESIGN)-/.test(id)) return '5–20 min';
   if (/^(SEO|A11Y|CONTENT|SEC-(HSTS|CSP|CLICKJACK|NOSNIFF|REFERRER|PERMISSIONS|VERSION)|DNS|COOKIE|UX)/.test(id)) return '5–20 min';
   if (/^(DB|BE)-/.test(id)) return '1–3 h';
   return '30–60 min';
@@ -467,6 +553,7 @@ function verifyFor(f) {
   if (/^SEC-|^CSP-|^COOKIE-/.test(f.id)) return 'Run the audit again: this item should disappear and the security headers grade should go up. Also check the browser console for blocked resources.';
   if (/BROKEN|MISSING|UNREACHABLE/.test(f.id)) return 'Open each listed link or file in a browser; it should load without an error. Then run the audit again.';
   if (/^DNS-/.test(f.id)) return 'DNS changes can take up to a few hours; then run the audit again (or check with an online SPF/DMARC checker).';
+  if (/^VIS-/.test(f.id)) return 'Run the audit again with the real-browser check on: the numbered box should be gone on both phone and desktop screenshots.';
   if (/^LH-/.test(f.id)) return 'Run the audit again with Lighthouse on: this check should pass on every page listed.';
   if (/^PERF-/.test(f.id)) return 'Run the audit with Lighthouse on: the performance score and response time should improve.';
   if (/^APK-/.test(f.id)) return 'Build a new release APK and analyse it again: this item should be gone.';
@@ -762,6 +849,7 @@ function renderResults(r, { keepScroll = false } = {}) {
     compareSection(r),
     planSection(r),
     techSection(r),
+    r.kind === 'website' && (r.visual || r.visual_error) ? visualSection(r) : null,
     r.kind === 'website' ? pagesSection(r) : null,
     findingsSection(r, merged),
     detailsSection(r),
@@ -847,6 +935,7 @@ function saveHistory(r) {
   r.id ||= `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
   const { screenshot, ...lean } = r;
   if (lean.pages) lean.pages = lean.pages.map(({ screenshot: _s, ...p }) => p);
+  if (lean.visual) lean.visual = withoutShots(lean.visual);
   let list = readHistory().filter((x) => x.id !== r.id);
   list.unshift({ id: r.id, kind: r.kind, key: auditKey(r), target: r.final_url || r.target, score: r.score, grade: r.ai?.grade || null, date: r.checked_at });
   for (const old of list.slice(HISTORY_MAX)) store.del(`sa-r-${old.id}`);

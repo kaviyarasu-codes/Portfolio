@@ -261,3 +261,19 @@ main.sa-wrap { padding-top: 24px; padding-bottom: 64px; display: grid; gap: 16px
 .sa-checklist { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin: 12px 0 }
 .sa-checklist ul { margin-top: 6px; font-size: .92rem }
 .sa-steps-list { list-style: decimal; margin: 10px 0 14px }
+
+/* Real-browser design check */
+.sa-visual { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; margin-top: 12px }
+.sa-visual-view { min-width: 0; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface-2); padding: 12px }
+.sa-visual-view h3 { font-size: 1rem; margin: 0 0 8px }
+.sa-visual-shot { display: block; max-height: 560px; overflow: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--surface) }
+.sa-visual-shot img { display: block; width: 100%; height: auto }
+.sa-visual-shot.is-empty { display: grid; place-items: center; height: 80px; color: var(--muted); font-size: .85rem }
+.sa-visual-list { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 6px }
+.sa-visual-list details { border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; background: var(--surface) }
+.sa-visual-list summary { cursor: pointer; display: flex; align-items: center; gap: 6px; flex-wrap: wrap }
+.sa-visual-list code { font-size: .78rem; word-break: break-all }
+.sa-num { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 5px; border-radius: 11px; color: #fff; font: 700 12px/1 Arial, sans-serif; background: #2563eb; flex: none }
+.sa-num.sev-critical { background: #b42318 } .sa-num.sev-high { background: #e11d48 } .sa-num.sev-medium { background: #b45309 } .sa-num.sev-info { background: #64748b }
+@media (min-width: 900px) { .sa-visual { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) } }
+.sa-visual-list summary > span:last-child { flex: 1 1 12ch }

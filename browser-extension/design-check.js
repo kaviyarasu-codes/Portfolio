@@ -1,6 +1,8 @@
+// Copy of functions/_lib/design-check.js (run browser-extension/build.sh to refresh).
 // Design and usability checks that need the real, rendered page: colours,
-// sizes, overlaps, focus outlines. Injected into the inspected tab (isolated
-// world) by popup.js. Each function must be self-contained.
+// sizes, overlaps, focus outlines. Shared by the Site Inspector extension
+// (injected into the tab) and /api/visual (run in Cloudflare Browser Rendering).
+// Each exported function must be self-contained: it is serialised and run in the page.
 
 /** Runs in the page. Returns grouped issues; keeps element references for highlighting. */
 export function designAudit() {
