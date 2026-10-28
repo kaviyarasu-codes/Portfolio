@@ -40,7 +40,17 @@ export const onRequestPost = ownerOnly(async ({ request, env }) => {
       .map((a) => ({ title: a.title, savings: a.displayValue || null })),
     failed_checks: ['accessibility', 'best-practices', 'seo'].flatMap((c) => refs(c)
       .filter((a) => a.score === 0 && a.scoreDisplayMode === 'binary')
-      .map((a) => ({ category: c, title: a.title, items: (a.details?.items || []).length }))),
+      .map((a) => ({
+        category: c,
+        id: a.id,
+        title: a.title,
+        items: (a.details?.items || []).length,
+        // Which elements fail, e.g. "Element has insufficient color contrast of 2.8 (foreground #999999, background #ffffff)".
+        examples: (a.details?.items || []).slice(0, 6).map((it) => {
+          const node = it.node || it;
+          return { label: (node.nodeLabel || '').slice(0, 80), selector: (node.selector || '').slice(0, 120), snippet: (node.snippet || '').slice(0, 160), explanation: (node.explanation || '').replace(/^Fix (any|all) of the following:\s*/i, '').slice(0, 220) };
+        }),
+      }))),
     screenshot: audits['final-screenshot']?.details?.data || null,
   });
 });

@@ -396,6 +396,43 @@ function aiPanel(r, stepIndex) {
   return box;
 }
 
+/* ── Lighthouse checks as plain-language findings ───────── */
+
+const LH_FIX = {
+  'color-contrast': ['medium', 'Text with low colour contrast (hard to read)', 'Darken the text or lighten the background until contrast is at least 4.5:1 (3:1 for large or bold text). The examples show the current colours; test new ones with a contrast checker.'],
+  'button-name': ['medium', 'Buttons without readable text', 'Give every button visible text, or an aria-label for icon-only buttons (e.g. aria-label="Open menu").'],
+  'link-name': ['medium', 'Links without readable text', 'Add text, or an aria-label for icon links (e.g. aria-label="WhatsApp").'],
+  'image-alt': ['medium', 'Images without alt text', 'Add alt text that describes each image, or alt="" for decorative images.'],
+  'label': ['medium', 'Form fields without labels', 'Add a visible <label for="…"> to each field; placeholders disappear while typing.'],
+  'target-size': ['medium', 'Buttons or links too small or too close to tap', 'Make tap targets at least 24×24 px (44×44 is better) with space between them.'],
+  'link-in-text-block': ['low', 'Links look like normal text', 'Underline links inside paragraphs, or give them a clearly different colour (at least 3:1 against the text).'],
+  'heading-order': ['low', 'Headings skip levels', 'Use headings in order (h1 → h2 → h3) without jumping levels.'],
+  'html-has-lang': ['medium', 'Page language not set', 'Add lang="en" (or the right language) to the <html> tag.'],
+  'document-title': ['medium', 'Page has no title', 'Add a descriptive <title>.'],
+  'meta-description': ['low', 'No meta description', 'Add a 120–160 character description for search results.'],
+  'image-aspect-ratio': ['low', 'Images are stretched or squashed', 'Keep width and height in proportion, or use CSS object-fit: cover.'],
+  'image-size-responsive': ['low', 'Images are too low-resolution (look blurry)', 'Upload images at least twice their displayed size, in WebP, so they are sharp on phones.'],
+  'errors-in-console': ['medium', 'JavaScript errors in the browser console', 'Open the page, press F12 → Console, and fix the listed errors; they often break buttons, sliders or forms.'],
+  'font-size': ['low', 'Text too small to read on phones', 'Use at least 16px for body text and 12px for small print.'],
+  'is-crawlable': ['high', 'Page is blocked from search engines', 'Remove noindex / robots.txt blocking if this page should appear in Google.'],
+  'link-text': ['low', 'Links say "click here" or "read more"', 'Use link text that says where it goes (e.g. "View our courses").'],
+  'list': ['low', 'Lists are not built correctly', 'Put list items (<li>) directly inside <ul> or <ol>.'],
+  'duplicate-id-aria': ['low', 'Duplicate element IDs', 'Give every id on the page a unique value.'],
+  'aria-allowed-attr': ['low', 'Incorrect accessibility (ARIA) attributes', 'Remove ARIA attributes that do not belong on those elements.'],
+  'frame-title': ['low', 'Embedded frames (maps, videos) have no title', 'Add title="…" to each <iframe>.'],
+  'video-caption': ['medium', 'Videos without captions', 'Add captions so people without sound can follow.'],
+  'tabindex': ['low', 'Unusual keyboard order (tabindex above 0)', 'Remove tabindex values above 0.'],
+  'deprecations': ['low', 'The site uses features browsers are removing', 'Update the libraries or code listed by Lighthouse.'],
+};
+
+function lighthouseFindings(checks) {
+  return (checks || []).map((c) => {
+    const [severity, title, fix] = LH_FIX[c.id] || ['low', c.title, 'See the examples; Lighthouse lists the elements to change.'];
+    const examples = (c.examples || []).map((x) => `• ${x.label || x.selector || x.snippet}${x.explanation ? ` – ${x.explanation}` : ''}`);
+    return { severity, id: `LH-${c.id}`, title: `${title}${c.items ? ` (${c.items})` : ''}`, detail: examples.length ? examples.join('\n') : `Lighthouse check "${c.title}" failed.`, fix };
+  });
+}
+
 /* ── Merging findings across pages ──────────────────────── */
 
 function pathOf(u) { try { const x = new URL(u); return `${x.pathname}${x.search}` || '/'; } catch { return u; } }
@@ -404,12 +441,16 @@ function pathOf(u) { try { const x = new URL(u); return `${x.pathname}${x.search
 function allFindings(r) {
   const map = new Map();
   const add = (f, page) => {
-    const key = `${f.id}|${f.title}`;
+    const key = f.id.startsWith('LH-') ? f.id : `${f.id}|${f.title}`;
     if (!map.has(key)) map.set(key, { ...f, pages: [] });
     if (page && !map.get(key).pages.includes(page)) map.get(key).pages.push(page);
   };
   for (const f of r.findings) add(f, r.kind === 'website' ? pathOf(r.final_url) : null);
-  for (const p of (r.pages || []).filter((x) => !x.home)) for (const f of p.findings || []) add(f, pathOf(p.final_url || p.url));
+  for (const f of lighthouseFindings(r.lighthouse?.failed_checks)) add(f, pathOf(r.final_url));
+  for (const p of (r.pages || []).filter((x) => !x.home)) {
+    for (const f of p.findings || []) add(f, pathOf(p.final_url || p.url));
+    for (const f of lighthouseFindings(p.lighthouse?.failed_checks)) add(f, pathOf(p.final_url || p.url));
+  }
   const order = Object.fromEntries(SEVERITIES.map((s, i) => [s, i]));
   return [...map.values()].sort((a, b) => order[a.severity] - order[b.severity] || b.pages.length - a.pages.length);
 }
@@ -426,6 +467,7 @@ function verifyFor(f) {
   if (/^SEC-|^CSP-|^COOKIE-/.test(f.id)) return 'Run the audit again: this item should disappear and the security headers grade should go up. Also check the browser console for blocked resources.';
   if (/BROKEN|MISSING|UNREACHABLE/.test(f.id)) return 'Open each listed link or file in a browser; it should load without an error. Then run the audit again.';
   if (/^DNS-/.test(f.id)) return 'DNS changes can take up to a few hours; then run the audit again (or check with an online SPF/DMARC checker).';
+  if (/^LH-/.test(f.id)) return 'Run the audit again with Lighthouse on: this check should pass on every page listed.';
   if (/^PERF-/.test(f.id)) return 'Run the audit with Lighthouse on: the performance score and response time should improve.';
   if (/^APK-/.test(f.id)) return 'Build a new release APK and analyse it again: this item should be gone.';
   return 'Make the change, then run the audit again: this item should no longer appear.';

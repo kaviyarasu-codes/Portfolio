@@ -27,6 +27,7 @@ Built by **Kaviyarasu K** — Full-Stack & App Developer, Coimbatore · [Portfol
 ## Private Site Audit tool (`/site-audit`)
 
 Owner-only page for reviewing client websites, web apps and Android APKs. Paste a link (or drop an APK) and get:
+- **Exact elements from Lighthouse**: failing contrast, tap-size, button/link name, image and console checks list the elements and colours involved, as plain-language findings in the fix plan.
 - **Every page**: the home page plus up to 25 pages found in the menu, links and sitemap, each with HTTP status, response time, issues, and (optionally) a phone screenshot and Lighthouse scores.
 - **How it is built**: languages, CMS / site builder (WordPress, Shopify, Wix, Webflow, Framer, AI builders such as Lovable, Bolt, v0, Hostinger), frameworks and library versions, backend framework, database/backend services, hosting/CDN, web server, DNS and email providers, analytics, chat, payments and forms.
 - **Checks by area**: frontend (layout basics, accessibility, broken images/links, stray text), backend (visible PHP warnings, debug pages, stack traces), database (visible SQL/connection errors, Firebase/Supabase exposure in public code), security (HTTPS, headers, cookies, leaked keys in public JavaScript, outdated libraries with known CVEs, source maps), network & hosting (DNS, IPv6, HTTP/3, SPF/DMARC/CAA), performance and SEO.
@@ -67,6 +68,7 @@ npx wrangler pages dev .                      # then open http://127.0.0.1:8788/
 
 A Chrome/Edge extension (Manifest V3), like Wappalyzer: click its icon on any website to see languages, CMS/builders, frameworks and library versions, hosting, analytics, chat, payments and forms, plus quick issues (HTTPS, security headers, outdated libraries, mixed content, viewport, alt text). It also reads the live page's JavaScript (e.g. `jQuery.fn.jquery`, React/Vue markers), so it finds things a server-side check cannot. Everything runs in the browser; nothing is sent anywhere. "Full audit" (and the right-click menu) opens `/site-audit?url=…`.
 
+- **Design tab** (`design-check.js`) checks the rendered page: low-contrast text with the exact colours, ratio and a suggested passing colour; buttons that blend into the background, are covered by other elements (cookie bars, invisible layers), have no text, or are too small to tap; links that look like plain text; content wider than the screen; cut-off text; oversized fixed bars; broken, blurry, oversized or distorted images; placeholder-only form fields; missing keyboard focus outlines; tiny text, cramped or very long lines; too many fonts, sizes or colours. "Show" scrolls to and outlines each example on the page.
 - Uses the same detection rules as the Site Audit (`functions/_lib/tech.js`, copied in by `build.sh`).
 - Permissions: `activeTab` + `scripting` (access only to the tab you click on), `contextMenus`.
 - Build the download: `bash browser-extension/build.sh` → `assets/downloads/site-inspector.zip` (linked from `/site-audit`).

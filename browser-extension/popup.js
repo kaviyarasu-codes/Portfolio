@@ -2,6 +2,7 @@
 // detects technologies with the same rules as the Site Audit tool, adds what
 // only a live page reveals (JavaScript globals), and lists quick issues.
 import { detectTechnologies, versionFindings } from './tech.js';
+import { designAudit, highlightElement } from './design-check.js';
 
 const AUDIT_URL = 'https://kaviyarasu-portfolio.pages.dev/site-audit';
 const $ = (id) => document.getElementById(id);
@@ -231,6 +232,25 @@ function guessCategory(name) {
   return 'JavaScript library';
 }
 
+/* ── Design tab ────────────────────────────────────────── */
+
+function renderDesign(design, tabId) {
+  const view = $('viewDesign');
+  const issues = design?.issues || [];
+  if (current) current.design = design;
+  $('designCount').textContent = String(issues.length);
+  if (!issues.length) { view.replaceChildren(h('p', { class: 'empty', text: 'No design problems found on this screen size. Try again with the window narrower (phone size).' })); return; }
+  view.replaceChildren(
+    h('p', { class: 'design-note', text: `Checked at ${design.summary.viewport}. Make the window narrow to test phone layout, then reopen.` }),
+    ...issues.map((i) => h('details', { class: 'design-issue' },
+      h('summary', {}, h('span', { class: `dot ${i.severity}`, title: i.severity }), h('span', { class: 'di-title' }, i.title, h('small', { text: ` ${i.count}×` }))),
+      h('p', { class: 'di-detail', text: i.detail }),
+      h('p', { class: 'di-fix' }, h('b', { text: 'Fix: ' }), i.fix),
+      h('ul', { class: 'di-items' }, i.items.map((it, idx) => h('li', {},
+        h('span', { class: 'di-where' }, h('code', { text: it.where }), it.text ? h('small', { text: ` "${it.text}"` }) : null, it.extra ? h('small', { class: 'di-extra', text: it.extra }) : null),
+        h('button', { type: 'button', class: 'show', onclick: () => chrome.scripting.executeScript({ target: { tabId }, func: highlightElement, args: [i.id, idx] }), text: 'Show' })))))));
+}
+
 /* ── Start ─────────────────────────────────────────────── */
 
 async function inspect() {
@@ -249,18 +269,23 @@ async function inspect() {
       chrome.scripting.executeScript({ target: { tabId }, func: headersFromPage }),
     ]);
     render(page, headers || {});
+    const [{ result: design }] = await chrome.scripting.executeScript({ target: { tabId }, func: designAudit });
+    renderDesign(design, tabId);
   } catch (e) {
     $('status').textContent = 'This page could not be inspected.';
     $('viewTech').replaceChildren(h('p', { class: 'empty', text: e.message }));
   }
 }
 
-for (const [tabBtn, other] of [[$('tabTech'), $('tabIssues')], [$('tabIssues'), $('tabTech')]]) {
-  tabBtn.addEventListener('click', () => {
-    tabBtn.setAttribute('aria-selected', 'true'); tabBtn.tabIndex = 0;
-    other.setAttribute('aria-selected', 'false'); other.tabIndex = -1;
-    $(tabBtn.getAttribute('aria-controls')).hidden = false;
-    $(other.getAttribute('aria-controls')).hidden = true;
+const TABS = ['tabTech', 'tabDesign', 'tabIssues'];
+for (const id of TABS) {
+  $(id).addEventListener('click', () => {
+    for (const other of TABS) {
+      const on = other === id;
+      $(other).setAttribute('aria-selected', String(on));
+      $(other).tabIndex = on ? 0 : -1;
+      $($(other).getAttribute('aria-controls')).hidden = !on;
+    }
   });
 }
 
@@ -277,6 +302,7 @@ $('copyBtn').addEventListener('click', async () => {
   for (const t of current.tech) (groups[t.category] ||= []).push(`${t.name}${t.version ? ` ${t.version}` : ''}`);
   for (const [cat, items] of Object.entries(groups)) lines.push(`${cat}: ${items.join(', ')}`);
   if (current.issues.length) lines.push('', 'Quick issues:', ...current.issues.slice(0, 8).map((i) => `- ${i.title}`));
+  if (current.design?.issues?.length) lines.push('', 'Design issues:', ...current.design.issues.slice(0, 10).map((i) => `- ${i.title} (${i.count}): ${i.items[0]?.extra || i.items[0]?.where || ''}`));
   await navigator.clipboard.writeText(lines.join('\n'));
   $('copyBtn').textContent = 'Copied ✓';
   setTimeout(() => { $('copyBtn').textContent = 'Copy list'; }, 1500);

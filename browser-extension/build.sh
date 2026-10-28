@@ -6,5 +6,5 @@ cd "$(dirname "$0")"
 { echo '// Copy of functions/_lib/tech.js (run browser-extension/build.sh to refresh).'; cat ../functions/_lib/tech.js; } > tech.js
 mkdir -p ../assets/downloads
 rm -f ../assets/downloads/site-inspector.zip
-zip -qr ../assets/downloads/site-inspector.zip manifest.json background.js popup.html popup.css popup.js tech.js icons
+zip -qr ../assets/downloads/site-inspector.zip manifest.json background.js popup.html popup.css popup.js design-check.js tech.js icons
 echo "Built assets/downloads/site-inspector.zip"

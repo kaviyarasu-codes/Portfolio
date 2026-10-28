@@ -16,11 +16,13 @@
 
   <nav class="tabs" role="tablist" aria-label="Views">
     <button type="button" role="tab" id="tabTech" aria-selected="true" aria-controls="viewTech">Technologies</button>
+    <button type="button" role="tab" id="tabDesign" aria-selected="false" aria-controls="viewDesign" tabindex="-1">Design <span id="designCount" class="count"></span></button>
     <button type="button" role="tab" id="tabIssues" aria-selected="false" aria-controls="viewIssues" tabindex="-1">Quick issues <span id="issueCount" class="count"></span></button>
   </nav>
 
   <main>
     <section id="viewTech" role="tabpanel" aria-labelledby="tabTech"></section>
+    <section id="viewDesign" role="tabpanel" aria-labelledby="tabDesign" hidden><p class="empty">Checking colours, buttons and layout…</p></section>
     <section id="viewIssues" role="tabpanel" aria-labelledby="tabIssues" hidden></section>
   </main>
 
