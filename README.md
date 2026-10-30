@@ -20,6 +20,10 @@ python3 -m http.server 8000   # then open http://localhost:8000
 ```
 Every push to `main` deploys automatically to Cloudflare Pages.
 
+## Licence
+Code: [MIT](LICENSE) — reuse the site structure, Site Audit tool and Site Inspector extension freely.
+Personal content (photos, logo, résumé, project screenshots, text about me) is not covered — please replace it with your own.
+
 ---
 
 Built by **Kaviyarasu K** — Full-Stack & App Developer, Coimbatore · [Portfolio](https://kaviyarasu-portfolio.pages.dev) · [LinkedIn](https://www.linkedin.com/in/kaviyarasu-kanthavel/)
