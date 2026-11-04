@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Projects | Kaviyarasu K</title>
-  <meta name="description" content="Projects by Kaviyarasu K: the Agnisiragu news platform (Play Store), TicketsRaja ticketing marketplace, a GST billing platform, Event247 and client websites." />
+  <meta name="description" content="Projects by Kaviyarasu K: HookScope, an AI ad pre-testing studio; the Agnisiragu news platform (Play Store), TicketsRaja ticketing marketplace, a GST billing platform, Event247 and client websites." />
   <meta name="author" content="Kaviyarasu K" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://kaviyarasu-portfolio.pages.dev/projects" />
@@ -14,7 +14,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://kaviyarasu-portfolio.pages.dev/projects" />
   <meta property="og:title" content="Projects | Kaviyarasu K" />
-  <meta property="og:description" content="Projects by Kaviyarasu K: the Agnisiragu news platform (Play Store), TicketsRaja ticketing marketplace, a GST billing platform, Event247 and client websites." />
+  <meta property="og:description" content="Projects by Kaviyarasu K: HookScope, an AI ad pre-testing studio; the Agnisiragu news platform (Play Store), TicketsRaja ticketing marketplace, a GST billing platform, Event247 and client websites." />
   <meta property="og:image" content="https://kaviyarasu-portfolio.pages.dev/assets/img/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -22,7 +22,7 @@
   <meta property="og:locale" content="en_IN" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Projects | Kaviyarasu K" />
-  <meta name="twitter:description" content="Projects by Kaviyarasu K: the Agnisiragu news platform (Play Store), TicketsRaja ticketing marketplace, a GST billing platform, Event247 and client websites." />
+  <meta name="twitter:description" content="Projects by Kaviyarasu K: HookScope, an AI ad pre-testing studio; the Agnisiragu news platform (Play Store), TicketsRaja ticketing marketplace, a GST billing platform, Event247 and client websites." />
   <meta name="twitter:image" content="https://kaviyarasu-portfolio.pages.dev/assets/img/og-image.jpg" />
 
   <meta name="theme-color" content="#F6F7F9" />
@@ -77,6 +77,7 @@
         <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">All</button>
         <button type="button" class="filter-btn" data-filter="live" aria-pressed="false">Live</button>
         <button type="button" class="filter-btn" data-filter="dev" aria-pressed="false">In development</button>
+        <button type="button" class="filter-btn" data-filter="ai" aria-pressed="false">AI</button>
         <button type="button" class="filter-btn" data-filter="mobile" aria-pressed="false">Mobile apps</button>
         <button type="button" class="filter-btn" data-filter="web" aria-pressed="false">Web</button>
         <button type="button" class="filter-btn" data-filter="client" aria-pressed="false">Client sites</button>
@@ -84,6 +85,26 @@
     </header>
 
     <div class="wrap" id="project-list">
+
+      <article class="case" id="hookscope" data-cats="dev web ai">
+        <div class="visual"><img src="assets/img/hookscope/report-dark.webp" alt="HookScope report comparing three versions of a reel" width="1600" height="1000" loading="lazy" /></div>
+        <div>
+          <div class="case-meta"><span class="status dev">Pilot, in development</span><span><i class="ph ph-user" aria-hidden="true"></i> My own product</span></div>
+          <h2>HookScope ad pre-testing studio</h2>
+          <p class="role">Designer and developer, end to end.</p>
+          <div class="tags"><span class="tag">Meta FAIR TRIBE v2</span><span class="tag">Python + FastAPI</span><span class="tag">Modal GPU</span><span class="tag">Claude connector (MCP)</span><span class="tag">Chart.js + three.js</span></div>
+          <ul>
+            <li>Compares 2 or 3 versions of an ad and shows which holds attention and where viewers drop, before any money is spent</li>
+            <li>Runs Meta FAIR's TRIBE v2 brain-response model on a cloud GPU, about ₹12 to ₹20 per 100 s ad</li>
+            <li>Plain "what to do" verdict, attention chart, brain systems, 3D brain view, team reports and print / PDF</li>
+            <li>Claude connector with OAuth sign-in: the team asks in Tamil or English and Claude runs the test</li>
+            <li>Pilot with a digital marketing academy in Tamil Nadu; research licence, not for sale</li>
+          </ul>
+          <div class="links-row">
+            <a class="btn btn-solid" href="hookscope.html">Product page <i class="ph ph-arrow-up-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </article>
 
       <article class="case" id="agnisiragu" data-cats="live mobile web">
         <div class="visual"><img src="assets/img/projects/agnisiragu.webp" alt="Agnisiragu news website home page" width="1200" height="750" /></div>
@@ -348,6 +369,7 @@
         </nav>
         <nav class="footer-col" aria-label="Projects">
           <h3>Projects</h3>
+          <a href="hookscope.html">HookScope</a>
           <a href="projects.html#agnisiragu">Agnisiragu</a>
           <a href="projects.html#ticketsraja">TicketsRaja</a>
           <a href="projects.html#billing">GST billing platform</a>
