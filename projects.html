@@ -155,6 +155,7 @@
             <li>Fixtures grouped by day with sport, category and school filters, plus live score entry from the admin panel on match days</li>
             <li>Tournament status works itself out from the dates, with a scoreboard-style countdown on the home page</li>
             <li>Membership applications with private ID-proof storage, year-wise photo and video gallery, news, downloads and sponsor enquiries</li>
+            <li>Admin panel works on a phone too: slide-in menu, bottom tab bar and colour-coded custom icons, so scores can be updated from the ground</li>
             <li>Security and reliability: login lockout, forced password change, same-origin checks, rate-limited forms, atomic writes with daily backups</li>
             <li>One-command safe updates on the VPS that back up live data first; 79 automated end-to-end checks</li>
           </ul>
@@ -162,6 +163,40 @@
             <a class="btn btn-solid" href="https://tngrmsportsclub.com" target="_blank" rel="noopener noreferrer"><i class="ph ph-globe" aria-hidden="true"></i> tngrmsportsclub.com</a>
           </div>
         </div>
+
+        <details class="screens" id="tngrmsc-screens">
+          <summary>
+            <span class="sc-thumbs" aria-hidden="true">
+              <img src="assets/img/tngrmsc/app-fixtures.webp" alt="" width="720" height="1516" loading="lazy" />
+              <img src="assets/img/tngrmsc/app-admin-menu.webp" alt="" width="720" height="1516" loading="lazy" />
+              <img class="wide" src="assets/img/tngrmsc/web-scoreboard.webp" alt="" width="1365" height="768" loading="lazy" />
+            </span>
+            <span class="sc-text"><b>View website &amp; admin screens</b><small>3 website · 4 mobile · 2 admin panel</small></span>
+            <i class="ph ph-caret-down sc-caret" aria-hidden="true"></i>
+          </summary>
+        <div class="gallery">
+          <div class="gal-tabs" role="tablist" aria-label="TNGRMSC screens">
+            <button type="button" role="tab" aria-selected="true" aria-controls="tn-gal-web" id="tn-tab-web" class="gal-tab active"><i class="ph ph-globe" aria-hidden="true"></i> Website</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tn-gal-mobile" id="tn-tab-mobile" class="gal-tab" tabindex="-1"><i class="ph ph-device-mobile" aria-hidden="true"></i> Mobile</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="tn-gal-admin" id="tn-tab-admin" class="gal-tab" tabindex="-1"><i class="ph ph-layout" aria-hidden="true"></i> Admin panel</button>
+          </div>
+          <div class="gal-panel browsers" role="tabpanel" id="tn-gal-web" aria-labelledby="tn-tab-web">
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/tngrmsc/web-scoreboard.webp" aria-label="Enlarge: Home: club figures and scoreboard-style tournament panel"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/tngrmsc/web-scoreboard.webp" alt="TNGRMSC home page with club figures and tournament panel" width="1365" height="768" loading="lazy" /></button><figcaption>Home: club figures and scoreboard-style tournament panel</figcaption></figure>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/tngrmsc/web-fixtures.webp" aria-label="Enlarge: Fixtures grouped by day with sport, category and school filters"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/tngrmsc/web-fixtures.webp" alt="TNGRMSC fixtures page" width="1365" height="768" loading="lazy" /></button><figcaption>Fixtures grouped by day with sport, category and school filters</figcaption></figure>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/tngrmsc/web-tournament.webp" aria-label="Enlarge: Tournament page with dates, venue, sports, results and fixtures"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/tngrmsc/web-tournament.webp" alt="TNGRMSC tournament detail page" width="1365" height="768" loading="lazy" /></button><figcaption>Tournament page with dates, venue, sports, results and fixtures</figcaption></figure>
+          </div>
+          <div class="gal-panel phones" role="tabpanel" id="tn-gal-mobile" aria-labelledby="tn-tab-mobile" hidden>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/tngrmsc/app-home.webp" aria-label="Enlarge: Tournament scoreboard on a phone"><img src="assets/img/tngrmsc/app-home.webp" alt="TNGRMSC home page on mobile" width="720" height="1516" loading="lazy" /></button><figcaption>Tournament scoreboard on a phone</figcaption></figure>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/tngrmsc/app-fixtures.webp" aria-label="Enlarge: Match cards, easy to scan on match day"><img src="assets/img/tngrmsc/app-fixtures.webp" alt="TNGRMSC fixtures on mobile" width="720" height="1516" loading="lazy" /></button><figcaption>Match cards, easy to scan on match day</figcaption></figure>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/tngrmsc/app-admin.webp" aria-label="Enlarge: Admin dashboard with a bottom tab bar"><img src="assets/img/tngrmsc/app-admin.webp" alt="TNGRMSC admin dashboard on mobile" width="720" height="1516" loading="lazy" /></button><figcaption>Admin dashboard with a bottom tab bar</figcaption></figure>
+            <figure class="gal-item"><button type="button" class="gal-open phone" data-full="assets/img/tngrmsc/app-admin-menu.webp" aria-label="Enlarge: Colour-coded admin menu with custom icons"><img src="assets/img/tngrmsc/app-admin-menu.webp" alt="TNGRMSC admin menu on mobile" width="720" height="1516" loading="lazy" /></button><figcaption>Colour-coded admin menu with custom icons</figcaption></figure>
+          </div>
+          <div class="gal-panel browsers" role="tabpanel" id="tn-gal-admin" aria-labelledby="tn-tab-admin" hidden>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/tngrmsc/admin-dashboard.webp" aria-label="Enlarge: Dashboard: things waiting for action and quick actions"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/tngrmsc/admin-dashboard.webp" alt="TNGRMSC admin dashboard" width="1365" height="768" loading="lazy" /></button><figcaption>Dashboard: things waiting for action and quick actions</figcaption></figure>
+            <figure class="gal-item wide"><button type="button" class="gal-open browser" data-full="assets/img/tngrmsc/admin-scores.webp" aria-label="Enlarge: Enter scores and match status on match days"><span class="bar" aria-hidden="true"><i></i><i></i><i></i></span><img src="assets/img/tngrmsc/admin-scores.webp" alt="TNGRMSC admin fixture score entry" width="1365" height="768" loading="lazy" /></button><figcaption>Enter scores and match status on match days</figcaption></figure>
+          </div>
+        </div>
+        </details>
       </article>
 
       <article class="case" id="ticketsraja" data-cats="dev web">
