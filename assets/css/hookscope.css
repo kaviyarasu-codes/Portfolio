@@ -1,0 +1,48 @@
+/* HookScope product page. Builds on style.css; only page-specific pieces live here. */
+.hs-head { padding-bottom: 28px }
+.hs-back { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: .92rem; margin-bottom: 22px }
+.hs-back:hover { color: var(--accent) }
+.hs-lede { max-width: 60ch; margin: 18px 0 26px; font-size: clamp(1.05rem, 1.6vw, 1.25rem); color: var(--ink-2) }
+.hs-hero { margin-bottom: 8px }
+.hs-hero .gal-open { box-shadow: var(--shadow) }
+
+.hs-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px }
+.hs-facts > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 24px; box-shadow: var(--shadow-sm) }
+.hs-facts b { display: block; font-size: 1.08rem; margin-bottom: 8px }
+.hs-facts p { color: var(--ink-2); font-size: .95rem }
+
+.gal-panel.hs-more { grid-template-columns: 2fr 1fr; align-items: start }
+.gal-open.phone.hs-phone img { aspect-ratio: 720 / 1226 }
+
+.hs-split { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center }
+.hs-split h2 { margin-bottom: 14px }
+.hs-p { color: var(--ink-2); max-width: 58ch }
+.hs-quote { margin: 18px 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface); border-radius: 0 var(--r-sm) var(--r-sm) 0; font-size: 1.1rem; font-weight: 500 }
+.hs-list { display: grid; gap: 12px }
+.hs-list li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: center; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r) }
+.hs-list .ph { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--r-sm); background: var(--accent-soft); color: var(--accent); font-size: 1.35rem }
+.hs-list span { color: var(--ink-2); font-size: .95rem } .hs-list b { color: var(--ink) }
+
+.hs-numbers { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px }
+.hs-numbers > div { padding: 20px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface) }
+.hs-numbers b { display: block; font-size: clamp(1.5rem, 2.6vw, 2rem); letter-spacing: -.03em; line-height: 1.1 }
+.hs-numbers span { color: var(--muted); font-size: .9rem }
+.hs-stack { margin-bottom: 28px }
+.hs-points { display: grid; gap: 10px; max-width: 80ch }
+.hs-points li { position: relative; padding-left: 22px; color: var(--ink-2) }
+.hs-points li::before { content: ""; position: absolute; left: 4px; top: .7em; width: 7px; height: 7px; border-radius: 50%; background: var(--accent) }
+
+.hs-cta { text-align: center; display: grid; justify-items: center; gap: 12px }
+.hs-cta p { color: var(--muted) }
+.hs-cta .links-row { justify-content: center; margin-top: 8px }
+
+@media (max-width: 900px) {
+  .hs-facts, .hs-split { grid-template-columns: 1fr }
+  .hs-numbers { grid-template-columns: 1fr 1fr }
+  .gal-panel.hs-more { grid-template-columns: 1fr }
+  .gal-panel.hs-more .hs-phone { max-width: 300px; margin: 0 auto }
+}
+@media (max-width: 600px) {
+  .hs-hero .gal-open.browser { max-width: 340px; margin: 0 auto }
+  .hs-hero picture img { width: 100%; height: auto }
+}
