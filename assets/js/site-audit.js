@@ -476,6 +476,38 @@ function visualFindings(v) {
   return [...map.values()].map(({ lines, ...f }) => ({ ...f, detail: `${f.detail}\n\n${lines.join('\n')}` }));
 }
 
+// Lighthouse checks that are about how the page looks and is used.
+const LH_DESIGN = /^LH-(color-contrast|target-size|tap-targets|font-size|image-aspect-ratio|image-size-responsive|button-name|link-name|label|link-in-text-block|content-width|viewport)$/;
+const isDesign = (f) => /^(VIS|DESIGN)-/.test(f.id) || LH_DESIGN.test(f.id);
+
+/** Design warnings (critique count): design problems that are not just "info". */
+function designWarnings(r) {
+  const list = allFindings(r).filter((f) => isDesign(f) && f.severity !== 'info');
+  return { list, count: list.length, template: allFindings(r).filter((f) => /^VIS-TEMPLATE-|^DESIGN-CSS-TEMPLATE/.test(f.id)) };
+}
+
+/** A prompt for an AI coding tool (Claude, ChatGPT, Cursor) to fix only the design problems found. */
+function polishPrompt(r) {
+  const { list, template } = designWarnings(r);
+  const lines = [
+    `Polish the design of ${r.final_url || r.target}. Keep the current layout, brand and content; fix only these problems found by a design audit.`,
+    'For each, change the CSS/HTML of the element named (selectors are from the live page; find the matching code).',
+    '',
+  ];
+  list.forEach((f, i) => {
+    lines.push(`${i + 1}. [${SEV_LABEL[f.severity]}] ${f.title}${f.pages?.length ? ` – ${f.pages.join(', ')}` : ''}`);
+    const ex = [...new Set((f.detail || '').split('\n').filter((l) => /^\s*•/.test(l)).map((l) => l.trim()))].slice(0, 6);
+    if (ex.length) lines.push(...ex.map((l) => `   ${l.trim()}`));
+    lines.push(`   Fix: ${f.fix}`);
+  });
+  if (template.length) {
+    lines.push('', 'Optional – it looks like a generic template/AI design. Without changing the layout, make it feel more custom:');
+    for (const f of template) lines.push(`- ${f.title}: ${f.fix}`);
+  }
+  lines.push('', 'Rules: text contrast at least 4.5:1 (3:1 for large text); tap targets at least 44×44 px on phones; nothing fixed may cover buttons, forms or payment/QR codes; keep a visible :focus-visible outline; no horizontal scrolling at 360 px width.', 'When done, list each change you made with the file and line.');
+  return lines.join('\n');
+}
+
 function visualSection(r) {
   const sec = h('section', { class: 'sa-card', id: 'visualSection', 'aria-labelledby': 'visualTitle' },
     h('h2', { id: 'visualTitle', text: 'Design check in a real browser' }),
@@ -514,6 +546,12 @@ function visualSection(r) {
       list));
   }
   sec.append(grid);
+  const tplIssues = r.visual.views.flatMap((v) => (v.issues || []).filter((i) => i.id.startsWith('template-')));
+  const tplNames = [...new Set(tplIssues.map((i) => i.title))];
+  if (tplNames.length) sec.append(h('div', { class: 'sa-template' },
+    h('h3', { text: `Template / AI look: ${tplNames.length} of 7 common signs` }),
+    h('p', { class: 'sa-muted sa-small', text: 'Not errors. These patterns appear on most sites made from AI prompts or stock templates, so the site can look like many others.' }),
+    h('ul', { class: 'sa-bullets sa-small' }, tplNames.map((t) => h('li', { text: t })))));
   return sec;
 }
 
@@ -706,7 +744,8 @@ function compareSection(r) {
       tile('Score change', `${diff > 0 ? '+' : ''}${diff}`, { cls: diff > 0 ? 'is-good' : diff < 0 ? 'is-bad' : '', sub: `${prev.score} → ${r.score}` }),
       tile('Fixed', String(fixed.length), { cls: fixed.length ? 'is-good' : '' }),
       tile('New', String(added.length), { cls: added.length ? 'is-bad' : '' }),
-      tile('Still open', String(still.length))),
+      tile('Still open', String(still.length)),
+      r.kind === 'website' ? (() => { const a = designWarnings(prev).count, b = designWarnings(r).count; return tile('Design warnings', `${a} → ${b}`, { cls: b < a ? 'is-good' : b > a ? 'is-bad' : '' }); })() : null),
     h('div', { class: 'sa-ai-grid' },
       h('div', {}, h('h3', { text: 'Fixed since last time' }), list(fixed, 'Nothing fixed yet.')),
       h('div', {}, h('h3', { text: 'New problems' }), list(added, 'No new problems.'))));
@@ -721,6 +760,7 @@ function summaryText(r) {
     `${r.kind === 'apk' ? 'App' : 'Website'} check: ${name} (${new Date(r.checked_at).toLocaleDateString()})`,
     `Score: ${r.score}/100${r.ai?.grade && r.ai.grade !== '–' ? ` · Grade ${r.ai.grade}` : ''}`,
   ];
+  if (r.kind === 'website') lines.push(`Design warnings: ${designWarnings(r).count}`);
   if (merged.length) {
     lines.push('', 'Top things to fix:');
     merged.slice(0, 5).forEach((f, i) => lines.push(`${i + 1}. ${f.title}${f.pages?.length > 1 ? ` (${f.pages.length} pages)` : ''}`));
@@ -731,10 +771,10 @@ function summaryText(r) {
   return lines.join('\n');
 }
 
-async function copyText(text, what) {
+async function copyText(text, what, hint = 'Paste it into WhatsApp, email or a document.') {
   try {
     await navigator.clipboard.writeText(text);
-    notice('Copied', `${what} copied. Paste it into WhatsApp, email or a document.`);
+    notice('Copied', `${what} copied. ${hint}`);
   } catch {
     notice('Copy failed', 'Your browser blocked the clipboard. Use Download instead.', { kind: 'error' });
   }
@@ -817,6 +857,7 @@ function renderResults(r, { keepScroll = false } = {}) {
   const tiles = [
     tile('Score', `${r.score}/100`, { cls: scoreClass(r.score), sub: 'automated checks' }),
     h('div', { class: 'sa-tile', id: 'gradeTile' }, h('span', { class: 'sa-tile-label', text: 'AI grade' }), h('b', { text: r.ai?.grade || '–' })),
+    ...(r.kind === 'website' ? [(() => { const n = designWarnings(r).count; return tile('Design warnings', String(n), { cls: n ? 'is-bad' : 'is-good', sub: 'look & usability' }); })()] : []),
     ...SEVERITIES.map((s) => tile(SEV_LABEL[s], String(counts[s]), { cls: `sev-tile sev-${s}` })),
   ];
   const facts = [];
@@ -835,6 +876,7 @@ function renderResults(r, { keepScroll = false } = {}) {
       h('p', { class: 'sa-muted sa-small', text: `Checked ${new Date(r.checked_at).toLocaleString()}${r.final_url && r.final_url !== r.target ? ` · started at ${r.target}` : ''}` })),
     h('div', { class: 'sa-res-actions no-print' },
       h('button', { class: 'sa-btn sa-btn-primary', type: 'button', onclick: () => copyText(summaryText(r), 'Summary'), text: 'Copy summary for WhatsApp / email' }),
+      r.kind === 'website' ? h('button', { class: 'sa-btn sa-btn-ghost', type: 'button', onclick: () => copyText(polishPrompt(r), 'Design fix prompt', 'Paste it into Claude, ChatGPT or Cursor together with the site\'s code.'), title: 'Paste into Claude, ChatGPT or Cursor to fix the design problems', text: 'Copy design fix prompt (AI)' }) : null,
       h('button', { class: 'sa-btn sa-btn-ghost', type: 'button', onclick: () => downloadJson(r), text: 'Download JSON' }),
       h('button', { class: 'sa-btn sa-btn-ghost', type: 'button', onclick: printReport, text: 'Print / Save PDF' })));
 

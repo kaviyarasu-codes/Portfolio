@@ -161,5 +161,20 @@ export function reviewCss(sheets) {
   if (fonts.length > 4) findings.push(f('info', 'DESIGN-CSS-MANY-FONTS', `${fonts.length} font families in the CSS`, fonts.slice(0, 10).join(', '), 'Use 1–2 font families; each extra font also slows the page.'));
   if (important > 60) findings.push(f('info', 'DESIGN-CSS-IMPORTANT', `!important is used ${important} times`, 'Heavy use of !important makes styles hard to change and causes "my change does not show" bugs.', 'Reduce !important by using more specific selectors or cleaning up conflicting rules.'));
 
-  return { findings, stats: { rules: rules.length, colors: colorSet.size, fonts: fonts.length, important, responsive: hasMedia || usesFlexGrid } };
+  // 8. "Template look": styles repeated across most AI-made and stock-template sites.
+  const signs = [];
+  const gradText = rules.find((r) => /text/.test(val(r.decls['background-clip'] || r.decls['-webkit-background-clip'] || '')) && /gradient/.test(val(r.decls.background || r.decls['background-image'] || '')));
+  if (gradText) signs.push(`gradient text (${where(gradText)})`);
+  const purple = rules.find((r) => /gradient/.test(val(r.decls.background || r.decls['background-image'] || '')) && /(#(6366f1|8b5cf6|7c3aed|a855f7|9333ea|6d28d9|4f46e5|764ba2|667eea)|purple|violet|indigo)/i.test(val(r.decls.background || r.decls['background-image'])));
+  if (purple) signs.push(`purple/indigo gradient (${where(purple)})`);
+  const mainFont = val(rules.find((r) => /^(body|html|:root)/.test(r.selector) && r.decls['font-family'])?.decls['font-family'] || '').split(',')[0].replace(/["']/g, '').trim();
+  if (/^(inter|poppins|roboto|montserrat)$/i.test(mainFont)) signs.push(`default font ${mainFont}`);
+  const stripe = rules.find((r) => /^[3-9]px/.test(val(r.decls['border-left'] || r.decls['border-left-width'] || '')) && r.decls['border-radius']);
+  if (stripe) signs.push(`coloured side stripe on cards (${where(stripe)})`);
+  const glass = rules.filter((r) => /blur\(/.test(val(r.decls['backdrop-filter'] || r.decls['-webkit-backdrop-filter'] || ''))).length;
+  if (glass >= 3) signs.push(`frosted-glass blur on ${glass} rules`);
+  if (signs.length >= 2) findings.push(f('info', 'DESIGN-CSS-TEMPLATE-LOOK', `Looks like a template / AI-made design (${signs.length} common signs)`, signs.map((s) => `• ${s}`).join('\n'),
+    'Not a bug, but it makes the site look like many others. Use the brand\'s own colours and fonts, solid colours for text, and fewer decorative effects.'));
+
+  return { findings, stats: { rules: rules.length, colors: colorSet.size, fonts: fonts.length, important, responsive: hasMedia || usesFlexGrid, template_signs: signs.length } };
 }

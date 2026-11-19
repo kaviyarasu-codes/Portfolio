@@ -277,3 +277,5 @@ main.sa-wrap { padding-top: 24px; padding-bottom: 64px; display: grid; gap: 16px
 .sa-num.sev-critical { background: #b42318 } .sa-num.sev-high { background: #e11d48 } .sa-num.sev-medium { background: #b45309 } .sa-num.sev-info { background: #64748b }
 @media (min-width: 900px) { .sa-visual { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) } }
 .sa-visual-list summary > span:last-child { flex: 1 1 12ch }
+.sa-template { margin-top: 16px; padding: 12px 14px; border: 1px dashed var(--line); border-radius: var(--r-sm) }
+.sa-template h3 { font-size: 1rem; margin: 0 0 4px }

@@ -204,6 +204,77 @@ export function designAudit() {
     else if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
   } catch { /* ignore */ }
 
+  // Floating widgets (chat / WhatsApp / call buttons, cookie bars) sitting on top of
+  // buttons, form fields or images (e.g. a payment QR code) somewhere on the page.
+  const floating = [...document.querySelectorAll('body *')].filter((el) => {
+    const st = getComputedStyle(el);
+    if (st.position !== 'fixed' && st.position !== 'sticky') return false;
+    if (!visible(el, st)) return false;
+    const r = el.getBoundingClientRect();
+    return r.width < vw * 0.9 || r.top > vh * 0.5; // skip full-width top headers
+  }).filter((el, _, list) => !list.some((o) => o !== el && o.contains(el))).slice(0, 12);
+  if (floating.length) {
+    const targets = [...document.querySelectorAll('button, a[href], input:not([type="hidden"]), select, textarea, img, canvas, video, iframe')].filter((el) => !floating.some((f) => f.contains(el)) && visible(el)).slice(0, 600);
+    const startY = scrollY;
+    const maxY = Math.max(0, document.documentElement.scrollHeight - vh);
+    const seen = new Set();
+    for (let y = 0, steps = 0; steps < 16; y += vh * 0.5, steps++) {
+      scrollTo(0, Math.min(y, maxY));
+      for (const f of floating) {
+        const fr = f.getBoundingClientRect();
+        if (!fr.width || !fr.height) continue;
+        for (const t of targets) {
+          if (seen.has(t)) continue;
+          const tr = t.getBoundingClientRect();
+          const w = Math.min(fr.right, tr.right) - Math.max(fr.left, tr.left);
+          const hgt = Math.min(fr.bottom, tr.bottom) - Math.max(fr.top, tr.top);
+          if (w <= 0 || hgt <= 0 || tr.width * tr.height < 100) continue;
+          const share = (w * hgt) / (tr.width * tr.height);
+          // A small bubble over a big image hides little of it, but all of the bubble is on it.
+          const onTop = (w * hgt) / (fr.width * fr.height);
+          const isQr = t.matches('img, canvas') && /qr|upi|pay|scan|gpay|phonepe|paytm/i.test(`${t.getAttribute('src') || ''} ${t.getAttribute('alt') || ''} ${t.className || ''}`);
+          const isControl = t.matches('button, a[href], input, select, textarea');
+          if (!(share >= 0.3 || ((isQr || isControl) && (share >= 0.15 || onTop >= 0.5)))) continue;
+          seen.add(t);
+          add('widget-covers', isQr || isControl ? 'high' : 'medium', 'A floating button or bar covers part of the page', 'A fixed chat/WhatsApp/call button, cookie bar or sticky element sits on top of content when the page is scrolled, hiding it or blocking taps.', 'Move the floating element (smaller, other corner, or hide it near forms and payment sections), or add bottom padding to the page so content can scroll clear of it.', t, `${Math.round(share * 100)}% hidden by ${describe(f)}${isQr ? ' (looks like a payment / QR code)' : ''}`);
+        }
+      }
+      if (y >= maxY) break;
+    }
+    scrollTo(0, startY);
+  }
+
+  // "Template look": patterns common in sites made from AI prompts and stock templates.
+  // Not errors; they make a site look like many others.
+  const tpl = (id, title, detail, fix, el, extra) => add(`template-${id}`, 'info', title, detail, fix, el, extra);
+  const hueOf = (c) => { const r = c.r / 255, g = c.g / 255, b = c.b / 255; const mx = Math.max(r, g, b), mn = Math.min(r, g, b); if (mx - mn < 0.15) return null; const d = mx - mn; let hh = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; return (hh * 60 + 360) % 360; };
+  const cardLike = (st) => parseFloat(st.borderTopLeftRadius) >= 8 && (st.boxShadow !== 'none' || (parseFloat(st.borderTopWidth) >= 1 && st.borderTopStyle !== 'none')) && parseFloat(st.paddingTop) >= 8;
+  const bodyFont = getComputedStyle(document.body).fontFamily.split(',')[0].replace(/["']/g, '').trim();
+  if (/^(inter|roboto|poppins|montserrat|open sans|arial|helvetica|system-ui|-apple-system|segoe ui)$/i.test(bodyFont)) tpl('font', 'Uses the most common default font', `The main font is ${bodyFont}, the same as a large share of template and AI-made sites.`, 'Pick a font that suits the brand (e.g. from Google Fonts) for headings at least.', document.body, bodyFont);
+  let centered = 0, paras = 0;
+  for (const el of all) {
+    if (!el.isConnected) continue;
+    const st = getComputedStyle(el);
+    if (!visible(el, st)) continue;
+    const bgImg = st.backgroundImage;
+    if (/gradient/.test(bgImg) && /text/.test(st.webkitBackgroundClip || st.backgroundClip)) tpl('gradient-text', 'Gradient-coloured text', 'Gradient text is one of the most repeated "AI website" effects and can be hard to read.', 'Use a solid brand colour for headings; keep gradients for backgrounds or decoration.', el);
+    else if (/gradient/.test(bgImg)) {
+      const r = el.getBoundingClientRect();
+      const hues = (bgImg.match(/rgba?\([^)]+\)/g) || []).map(parse).filter(Boolean).map(hueOf).filter((x) => x !== null);
+      if (r.width * r.height > vw * vh * 0.08 && hues.some((x) => x >= 240 && x <= 300) && hues.some((x) => (x >= 190 && x < 240) || x > 300)) tpl('purple-gradient', 'Purple / blue gradient background', 'Purple-to-blue (or pink) gradients are the most common look of AI-generated sites.', 'Use the brand\'s own colours, or a calm solid background with one accent colour.', el);
+    }
+    const bl = parseFloat(st.borderLeftWidth);
+    if (bl >= 3 && bl > parseFloat(st.borderTopWidth) + 2 && parseFloat(st.borderTopLeftRadius) >= 6 && el.getBoundingClientRect().height > 40) tpl('side-stripe', 'Cards with a coloured stripe on one side', 'A thick coloured left border on rounded cards is a very common template pattern.', 'Use spacing, a heading style or a small icon to separate cards instead.', el);
+    if (cardLike(st) && el.parentElement) {
+      for (let p = el.parentElement, d = 0; p && p !== document.body && d < 4; p = p.parentElement, d++) {
+        if (cardLike(getComputedStyle(p))) { tpl('nested-cards', 'Boxes inside boxes', 'Rounded cards placed inside other cards add visual noise.', 'Keep one level of card; group the inner items with spacing or a divider.', el); break; }
+      }
+    }
+    if (el.matches('p') && ownText(el).length > 120) { paras++; if (st.textAlign === 'center') centered++; }
+    if (el.matches('h1, h2, h3, h4, button, li, a') && /^\p{Extended_Pictographic}/u.test((el.innerText || '').trim())) tpl('emoji-icons', 'Emojis used as icons', 'Emojis at the start of headings, buttons or list items look informal and render differently on every phone.', 'Use a consistent icon set (SVG) or no icon.', el);
+  }
+  if (paras >= 3 && centered / paras > 0.6) tpl('centered', 'Long paragraphs are centred', `${centered} of ${paras} long paragraphs are centred, which is harder to read and common in templates.`, 'Left-align paragraphs; centre only short headings and buttons.', document.body);
+
   // Consistency
   if (document.documentElement.scrollWidth > vw + 2 && !issues.overflow) add('overflow', 'high', 'Content wider than the screen', 'The page scrolls sideways.', 'Find wide elements (images, tables, fixed widths) and constrain them with max-width: 100%.', document.body, `page ${document.documentElement.scrollWidth}px, screen ${vw}px`);
   const summary = { fonts: [...fonts].filter(Boolean), fontSizes: [...sizes].sort((a, b) => a - b), textColors: colors.size, viewport: `${vw}×${vh}` };
