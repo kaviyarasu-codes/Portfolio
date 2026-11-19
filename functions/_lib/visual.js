@@ -5,6 +5,9 @@
 //
 // Environment: CF_ACCOUNT_ID, CF_API_TOKEN (secret; token permission
 // "Account → Browser Rendering → Edit").
+//
+// It also runs the Impeccable anti-pattern detector (Apache-2.0, vendored in
+// assets/vendor/impeccable/) in the page, loaded from this site.
 import { designAudit } from './design-check.js';
 
 const MOBILE_UA = 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Mobile Safari/537.36';
@@ -16,9 +19,11 @@ export const VIEWS = [
 
 const SEV_COLOR = { critical: '#b42318', high: '#e11d48', medium: '#b45309', low: '#2563eb' };
 
+export const IMPECCABLE_PATH = '/assets/vendor/impeccable/detect-antipatterns-browser.js';
+
 /** Script injected into the page: run the checks, mark problems, embed the result as JSON. */
-export function injectedScript() {
-  return `(() => {
+export function injectedScript(impeccableUrl = null) {
+  return `(async () => {
   const emit = (data) => {
     const out = document.createElement('script');
     out.type = 'application/json';
@@ -26,9 +31,41 @@ export function injectedScript() {
     out.textContent = JSON.stringify(data).replace(/</g, '\\\\u003c');
     document.documentElement.appendChild(out);
   };
+  // Impeccable's detector first (before our boxes change the page). Loaded with a
+  // script tag so a page CSP that blocks it only skips this part.
+  const impeccable = async (src) => {
+    if (!src) return null;
+    try {
+      window.__IMPECCABLE_CONFIG__ = { autoScan: false };
+      await new Promise((ok, fail) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = ok;
+        s.onerror = () => fail(new Error('could not load the Impeccable detector (blocked by the page or offline)'));
+        document.head.appendChild(s);
+        setTimeout(() => fail(new Error('Impeccable detector took too long to load')), 15000);
+      });
+      if (typeof window.impeccableDetectAsync !== 'function') throw new Error('Impeccable detector did not start');
+      const groups = await Promise.race([
+        window.impeccableDetectAsync(),
+        new Promise((_, fail) => setTimeout(() => fail(new Error('Impeccable detector timed out')), 20000)),
+      ]);
+      return {
+        groups: (groups || []).filter((g) => !g.isHidden).slice(0, 150).map((g) => ({
+          selector: String(g.selector || '').slice(0, 160),
+          page: !!g.isPageLevel,
+          findings: (g.findings || []).map((f) => ({ type: f.type, name: f.name, category: f.category, severity: f.severity, detail: String(f.detail || '').slice(0, 220), description: f.description, vendor: f.thirdParty })),
+        })),
+      };
+    } catch (e) {
+      return { error: String(e && e.message || e) };
+    }
+  };
   try {
+    const imp = await impeccable(${JSON.stringify(impeccableUrl)});
     const designAudit = ${designAudit.toString()};
     const res = designAudit();
+    if (imp) res.impeccable = imp;
     const colors = ${JSON.stringify(SEV_COLOR)};
     res.issues.forEach((iss, i) => { iss.n = i + 1; });
     for (const iss of res.issues) {
@@ -67,13 +104,15 @@ function imageUri(b64) {
   return `data:${b64.startsWith('/9j/') ? 'image/jpeg' : 'image/png'};base64,${b64}`;
 }
 
-async function snapshot(env, url, view) {
+async function snapshot(env, url, view, impeccableUrl) {
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/browser-rendering/snapshot`;
   const body = {
     url,
     viewport: view.viewport,
     gotoOptions: { waitUntil: 'networkidle2', timeout: 45000 },
-    addScriptTag: [{ content: injectedScript() }],
+    addScriptTag: [{ content: injectedScript(impeccableUrl) }],
+    // The check is async (it loads the Impeccable detector); wait for its result.
+    waitForSelector: { selector: '#__si_result', timeout: 40000 },
     screenshotOptions: { fullPage: true, type: 'jpeg', quality: 60 },
   };
   if (view.userAgent) body.userAgent = view.userAgent;
@@ -94,13 +133,15 @@ async function snapshot(env, url, view) {
   const screenshot = imageUri(result.screenshot);
   if (!found) return { name: view.name, screenshot, error: 'The page did not run the design check. Its security policy (CSP) may block injected scripts, or it did not finish loading.' };
   if (found.error) return { name: view.name, screenshot, error: `Design check failed in the page: ${found.error}` };
-  return { name: view.name, viewport: `${view.viewport.width}×${view.viewport.height}`, issues: found.issues, summary: found.summary, screenshot };
+  return { name: view.name, viewport: `${view.viewport.width}×${view.viewport.height}`, issues: found.issues, summary: found.summary, impeccable: found.impeccable || null, screenshot };
 }
 
-export async function visualCheck(url, env) {
+/** @param {string} [origin] this site's origin, to load the vendored Impeccable detector from */
+export async function visualCheck(url, env, origin) {
   if (!env.CF_ACCOUNT_ID || !env.CF_API_TOKEN) {
     throw Object.assign(new Error('Real-browser design check is not set up. Add CF_ACCOUNT_ID and CF_API_TOKEN (Browser Rendering) in Cloudflare Pages settings.'), { status: 501 });
   }
-  const views = await Promise.all(VIEWS.map((v) => snapshot(env, url, v)));
+  const impeccableUrl = origin && env.IMPECCABLE !== 'off' ? new URL(IMPECCABLE_PATH, origin).href : null;
+  const views = await Promise.all(VIEWS.map((v) => snapshot(env, url, v, impeccableUrl)));
   return { url, checked_at: new Date().toISOString(), views };
 }

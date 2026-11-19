@@ -476,14 +476,33 @@ function visualFindings(v) {
   return [...map.values()].map(({ lines, ...f }) => ({ ...f, detail: `${f.detail}\n\n${lines.join('\n')}` }));
 }
 
+/** Impeccable detector results (both views) as one finding per rule. */
+function impeccableFindings(v) {
+  const map = new Map();
+  for (const view of v?.views || []) {
+    for (const g of view.impeccable?.groups || []) {
+      for (const x of g.findings) {
+        const id = `IMP-${String(x.type).toUpperCase()}`;
+        // Impeccable: error / warning / advisory; "slop" rules are about looking generic, not broken.
+        const sev = x.severity === 'advisory' ? 'info' : x.category === 'slop' ? 'low' : x.severity === 'error' ? 'medium' : 'low';
+        if (!map.has(id)) map.set(id, { severity: sev, id, title: `${x.name}${x.category === 'slop' ? ' (AI / template look)' : ''}`, detail: x.description || '', fix: x.description || 'See the Impeccable rule description.', views: [], lines: new Set(), slop: x.category === 'slop' });
+        const f = map.get(id);
+        if (!f.views.includes(view.name)) f.views.push(view.name);
+        if (f.lines.size < 8) f.lines.add(`  • ${g.page ? 'whole page' : g.selector}${x.detail ? ` – ${x.detail}` : ''}${x.vendor ? ` (from ${x.vendor} widget)` : ''}`);
+      }
+    }
+  }
+  return [...map.values()].map(({ lines, ...f }) => ({ ...f, detail: `${f.detail}\n\n${[...lines].join('\n')}\n\nRule by Impeccable (impeccable.style).` }));
+}
+
 // Lighthouse checks that are about how the page looks and is used.
 const LH_DESIGN = /^LH-(color-contrast|target-size|tap-targets|font-size|image-aspect-ratio|image-size-responsive|button-name|link-name|label|link-in-text-block|content-width|viewport)$/;
-const isDesign = (f) => /^(VIS|DESIGN)-/.test(f.id) || LH_DESIGN.test(f.id);
+const isDesign = (f) => /^(VIS|DESIGN|IMP)-/.test(f.id) || LH_DESIGN.test(f.id);
 
 /** Design warnings (critique count): design problems that are not just "info". */
 function designWarnings(r) {
   const list = allFindings(r).filter((f) => isDesign(f) && f.severity !== 'info');
-  return { list, count: list.length, template: allFindings(r).filter((f) => /^VIS-TEMPLATE-|^DESIGN-CSS-TEMPLATE/.test(f.id)) };
+  return { list: list.filter((f) => !f.slop), count: list.length, template: allFindings(r).filter((f) => /^VIS-TEMPLATE-|^DESIGN-CSS-TEMPLATE/.test(f.id) || f.slop) };
 }
 
 /** A prompt for an AI coding tool (Claude, ChatGPT, Cursor) to fix only the design problems found. */
@@ -539,19 +558,29 @@ function visualSection(r) {
             h('p', { class: 'sa-small' }, h('b', { text: 'Fix: ' }), iss.fix)))))
         : h('p', { class: 'sa-muted', text: 'No design problems found at this size.' });
     const sum = view.summary;
+    const imp = view.impeccable;
+    const impTypes = imp?.groups ? [...new Map(imp.groups.flatMap((g) => g.findings).map((x) => [x.type, x])).values()] : [];
+    const impBlock = !imp ? null : imp.error
+      ? h('p', { class: 'sa-muted sa-small', text: `Impeccable rules not run: ${imp.error}` })
+      : h('details', { class: 'sa-imp' },
+        h('summary', { text: `Impeccable design rules: ${impTypes.length} rule(s) flagged` }),
+        impTypes.length ? h('ul', { class: 'sa-bullets sa-small' }, impTypes.map((x) => h('li', {}, h('b', { text: x.name }), x.category === 'slop' ? h('span', { class: 'sa-tag', text: 'AI look' }) : null, ` – ${x.description || ''}`))) : h('p', { class: 'sa-muted sa-small', text: 'No Impeccable rule was triggered.' }));
     grid.append(h('article', { class: 'sa-visual-view' },
       h('h3', { text: `${VIEW_LABEL[view.name] || view.name}${view.viewport ? ` · ${view.viewport}` : ''}` }),
       shot,
       sum ? h('p', { class: 'sa-muted sa-small', text: `Fonts: ${sum.fonts.join(', ') || '–'} · text sizes: ${sum.fontSizes.join(', ')} px · ${sum.textColors} text colours` }) : null,
-      list));
+      list,
+      impBlock));
   }
   sec.append(grid);
   const tplIssues = r.visual.views.flatMap((v) => (v.issues || []).filter((i) => i.id.startsWith('template-')));
-  const tplNames = [...new Set(tplIssues.map((i) => i.title))];
+  const impSlop = r.visual.views.flatMap((v) => (v.impeccable?.groups || []).flatMap((g) => g.findings)).filter((x) => x.category === 'slop').map((x) => x.name);
+  const tplNames = [...new Set([...tplIssues.map((i) => i.title), ...impSlop])];
   if (tplNames.length) sec.append(h('div', { class: 'sa-template' },
-    h('h3', { text: `Template / AI look: ${tplNames.length} of 7 common signs` }),
+    h('h3', { text: `Template / AI look: ${tplNames.length} sign(s) found` }),
     h('p', { class: 'sa-muted sa-small', text: 'Not errors. These patterns appear on most sites made from AI prompts or stock templates, so the site can look like many others.' }),
-    h('ul', { class: 'sa-bullets sa-small' }, tplNames.map((t) => h('li', { text: t })))));
+    h('ul', { class: 'sa-bullets sa-small' }, tplNames.map((t) => h('li', { text: t }))),
+    impSlop.length ? h('p', { class: 'sa-muted sa-small', text: 'Includes rules from Impeccable (impeccable.style, Apache-2.0).' }) : null));
   return sec;
 }
 
@@ -563,13 +592,14 @@ function pathOf(u) { try { const x = new URL(u); return `${x.pathname}${x.search
 function allFindings(r) {
   const map = new Map();
   const add = (f, page) => {
-    const key = /^(LH|VIS)-/.test(f.id) ? f.id : `${f.id}|${f.title}`;
+    const key = /^(LH|VIS|IMP)-/.test(f.id) ? f.id : `${f.id}|${f.title}`;
     if (!map.has(key)) map.set(key, { ...f, pages: [] });
     if (page && !map.get(key).pages.includes(page)) map.get(key).pages.push(page);
   };
   for (const f of r.findings) add(f, r.kind === 'website' ? pathOf(r.final_url) : null);
   for (const f of lighthouseFindings(r.lighthouse?.failed_checks)) add(f, pathOf(r.final_url));
   for (const f of visualFindings(r.visual)) add(f, `${pathOf(r.final_url)} (${f.views.join(' + ')})`);
+  for (const f of impeccableFindings(r.visual)) add(f, `${pathOf(r.final_url)} (${f.views.join(' + ')})`);
   for (const p of (r.pages || []).filter((x) => !x.home)) {
     for (const f of p.findings || []) add(f, pathOf(p.final_url || p.url));
     for (const f of lighthouseFindings(p.lighthouse?.failed_checks)) add(f, pathOf(p.final_url || p.url));
@@ -581,7 +611,7 @@ function allFindings(r) {
 /* ── Fix plan (AI plan when available, otherwise built from findings) ── */
 
 function effortFor(id) {
-  if (/^(VIS|DESIGN)-/.test(id)) return '5–20 min';
+  if (/^(VIS|DESIGN|IMP)-/.test(id)) return '5–20 min';
   if (/^(SEO|A11Y|CONTENT|SEC-(HSTS|CSP|CLICKJACK|NOSNIFF|REFERRER|PERMISSIONS|VERSION)|DNS|COOKIE|UX)/.test(id)) return '5–20 min';
   if (/^(DB|BE)-/.test(id)) return '1–3 h';
   return '30–60 min';
@@ -591,6 +621,7 @@ function verifyFor(f) {
   if (/^SEC-|^CSP-|^COOKIE-/.test(f.id)) return 'Run the audit again: this item should disappear and the security headers grade should go up. Also check the browser console for blocked resources.';
   if (/BROKEN|MISSING|UNREACHABLE/.test(f.id)) return 'Open each listed link or file in a browser; it should load without an error. Then run the audit again.';
   if (/^DNS-/.test(f.id)) return 'DNS changes can take up to a few hours; then run the audit again (or check with an online SPF/DMARC checker).';
+  if (/^IMP-/.test(f.id)) return 'Run the audit again with the real-browser check on: this Impeccable rule should no longer be listed.';
   if (/^VIS-/.test(f.id)) return 'Run the audit again with the real-browser check on: the numbered box should be gone on both phone and desktop screenshots.';
   if (/^LH-/.test(f.id)) return 'Run the audit again with Lighthouse on: this check should pass on every page listed.';
   if (/^PERF-/.test(f.id)) return 'Run the audit with Lighthouse on: the performance score and response time should improve.';

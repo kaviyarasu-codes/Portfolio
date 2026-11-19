@@ -279,3 +279,6 @@ main.sa-wrap { padding-top: 24px; padding-bottom: 64px; display: grid; gap: 16px
 .sa-visual-list summary > span:last-child { flex: 1 1 12ch }
 .sa-template { margin-top: 16px; padding: 12px 14px; border: 1px dashed var(--line); border-radius: var(--r-sm) }
 .sa-template h3 { font-size: 1rem; margin: 0 0 4px }
+.sa-imp { margin-top: 10px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; background: var(--surface) }
+.sa-imp summary { cursor: pointer; font-weight: 600 }
+.sa-imp .sa-tag { margin-left: 6px }

@@ -129,6 +129,7 @@ export function compact(results, maxChars) {
   if (r.visual) {
     r.visual = (r.visual.views || []).map((v) => ({
       view: v.name, error: v.error,
+      impeccable: v.impeccable?.error ? `not run: ${v.impeccable.error}` : [...new Set((v.impeccable?.groups || []).flatMap((g) => g.findings.map((x) => `${x.name} (${x.category})`)))].slice(0, 20),
       issues: (v.issues || []).slice(0, 15).map((i) => ({ severity: i.severity, id: i.id, title: i.title, count: i.count, example: i.items?.[0] ? `${i.items[0].where} ${i.items[0].extra || ''}`.trim() : undefined })),
     }));
   }

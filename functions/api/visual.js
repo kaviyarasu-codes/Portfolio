@@ -6,5 +6,5 @@ import { visualCheck } from '../_lib/visual.js';
 export const onRequestPost = ownerOnly(async ({ request, env }) => {
   const { url } = await request.json().catch(() => ({}));
   const target = normalizeTarget(url, { allowLocal: env.ALLOW_LOCAL_TARGETS === 'true' });
-  return json(await visualCheck(target.href, env));
+  return json(await visualCheck(target.href, env, new URL(request.url).origin));
 });
